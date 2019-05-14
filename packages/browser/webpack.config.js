@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const version = require('./package.json').version;
 
 const commitHash = require('child_process')
-  .execSync('git rev-parse --short HEAD', { encoding: 'utf-8' })
+  .execSync('git log --format=oneline --pretty=format:"%h" .', { encoding: 'utf-8' })
   .trim();
 
 const terserInstance = new TerserPlugin({
