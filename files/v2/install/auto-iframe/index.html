@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html class="ie6"> <![endif]-->
+<!--[if IE 7]>     <html class="ie ie7 lte9 lte8 lte7"> <![endif]-->
+<!--[if IE 8]>     <html class="ie ie8 lte9 lte8"> <![endif]-->
+<!--[if IE 9]>     <html class="ie ie9 lte9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html> <!--<![endif]-->
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="description" content="">
+		<meta name="author" content="Marco Di Costanzo">
+		<title>Aspera Connect Install Manager iFrame:: High-speed file transfer software - Aspera</title>
+  		<link rel="shortcut icon" href="http://asperasoft.com/favicon.ico" type="image/x-icon" />	
+		<link rel="stylesheet" href="install.css" type="text/css" charset="utf-8">
+		<script src="../../asperaweb-2.js" type="text/javascript" charset="utf-8"></script>	
+		<script src="../../connectversions.js"></script>
+		<script src="../../connectinstaller-2.js"></script>
+    
+		<script src="install.js"></script> 
+
+	</head>
+	<body>
+
+		<h1 id="installer-title" class="install_title"></h1>
+		<a href="javascript:void(0)" style="display:none;" class="close_button" onclick="closeInstaller();" id="close-button"></a>
+		<div id="version" class="version">&nbsp;</div>	
+
+		<div id="install-prompt" class="install_prompt" style="display:none">
+			<p id="prompt-message" class="message message_prompt">
+			</p>
+			<div id="prompt-buttons">
+				<a id="install-button" class="btn" href="javascript:void(0);" onclick="handleInstallButton();"></a>
+				<a id="deny-button" class="link deny" href="javascript:void(0);" onclick="closeInstaller();"></a>
+			</div>
+		</div>
+
+		<div id="install-body" class="install_body">
+			<div id="message" style="display:none" class="message message_info"></div>
+			<div id="install-container" class="install_container"></div>
+		</div>
+
+  </body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Christine Zheng, Michael Wang, Valerie Gorbik">
+    <!-- INSERTED AT BUILD TIME FOR PERFORMANCE
+    <script src="localize.js" type="text/javascript" charset="utf-8"></script>
+    <script src="install.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="install.css" type="text/css" charset="utf-8"></link>
+    -->
+  </head>
+  <style>
+    #INSTALL_CSS#
+  </style>
+  <script type="text/javascript">
+    #LOCALIZE_JS#
+    #INSTALL_JS#
+  </script>
+  <body onresize="resizeEvent();" onload="resizeEvent();">
+    <div class="connect-status-banner">
+      <div id="close-button" style="display: inline-block;"><a href="#" onclick="sendParentMessage('removeiframe');">x</a></div>
+      <div class="connect-status-banner-container">
+        <div class="connect-logo" id="logo" href="http://asperasoft.com"></div>
+        <div id="launching-container" class="message">
+          <span id="launching-container-text" class="text"></span>
+          <div class="aspera-icon spinner"></div>
+        </div>
+        <div id="security-update-container" class="message">
+          <span id="security-update-container-text" class="text"></span>
+          <a id="security-update-container-download-link" style="display:none;" class="button download-latest download-button" download href="" onclick="sendParentMessage('downloadconnect');"></a>
+          <a id="security-update-container-continue-link" style="display:none;" class="button" href="" onclick="sendParentMessage('continue'); return false"></a>
+        </div>
+        <div id="running-container" class="message">
+          <span id="running-container-text" class="text"></span>
+          <div class="aspera-icon check"></div>
+        </div>
+        <div id="unsupported-container" class="message">
+          <span id="unsupported-text" class="text"></span>
+        </div>
+      </div>
+      <div class="three-step-installer" style="display: inline-block;">
+        <div id="ext-install-welcome"></div>
+        <div id="extension-title"></div>
+        <div id="install-step-one">
+          <span id="step-one-checkmark" class="green-checkmark" style="display: inline-block;"><svg></svg></span>
+          <div id="step-one-new-container" class="steps" style="display: inline-block;">
+            <span id="step-one-new"></span>
+            <span id="step-one-text"  style="display: inline-block;"></span>
+          </div>
+          <span class="step-one-img" style="display: inline-block;"><svg id="pictogram-puzzle"></svg></span>
+          <div id="step-one-button" class="big-button-active" style="display: inline-block;">
+            <a id="step-one-inside-button" class="filled-button" style="display: inline-block;"></a>
+          </div>
+        </div>
+        <div id="install-step-two">
+          <span id="step-two-checkmark" class="green-checkmark" style="display: inline-block;"><svg></svg></span>
+          <span id="step-two-text" class="steps" style="display: inline-block;"></span>
+          <span class="step-one-img" style="display: inline-block;"><svg id="pictogram-download"></svg></span>
+          <div id="step-two-button" class="big-button-non-active"  style="display: inline-block;">
+            <a id="step-two-inside-button" href="" class="not-filled-button" style="display: inline-block;" download></a>
+          </div>
+        </div>
+        <div id="install-step-three">
+          <span id="step-three-checkmark" class="green-checkmark" style="display: inline-block;"><svg></svg></span>
+          <div id="step-three-new-container" class="steps" style="display: inline-block;">
+            <span id="step-three-new"></span>
+            <span id="step-three-text"  style="display: inline-block;"></span>
+          </div>
+          <span class="step-three-img" style="display: inline-block;"><svg id="pictogram-openbox"></svg></span>
+          <div id="step-three-button" class="big-button-non-active" style="display: inline-block;">
+            <button id="step-three-inside-button" class="not-filled-button" style="display: inline-block;"></button>
+          </div>
+          <a id="step-three-how" class="tooltip"><p id="text-how"></p>
+            <span><img src="tooltip_howto.gif" alt="How?" /></span>
+          </a>
+        </div>
+        <div id="already-installed">
+          <span id="already-installed-text" style="display: inline-block;"></span>
+          <a id="troubleshoot-link" href="" style="display: inline-block;" onclick="openTab('https://test-connect.asperasoft.com'); return false;"></a>
+        </div>
+      </div>
+    </div>
+    <div id="download-bottom" class="download-indicator">
+      <svg id="download-svg" viewBox="0 0 140 110">
+        <polygon id="download-svg-polygon" points="0,0 140,0 140,101 100,101 27,101 22,106 17,101 0,101" />
+        <p id="download-installer-text"></p>
+        <p id="run-installer-text"></p>
+      </svg>
+    </div>
+  </body>
+</html>
