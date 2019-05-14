@@ -18,7 +18,10 @@ cp ./packages/browser/build/asperaweb* ./dist/v4
 # For backwards compatibility
 touch ./dist/v4/connectinstaller-4.js ./dist/v4/connectinstaller-4.min.js
 
-# Bundle installers and connect_references.json
+# Build and bundle legacy Connect banners
+ruby ./scripts/bundle-banners.rb ./dist/v4
+
+# Bundle installers and build connect_references.json
 ruby ./scripts/bundle-installers.rb ./dist
 ruby ./scripts/bundle-installers.rb ./dist/v4
 
