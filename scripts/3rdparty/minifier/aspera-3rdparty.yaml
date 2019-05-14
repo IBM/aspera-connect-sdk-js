@@ -1,0 +1,18 @@
+package: minifier
+version: 0.7.2
+downloads: ['https://github.com/kangax/html-minifier/tree/v0.7.2']
+description: >
+               HTML minifier
+
+distribution: yes
+package_modified: no
+contributed_back: no
+copyright: Copyright (c) 2010-2015 Juriy "kangax" Zaytsev
+assessment:
+  awsom_id: IBM Aspera 3.9.0 B L2
+  assessor: mike.carr@us.ibm.com
+  date: 01/31/2018
+  license: 
+    type: opensource
+    terms: MIT
+    notes:

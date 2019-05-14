@@ -197,7 +197,7 @@ def bundle_installers(output_dir)
   cr.close()
 
   # Minify both connect_references.json and connectversions.js
-  # Shell.execute "node #{$scriptdir}/3rdparty/minifier/minify-tool.js --json #{output_dir}/connect_references.json > #{output_dir}/connect_references.min.json"
+  `node #{$scriptdir}/3rdparty/minifier/minify-tool.js --json #{output_dir}/connect_references.json > #{output_dir}/connect_references.min.json`
   return 0
 end
 

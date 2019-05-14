@@ -41,7 +41,7 @@ def bundle_banners(output_dir)
   topbar_index.write(topbar_contents)
   topbar_index.close()
 
-  # Shell.execute "node #{$scriptdir}/3rdparty/minifier/minify-tool.js --html #{install_output_dir}/auto-topbar/index.html > #{install_output_dir}/auto-topbar/index.min.html"
+  `node #{$scriptdir}/3rdparty/minifier/minify-tool.js --html #{install_output_dir}/auto-topbar/index.html > #{install_output_dir}/auto-topbar/index.min.html`
 
   #######################Carbon-installer#######################
   # JS locales
@@ -76,7 +76,7 @@ def bundle_banners(output_dir)
   carbon_index = File.open("#{install_output_dir}/carbon-installer/index.html", 'w+')
   carbon_index.write(carbon_contents)
   carbon_index.close()
-  # Shell.execute "node #{$scriptdir}/3rdparty/minifier/minify-tool.js --html #{install_output_dir}/carbon-installer/index.html > #{install_output_dir}/carbon-installer/index.min.html"
+  `node #{$scriptdir}/3rdparty/minifier/minify-tool.js --html #{install_output_dir}/carbon-installer/index.html > #{install_output_dir}/carbon-installer/index.min.html`
   ########################################################################
 
   FileUtils.cp_r "#{$scriptdir}/../packages/legacy-install/auto-iframe", install_output_dir
