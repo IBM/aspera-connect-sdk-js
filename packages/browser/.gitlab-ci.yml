@@ -1,0 +1,21 @@
+variables:
+  BUILD_IMAGE: gitlab-registry.aspera.us/devops/docker-aspera-builder:v0.4.0-rc.17
+
+stages:
+  - deploy
+
+pages:
+  stage: deploy
+  image: ${BUILD_IMAGE}
+  script:
+  - mkdir -p public
+  - npm install
+  - npm run build
+  - ls
+  - cp -R dist/* public/
+  - echo "<script src=\"asperaweb-4.js\"></script>" > public/test.html
+  
+  - ls public
+  artifacts:
+    paths:
+    - public

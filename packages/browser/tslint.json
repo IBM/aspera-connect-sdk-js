@@ -1,0 +1,11 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint-config-standard"
+  ],
+  "rules": {
+    "semicolon": [true, "always"],
+    "strict-type-predicates": false
+  },
+  "rulesDirectory": []
+}
