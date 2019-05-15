@@ -28,6 +28,7 @@ export const STATUS = {
   EXTENSION_INSTALL: 'EXTENSION_INSTALL'
 };
 
+
 export const EVENT = {
   ALL: 'all',
   TRANSFER: 'transfer',

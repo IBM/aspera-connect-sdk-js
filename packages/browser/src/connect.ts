@@ -151,10 +151,18 @@ interface ICallbacks {
   error?(response: any): any;
 }
 
-// NOTE: Typescript classes only enforce private modifiers at compile time but not
-//   at runtime. So converting Connect to class notation would make all private
-//   variables/functions public at runtime.
-function Connect (options: ConnectOptions) {
+/**
+ * @classdesc Contains all the Connect API methods
+ *
+ * @name Connect
+ * @class
+ *
+ */
+export function Connect (options: ConnectOptions) {
+  /**
+   * Whether this component is visible or not
+   * @name Connect#visible
+   */
   if (Utils.isNullOrUndefinedOrEmpty(options)) {
     options = {};
   }
@@ -170,9 +178,6 @@ function Connect (options: ConnectOptions) {
   let CONNECT_METHOD = options.connectMethod || '';
   let DRAGDROP_ENABLED = options.dragDropEnabled || false;
   let MAX_ACTIVITY_OUTSTANDING = options.maxActivityOutstanding || 2;
-
-  // Utils.CURRENT_API = Utils.FASP_API;
-  // Utils.SDK_LOCATION = SDK_LOCATION;
 
   // Expose the requested version to the install banner
   if (options.minVersion) {
@@ -352,11 +357,7 @@ function Connect (options: ConnectOptions) {
   this.driveHttpRequest = driveHttpRequest;
   this.isNullOrUndefinedOrEmpty = Utils.isNullOrUndefinedOrEmpty;
 
-    ////////////////////////////////////////////////////////////////////////////
-    // API Functions
-    ////////////////////////////////////////////////////////////////////////////
-
-  /**
+  /*
    * AW4.Connect#addEventListener(type, listener) -> null | Error
    * - type (EVENT): The type of event to receive events for. See
    * below for the format.
@@ -376,6 +377,11 @@ function Connect (options: ConnectOptions) {
    * 1. `TRANSFER` - [[AllTransfersInfo]]
    * 2. `STATUS` - [[STATUS]]
    *
+   */
+  /**
+   * @method
+   * @name Connect#addEventListener
+   * @param {EVENT} type The type of event to receive events for.
    */
   this.addEventListener = function (type: string, listener: IEvtListener) {
     // Check the parameters
@@ -1230,21 +1236,38 @@ function Connect (options: ConnectOptions) {
   };
 };
 
+/**
+ * AW4.Connect.EVENT
+ * @typedef {Object} EVENT
+ * @property {string} ALL="all" all event
+ * @property {string} TRANSFER="transfer" transfer event
+ * @property {string} STATUS="status" status event
+ * @example
+ *
+ * AW4.Connect.EVENT.ALL // returns "all"
+ * AW4.Connect.EVENT.STATUS // returns "status"
+ * AW4.Connect.EVENT.TRANSFER // returns "transfer"
+ */
 Connect.EVENT = EVENT;
 Connect.HTTP_METHOD = HTTP_METHOD;
+/**
+ * AW4.Connect.STATUS
+ * @typedef {Object} STATUS
+ * @property {string} INITIALIZING="INITIALIZING" initializing status event
+ * @property {string} RETRYING="RETRYING" retrying status event
+ * @property {string} RUNNING="RUNNING" running status event
+ * @property {string} OUTDATED="OUTDATED" outdated status event
+ * @property {string} FAILED="FAILED" failed status event
+ * @property {string} EXTENSION_INSTALL="EXTENSION_INSTALL" extension install event type
+ * @example
+ *
+ * AW4.Connect.STATUS.INITIALIZING // returns "INITIALIZING"
+ * AW4.Connect.STATUS.RETRYING // returns "RETRYING"
+ * // etc...
+ */
 Connect.STATUS = STATUS;
 Connect.TRANSFER_STATUS = TRANSFER_STATUS;
 
-// Object.assign(
-//   Connect,
-//   { HTTP_METHOD, STATUS, EVENT, TRANSFER_STATUS }
-// );
-
-export {
-  Connect
-}
-
-// export default Connect;
 
 // AW4.Connect
 

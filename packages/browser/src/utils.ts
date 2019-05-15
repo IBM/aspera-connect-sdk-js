@@ -1,3 +1,7 @@
+/**
+ * @module Utils
+ */
+ 
 import * as Logger from './logger';
 import BROWSER from './shared/browser'
 import {
@@ -20,11 +24,12 @@ SESSION_ID.set(generateUuid());
 SESSION_KEY.set(generateRandomStr(32))
 
 let SDK_LOCATION: string = '';
-
 var nextObjId = 0;
-
 var initUrlWampParams = '';
 
+/**
+ * @ignore
+ */
 export function getInitUrl() {
   return CURRENT_API + '://initialize/?key=' + SESSION_KEY.value() + '&id=' + SESSION_ID.value() + initUrlWampParams;
 };
@@ -33,13 +38,9 @@ export function getInitUrl() {
 // Compatibility functions
 ////////////////////////////////////////////////////////////////////////////
 
-// (function() {
-//     /*  Add TIMEOUT arguments support to IE < 9
-//       *  https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers.setTimeout
-//       */
-//         if(document.all&&!window.setTimeout.isPolyfill){var __nativeST__=window.setTimeout;window.setTimeout=function(e,t){var n=Array.prototype.slice.call(arguments,2);return __nativeST__(e instanceof Function?function(){e.apply(null,n)}:e,t)},window.setTimeout.isPolyfill=!0}if(document.all&&!window.setInterval.isPolyfill){var __nativeSI__=window.setInterval;window.setInterval=function(e,t){var n=Array.prototype.slice.call(arguments,2);return __nativeSI__(e instanceoFunction?function(){e.apply(null,n)}:e,t)},window.setInterval.isPolyfill=!0}
-// }());
-    
+/**
+ * @ignore
+ */
 export function createError (errorCode: any, message: any) {
   var internalMessage = '';
   if (errorCode == -1) {
@@ -49,9 +50,9 @@ export function createError (errorCode: any, message: any) {
 };
 
 
-/*
+/**
+ * @ignore
  * - str
- * @returns {Object}
  */
 export function parseJson (str: any) {
   var obj;
@@ -70,70 +71,34 @@ export function parseJson (str: any) {
 // Helper Functions
 ////////////////////////////////////////////////////////////////////////////
 
-/*
-  * x - variable we want to check
-  * @returns {Boolean} - true if the value is null, empty or undefined
-  */
+/**
+ * x - variable we want to check
+ */
 export function isNullOrUndefinedOrEmpty (x: any) {
   return x === '' || x === null || typeof x === 'undefined';
 };
-    
-// function getSessionId() {
-//   var id = SESSION_ID.value();
-//
-//   if (typeof sessionStorage != 'undefined') {
-//     var idfss: any = sessionStorage.getItem(SS_SESSION_LASTKNOWN_ID);
-//     if (!isNullOrUndefinedOrEmpty(idfss))
-//       id = idfss;
-//     }
-//     return id;
-// }
 
-// function getAppWampLaunchAttempted() {
-//     var yes = false;
-//
-//     if (typeof sessionStorage != 'undefined') {
-//         var val = sessionStorage.getItem(SS_APPSIDE_WAMPSESSN_LAUNCH_ATTEMPTED);
-//
-//         if (!isNullOrUndefinedOrEmpty(val) && (val === 'yes'))
-//             yes = true;
-//     }
-//
-//     return yes;
-// }
-//
-// function setAppWampLaunchAttempted(yes) {
-//     var ok = false;
-//
-//     if ((typeof sessionStorage != 'undefined') && (typeof yes === 'boolean')) {
-//         sessionStorage.setItem(SS_APPSIDE_WAMPSESSN_LAUNCH_ATTEMPTED,
-//             (yes ? 'yes' : 'no'));
-//         ok = true;
-//     }
-//
-//     return ok;
-// }
-
-/*
-  * AW4.Utils.versionLessThan(version1, version2) -> bool
-  *  - version1 (Number):  a version Integer
-  *  - version2 (Number):  a version Integer
-  *
-  * Compares two version strings.
-  * Returns true if version string 'a' is less than version string 'b'
-  *     '1.2.1' < '1.11.3'
-  *     '1.1'   < '2.1'
-  *     '1'     = '1'
-  *     '1.2'   < '2'
-  * Note the following behavior:
-  *     '1'     = '1.2'
-  *     '1.2'   = '1'
-  *  This helps with upgrade checks.  If at least version '4' is required, and
-  *   '4.4.2' is installed, versionLessThan('4.4.2','4') will return false.
-  *
-  * If the version number contains a character that is not a numeral it ignores
-  * it
-  */
+/**
+ * @ignore
+ * AW4.Utils.versionLessThan(version1, version2) -> bool
+ *  - version1 (Number):  a version Integer
+ *  - version2 (Number):  a version Integer
+ *
+ * Compares two version strings.
+ * Returns true if version string 'a' is less than version string 'b'
+ *     '1.2.1' < '1.11.3'
+ *     '1.1'   < '2.1'
+ *     '1'     = '1'
+ *     '1.2'   < '2'
+ * Note the following behavior:
+ *     '1'     = '1.2'
+ *     '1.2'   = '1'
+ *  This helps with upgrade checks.  If at least version '4' is required, and
+ *   '4.4.2' is installed, versionLessThan('4.4.2','4') will return false.
+ *
+ * If the version number contains a character that is not a numeral it ignores
+ * it
+ */
 export function versionLessThan (a: string, b: string) {
   var versionToArray = function( version: string ) {
     var splits = version.split('.');
@@ -164,7 +129,10 @@ export function versionLessThan (a: string, b: string) {
   // all numbers equal (or all are equal and we reached the end of a or b)
   return false;
 };
-    
+
+/**
+ * @ignore
+ */
 export function checkVersionException (): boolean {
   if (typeof(localStorage) == 'undefined')
     return false;
@@ -179,6 +147,9 @@ export function checkVersionException (): boolean {
   return false;
 };
 
+/**
+ * @ignore
+ */
 export function addVersionException (): void {
   if (typeof(localStorage) == 'undefined')
     return;
@@ -186,6 +157,7 @@ export function addVersionException (): void {
 };
 
 /**
+ * @ignore
  * Generate a random uuid string.
  */
 export function generateUuid (): string {
@@ -203,6 +175,9 @@ export function generateUuid (): string {
   });
 };
 
+/**
+ * @ignore
+ */
 export function generateRandomStr (size: number): string {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -213,6 +188,9 @@ export function generateRandomStr (size: number): string {
   return text;
 };
 
+/**
+ * @ignore
+ */
 export function encrypt (data: any) {
   var dataBytes = crypt.aesjs.utils.utf8.toBytes(data);
   var key = crypt.aesjs.utils.utf8.toBytes(SESSION_KEY.value());
@@ -247,26 +225,6 @@ export function decrypt (data: any) {
   return decryptedBytes;
 };
 
-// var setBasicWampSettings = function(settings) {
-//     WAMP_ROUTER = settings.wampRouter;
-//     WAMP_REALM = settings.wampRealm;
-//     WEBSOCKET_PORT = settings.websocketPort;
-//     IS_WEBSOCKET_SECURE = settings.isWebsocketSecure;
-// }
-
-//| returns true when
-//|  *) the already set settings match exactly the ones in the passed-in argument.
-// var checkBasicWampSettings = function(settings) {
-//     return ((WAMP_ROUTER === settings.wampRouter) && (WAMP_REALM === settings.wampRealm) &&
-//         (WEBSOCKET_PORT === settings.websocketPort) &&
-//         (IS_WEBSOCKET_SECURE === settings.isWebsocketSecure));
-// }
-//
-
-// interface Callback {
-//   success: any;
-//   error: any;
-// }
 /**
   * AW4.Utils.launchConnect(callback) -> null
   * - callback (function):  It will be called once we have determined if
@@ -371,6 +329,9 @@ export function atou (inputString: string) {
   }
 }
 
+/**
+ * @ignore
+ */
 export function nextObjectId () {
   // Return an incrementing id even if file was reloaded
   // if (typeof(AW4.nextObjId) == 'undefined')
@@ -378,6 +339,9 @@ export function nextObjectId () {
   return nextObjId++;
 }
 
+/**
+ * @ignore
+ */
 export function getLocalStorage(key: string) {
 	     try {
 	         if (typeof(localStorage) == 'undefined')
@@ -389,7 +353,10 @@ export function getLocalStorage(key: string) {
 	         return '';
 	     }
 	 }
-	
+
+/**
+ * @ignore
+ */
 export function setLocalStorage(key: string, value: string) {
 	     try {
 	         if (typeof(localStorage) == 'undefined')
@@ -402,13 +369,13 @@ export function setLocalStorage(key: string, value: string) {
 	     }
 	 }
    
-   export {
-     BROWSER,
-     CURRENT_API,
-     FASP_API,
-     LS_CONNECT_APP_ID,
-     SDK_LOCATION,
-     SESSION_ID,
-     SESSION_KEY,
-     SS_SESSION_LASTKNOWN_ID
-   }
+export {
+  BROWSER,
+  CURRENT_API,
+  FASP_API,
+  LS_CONNECT_APP_ID,
+  SDK_LOCATION,
+  SESSION_ID,
+  SESSION_KEY,
+  SS_SESSION_LASTKNOWN_ID
+}

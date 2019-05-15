@@ -38,8 +38,6 @@ export const Logger = {
   warn
 }
 
-
-// Don't override existing window.AW4.LocalizeDirlist (used in Connect Server)
 let LocalizeDirlist = {};
 
 const _window = window as any;

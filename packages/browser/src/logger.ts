@@ -1,3 +1,7 @@
+/**
+ * @module Logger
+ */
+ 
 import { LS_LOG_KEY } from './shared/constants';
 /**
  * section: API
@@ -17,19 +21,19 @@ if (typeof localStorage !== 'undefined' && localStorage.hasOwnProperty(LS_LOG_KE
   LogLevel = localStorage.getItem(LS_LOG_KEY);
 }
 
-export function trace (message: any) {
+export function trace (message: string) {
   if (LogLevel >= LEVEL.TRACE && typeof window.console !== 'undefined') {
     console.log(message);
   }
 }
 
-export function debug (message: any) {
+export function debug (message: string) {
   if (LogLevel >= LEVEL.DEBUG && typeof window.console !== 'undefined') {
     console.log(message);
   }
 }
 
-/*
+/**
  * AW4.Logger.log(message) -> No return value
  * -message (String): A check for if window.console is defined is performed,
  * and if window.console is defined, then message will be sent to
@@ -37,13 +41,13 @@ export function debug (message: any) {
  *
  * TODO: Support multiple arguments
  */
-export function log (message: any) {
+export function log (message: string) {
   if (typeof window.console !== 'undefined') {
     console.log(message);
   }
 }
 
-/*
+/**
  * AW4.Logger.warn(message) -> No return value
  * -message (String): A check for if window.console is defined is performed,
  * and if window.console is defined, then message will be sent to
@@ -51,13 +55,13 @@ export function log (message: any) {
  *
  * TODO: Support multiple arguments
  */
-export function warn (message: any) {
+export function warn (message: string) {
   if (typeof window.console !== 'undefined') {
     console.warn(message);
   }
 }
 
-/*
+/**
  * AW4.Logger.error(message) -> No return value
  * -message (String): A check for if window.console is defined is performed,
  * and if window.console is defined, then message will be sent to
@@ -65,13 +69,13 @@ export function warn (message: any) {
  *
  *  TODO: Support multiple arguments
  */
-export function error (message: any) {
+export function error (message: string) {
   if (typeof window.console !== 'undefined') {
     console.error(message);
   }
 }
 
-/*
+/**
  * AW4.Logger.setLevel(level) -> No return value
  * - level (Number): 0 for INFO, 1 for DEBUG, 2 for TRACE
  *
