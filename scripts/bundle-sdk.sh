@@ -10,7 +10,6 @@ cp -R ./files/v2/* ./dist
 
 # Bundle built javascript
 cp ./packages/browser/build/asperaweb* ./dist/v4
-# cp -R ./packages/install/ ./dist/install
 
 # For backwards compatibility
 touch ./dist/v4/connectinstaller-4.js ./dist/v4/connectinstaller-4.min.js
