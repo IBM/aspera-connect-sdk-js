@@ -8,9 +8,6 @@ mkdir dist/v4
 # Bundle v2 of the SDK
 cp -R ./files/v2/* ./dist
 
-# Build javascript
-npm run build
-
 # Bundle built javascript
 cp ./packages/browser/build/asperaweb* ./dist/v4
 # cp -R ./packages/install/ ./dist/install

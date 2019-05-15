@@ -9,5 +9,5 @@ $ npm run build
 
 To bundle and zip the SDK, run:
 ```shell
-$ npm run bundle
+$ npm run sdk
 ```
