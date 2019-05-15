@@ -13,9 +13,16 @@ const terserInstance = new TerserPlugin({
   sourceMap: true
 })
 
+let bannerText = `  Revision: ${version}
+  Revision date: ${new Date().toISOString().replace('T', ' ').substr(0, 19)}
+  Git commit hash: ${commitHash}
+  
+  http://www.asperasoft.com
+  Copyright IBM Corp. 2008, ${new Date().getFullYear()}`
+
 const plugins = [
   new webpack.BannerPlugin({
-    banner: () => { return `@ibm-aspera-sdk/browser v${version} (${commitHash})| https://www.ibm.com` }
+    banner: () => { return bannerText }
   })
 ];
 
