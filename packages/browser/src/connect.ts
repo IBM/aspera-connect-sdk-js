@@ -24,67 +24,6 @@ import { minRequestedVersion, SESSION_ID } from './shared/sharedInternals';
  *
  * The [[AW4.Connect]] class contains all the Connect API methods.
  */
-
-/**
- * new AW4.Connect([options])
- * - options (Object): Configuration parameters for the plug-in.
- *
- * Creates a new [[AW4.Connect]] object.
- *
- * ##### Options
- *
- * 1. `connectLaunchWaitTimeoutMs` (`Number`):
- *     How long to wait in milliseconds for Aspera Connect to launch, if we reach
- *     this timeout without a successful request to connect, we will go into FAILED
- *     status.
- *     `5000`.
- * 2. `id` (`String`):
- *     The DOM `id` of the plug-in object to be inserted. Default:
- *     `"aspera-web"`.
- * 3. `containerId` (`String`):
- *     The DOM `id` of an existing element to insert the plug-in element into
- *     (replacing its contents). If not specified, the plug-in is appended to
- *     the document body. Note that the plug-in must not be hidden in order to
- *     be loaded.
- * 4. `sdkLocation` (`String`):
- *     Optional. Specifies custom SDK location to check for Connect installers.
- *     It has to be in the following format:`//domain/path/to/connect/sdk`.
- *     The default location, if not specified is the unchanging Aspera location
- *     for the current SDK: `//d3gcli72yxqn2z.cloudfront.net/connect/v4`. If you
- *     are hosting your own SDK, and not using the Aspera one, then you must
- *     provide the location to your copy of the SDK. This points to the /v4/ folder
- *     of the provided SDK. This folder contains a number of items including JavaScript
- *     API and installer code, installers for all platforms, and documentation.
- *     The URL provided needs to be in the same level of security as the web page
- *     (HTTP/HTTPS), HTTPS preferred.
- * 5. `pollingTime` (`Number`):
- *     How often in milliseconds we want to get updates of the transfer's status
- *     Default: `2000`.
- * 6. `minVersion` (`String`):
- *     Minimum version of connect required by the web application in order to work.\
- *     Format:\
- *     `3.8.0`
- * 7. `dragDropEnabled` (`Boolean`):
- *     Enable drag and drop of files/folders into the browser
- *     Default: \
- *     `false`.
- * 8. `connectMethod` (`String`):
- *     Optional. Specify preferred implementation for Connect communication.
- *     Values:
- *     1. `http`
- *     2. `extension`
- *     Default for Connect 3.8 minVersion: `http`
- *     Default for Connect 3.9 minVersion: `extension`
- *
- * ##### Example
- *
- * The following JavaScript creates an [[AW4.Connect]] object to interface with
- * Aspera Connect on the client computer. This code should be executed on
- * document ready.
- *
- *     var asperaConnect = new AW4.Connect();
- *
- */
  
 interface ConnectOptions {
   connectLaunchWaitTimeoutMs?: number;
@@ -156,7 +95,35 @@ interface ICallbacks {
  *
  * @name Connect
  * @class
+ * @param {Object} options Configuration parameters for Connect
+ * @param {Number} [options.connectLaunchWaitTimeoutMs=5000] How long to wait in milliseconds
+ *   for Connect to launch. If we reach this timeout without a successful request to Connect,
+ *   Connect will go to FAILED status.
+ * @param {String} [options.id="aspera-web"] The DOM 'id' of the plug-in object to be inserted.
+ * @param {String} [options.containerId] The DOM 'id' of an existing element to insert the plug-in
+ *   element into (replacing its contents). If not specified, the plug-in is appended to the document body.
+ *   Note that the plug-in must not be hidden in order to be loaded.
+ * @param {String} [options.sdkLocation="//d3gcli72yxqn2z.cloudfront.net/connect/v4"] Specifies the custom
+ *   SDK location to check for Connect installers. It has to be in the following format: '//domain/path/to/connect/sdk'.
+ *   If you are hosting your own SDK, then you must provide the location to your copy
+ *   of the SDK. This points to the /v4 folder of the provided SDK. The URL provided
+ *   must be in the same level of security as the web page (HTTP/HTTPS), HTTPS preferred.
+ * @param {Number} [options.pollingTime=2000] How often in milliseconds we want to get
+ *   updates of transfer status.
+ * @param {String} [options.minVersion] Minimum version of Connect required by the web
+ *   application in order to work. Format: "3.9.0".
+ * @param {Boolean} [options.dragDropEnabled=false] Enable drag and drop of files/folders
+ *   into the browser.
+ * @param {("http"|"extension")} [options.connectMethod] Specify the preferred method of
+ *   Connect communication. Default is "extension" for minVersion >= 3.9.0. Otherwise, default
+ *   is "http".
  *
+ * @example
+ * let options = {
+ *   minVersion: "3.9.0",
+ *   dragDropEnabled: true
+ * }
+ * let asperaWeb = new AW4.Connect(options) // returns instance of AW4.Connect
  */
 export function Connect (options: ConnectOptions) {
   /**
@@ -357,31 +324,30 @@ export function Connect (options: ConnectOptions) {
   this.driveHttpRequest = driveHttpRequest;
   this.isNullOrUndefinedOrEmpty = Utils.isNullOrUndefinedOrEmpty;
 
-  /*
-   * AW4.Connect#addEventListener(type, listener) -> null | Error
-   * - type (EVENT): The type of event to receive events for. See
-   * below for the format.
-   * - listener (Function): The function that will be called when the event
-   * occurs.
-   *
-   * Subscribe for Aspera Web events. The first time the listener is called
-   * it will receive an event for each of the transfers already displayed in
-   * Connect, such that the listener will know the complete state of all transfers.
-   *
-   * ##### Format for `listener`
-   *
-   *      function(eventType, data) { ... }
-   *
-   * Event types ([[EVENT]]) and their associated `data`:
-   *
-   * 1. `TRANSFER` - [[AllTransfersInfo]]
-   * 2. `STATUS` - [[STATUS]]
-   *
-   */
   /**
-   * @method
+   * @function
    * @name Connect#addEventListener
+   * @description Subscribe for Connect events. The first time the listener is
+   *   called it will receive an event for each of the transfers already displayed
+   *   in Connect, such that the listener will know the complete state of all transfers.
    * @param {EVENT} type The type of event to receive events for.
+   * @param {Function} listener The function that will be called when the event occurs.
+   *   Format:
+   *   ```
+   *   function(eventType, data) { ... }
+   *   ```
+   *   "transfer" event types return data format: {@link AllTransfersInfo}
+   * @returns {null|Error}
+   *
+   * @example
+   * // create a transfer listener
+   * function transferListener(type, allTransfersInfo) {
+   *   if (type === AW4.Connect.EVENT.TRANSFER) {
+   *     console.log('Received transfer event!')
+   *     handleTransferEvent(allTransfersInfo) // do something with the transfers data
+   *   }
+   * }
+   * asperaWeb.addEventListener(AW4.Connect.EVENT.TRANSFER, transferListener)
    */
   this.addEventListener = function (type: string, listener: IEvtListener) {
     // Check the parameters
@@ -405,28 +371,26 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * AW4.Connect#authenticate(authSpec, callbacks) -> null | Error
-   * - authSpec (Object): Authentication credentials
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Test authentication credentials against a transfer server.
    *
    * *This method is asynchronous.*
    *
-   * Test authentication credentials against a transfer server.
+   * @function
+   * @name Connect#authenticate
+   * @param {Object} authSpec Authentication credentials.
    *
-   * ##### Options for `authSpec`
+   *  Options for `authSpec` (subset of {@link TransferSpec}):
+   *  * `remote_host`
+   *  * `ssh_port`
+   *  * `remote_user`
+   *  * `remote_password`
+   *  * `token`
    *
-   * These are a subset of [[TransferSpec]].
+   * @param  {Callbacks} callbacks `success` and `error` functions to receive results.
    *
-   * 1. `remote_host`
-   * 2. `ssh_port`
-   * 3. `remote_user`
-   * 4. `remote_password`
-   * 5. `token`
-   *
-   * ##### Object returned to success callback as parameter
-   *
-   *     {}
+   * Object returned to success callback:
+   * `{}`
+   * @return {null|Error}
    */
   this.authenticate = function (authSpec: Partial<ITransferSpec>, callbacks: ICallbacks) {
     if (Utils.isNullOrUndefinedOrEmpty(authSpec)) {
@@ -1268,6 +1232,377 @@ Connect.HTTP_METHOD = HTTP_METHOD;
 Connect.STATUS = STATUS;
 Connect.TRANSFER_STATUS = TRANSFER_STATUS;
 
+/**
+ * The data format for statistics for all existing transfers.
+ * See {@link TransferInfo}
+ *
+ * @typedef {Object} AllTransfersInfo
+ * @property {Number} iteration_token=0 A marker that represents the moment in time
+ *   that the transfer status was retrieved. If it is passed as an argument to
+ *   a {@link Connect#getAllTransfers} call, the response returned will only contain transfers
+ *   that have had activity since the previous call. Note that this token persists
+ *   even if the user restarts Connect.
+ * @property {Number} result_count=0 The number of {@link TransferInfo} objects returned
+ *   {@link AllTransfersInfo.transfers}.
+ * @property {Array} transfers An array that contains {@link TransferInfo} objects.
+ *
+ * @example
+ * {
+ *  "iteration_token": 28,
+ *  "result_count": 3,
+ *  "transfers": [
+ *    {@link TransferInfo},
+ *    {@link TransferInfo},
+ *    {@link TransferInfo}
+ *   ]
+ * }
+ */
+
+ /**
+  * The data format for statistics for on transfer session.
+  *
+  * See {@link TransferSpec} and {@link AsperaConnectSettings} for definitions.
+  *
+  * @typedef {Object} TransferInfo
+  * @property {String} add_time The time when the transfer was added (according
+  *   to the system's clock).
+  * @property {Object} aspera_connect_settings {@link AsperaConnectSettings}
+  * @property {Number} bytes_expected The number of bytes that are still
+  *   remaining to be written.
+  * @property {Number} bytes_written The number of bytes that have already been
+  *   written to disk.
+  * @property {Number} calculated_rate_kbps The current rate of the transfer in kbps.
+  * @property {String} current_file The full path of the current file.
+  * @property {Number} elapsed_usec The duration in microseconds of the transfer since it started
+  *   transferring.
+  * @property {String} end_time The time when the transfer was completed.
+  * @property {Array} files A list of files that have been active in this
+  *   transfer session. Note that files that have not been active yet in this session
+  *   will not be reported (and you can assume bytes_written is 0).
+  *
+  *   Format:
+  *   ```
+  *   [
+  *     {
+  *       "bytes_expected": 10485760,
+  *       "bytes_written": 1523456,
+  *       "fasp_file_id": "3c40b511-5b2dfebb-a2e63483-9b58cb45-9cd9abff",
+  *       "file": "/Users/aspera/Downloads/connect_downloads/10MB.3"
+  *     }, {
+  *       "bytes_expected": 10485760,
+  *       "bytes_written": 10485760,
+  *       "fasp_file_id": "d5b7deea-2d5878f4-222661f6-170ce0f2-68880a6c",
+  *       "file": "/Users/aspera/Downloads/connect_downloads/10MB.2"
+  *     }
+  *   ]
+  *   ```
+  * @property {String} modify_time The last time the transfer was modified
+  * @property {Number} percentage The progress of the transfer over 1.
+  * @property {String} previous_status The previous status of the transfer.
+  * @property {Number} remaining_usec The ETA of the transfer in microseconds.
+  * @property {String} start_time The time when the transfer moved to initiating
+  *   status.
+  * @property {String} status The status of the transfer. See {@link STATUS}.
+  * @property {String} title The name of the file.
+  * @property {Number} transfer_iteration_token A marker that represents the moment
+  *   in time that the transfer status was checked.
+  * @property {Object} transfer_spec {@link TransferSpec}
+  * @property {"fasp"|"http"} transport="fasp" `fasp` - (default) <br>
+  *   `http` - Set when a fasp transfer could not be performed and http fallback was used.
+  * @property {String} uuid
+  *
+  * @example
+  *     {
+  *       "add_time": "2012-10-05T17:53:16",
+  *       "aspera_connect_settings": {@link AsperaConnectSettings},
+  *       "bytes_expected": 102400,
+  *       "bytes_written": 11616,
+  *       "calculated_rate_kbps": 34,
+  *       "current_file": "/temp/tinyfile0001",
+  *       "elapsed_usec": 3000000,
+  *       "end_time": "",
+  *       "files": [
+  *          {
+  *            "bytes_expected": 10485760,
+  *            "bytes_written": 1523456,
+  *            "fasp_file_id": "3c40b511-5b2dfebb-a2e63483-9b58cb45-9cd9abff",
+  *            "file": "/Users/aspera/Downloads/connect_downloads/10MB.3"
+  *          }, {
+  *            "bytes_expected": 10485760,
+  *            "bytes_written": 10485760,
+  *            "fasp_file_id": "d5b7deea-2d5878f4-222661f6-170ce0f2-68880a6c",
+  *            "file": "/Users/aspera/Downloads/connect_downloads/10MB.2"
+  *          }
+  *       ]
+  *       "modify_time": "2012-10-05T17:53:18",
+  *       "percentage": 0.113438,
+  *       "previous_status": "initiating",
+  *       "remaining_usec": 21000000,
+  *       "start_time": "2012-10-05T17:53:16",
+  *       "status": "running",
+  *       "title": "tinyfile0001",
+  *       "transfer_iteration_token": 18,
+  *       "transfer_spec": {@link TransferSpec},
+  *       "transport": "fasp",
+  *       "uuid": "add433a8-c99b-4e3a-8fc0-4c7a24284ada",
+  *     }
+  */
+  
+  /**
+   * The parameters for starting a transfer.
+   *
+   * @typedef {Object} TransferSpec
+   *
+   * @property {"password"|"token"} [authentication="password"] The type of authentication to use.
+   * @property {"none"|"aes-128"} [cipher="aes-128"] The algorithm used to encrypt
+   *   data sent during a transfer. Use this option when transmitting sensitive data.
+   *   Increases CPU utilization.
+   * @property {"encrypt"|"decrypt"} [content_protection] Enable content protection
+   *   (encryption-at-rest), which keeps files encrypted on the server. Encrypted
+   *   files have the extension ".aspera-env". <br><br>
+   *   `encrypt` - Encrypt uploaded files. If `content_protection_passphrase` is
+   *   not specified, Connect will prompt for the passphrase. <br><br>
+   *   `decrypt` - Decrypt downloaded fiels. If `content_protection_passphrase` is
+   *   not specified, Connect will prompt for the passphrase.
+   * @property {String} [content_protection_passphrase] A passphrase to encrypt or
+   *   decrypt files when using `content_protection`.
+   * @property {String} [cookie] Data to associate with the transfer. The cookie is
+   *   reported to both client and server-side applications monitoring fasp™ transfers.
+   *   It is often used by applications to identify associated transfers.
+   * @property {Boolean} [create_dir=false] Creates the destination directory if it
+   *   does not already exist. When enabling this option, the destination path is
+   *   assumed to be a directory path.
+   * @property {String} [destination_root="/"] The transfer destination file path.
+   *   If destinations are specified in `paths`, this value is prepended to each destination.
+   *
+   *   Note that the download destination paths are relative to the user's Connect
+   *   download directory setting unless `ConnectSpec.use_absolute_destination_path`
+   *   is enabled.
+   * @property {Number} [dgram_size] The IP datagram size for fasp™ to use. If not
+   *   specified, fasp™ will automatically detect and use the path MTU as the
+   *   datagram size. Use this option only to satisfy networks with strict MTU
+   *   requirements.
+   * @property {"send"|"receive"} direction Whether to perform an upload or download.
+   *
+   *   `send` - Upload <br>
+   *   `receive` - Download
+   * @property {Number} [fasp_port=33001] The UDP port for fasp™ to use. The default value
+   *   is satisfactory for most situations. However, it can be changed to satisfy
+   *   firewall requirements.
+   * @property {Boolean} [http_fallback=false] Attempts to perform an HTTP transfer
+   *   if a fasp™ transfer cannot be performed.
+   * @property {Number} [http_fallback_port] The port where the Aspera HTTP server is
+   *   servicing HTTP transfers. Defaults to port 443 if a `cipher` is enabled, or
+   *   port 80 otherwise.
+   * @property {Boolean} [lock_min_rate=false] Prevents the user from changing the
+   *   minimum rate during a transfer.
+   * @property {Boolean} [lock_rate_policy=false] Prevents the user from changing the
+   *   rate policy during a transfer.
+   * @property {Boolean} [lock_target_rate=false] Prevents the user from changing the
+   *   target rate during a transfer.
+   * @property {Number} [min_rate_kbps] The minimum speed of the transfer. fasp™
+   *   will only share bandwidth exceeding this value.
+   *
+   *   Note: This value has no effect if `rate_policy` is `fixed`.
+   *
+   *   Default: Server-side minimum rate default setting (aspera.conf). Will respect
+   *   both local and server-side minimum rate caps if set.
+   * @property {Array} paths A list of the file and directory paths to transfer.
+   *   Use `destination_root` to specify the destination directory.
+   *
+   *   *Source list format*
+   *   ```
+   *     [
+   *       {
+   *         "source": "/foo"
+   *       }, {
+   *         "source": "/bar/baz"
+   *       },
+   *       ...
+   *     ]
+   *   ```
+   *   Optionally specify a destination path - including the file name - for each file.
+   *   This format is useful for renaming files or sending to different destinations.
+   *   Note that for this format all paths must be file paths (not directory paths).
+   *
+   *   *Source-Destination pair format*
+   *   ```
+   *     [
+   *       {
+   *         "source": "/foo",
+   *         "destination": "/qux/foofoo"
+   *       }, {
+   *         "source": "/bar/baz",
+   *         "destination": "/qux/bazbaz"
+   *       },
+   *       ...
+   *     ]
+   *   ```
+   * @property {"fixed"|"high"|"fair"|"low"} [rate_policy="fair"] The congestion
+   *   control behavior to use when sharing bandwidth.
+   *
+   *   `fixed` - Transfer at the target rate regardless of actual network capacity.
+   *   Do not share bandwidth.
+   *
+   *   `high` - When sharing bandwidth, transfer at twice the rate of a transfer using
+   *   "fair" policy.
+   *
+   *   `fair` - Share bandwidth equally with other traffic.
+   *
+   *   `low` - Use only unutilized bandwidth.
+   * @property {String} remote_host The fully qualified domain name or IP address
+   *   of the transfer server.
+   * @property {String} [remote_password] The password to use when `authentication`
+   *   is set to `password`. If this value is not specified, Connect will prompt
+   *   the user.
+   * @property {String} [remote_user] The username to use for authentication. For
+   *   password authentication, if this value is not specified, Connect will prompt
+   *   the user.
+   * @property {"none"|"attributes"|"sparse_checksum"|"full_checksum"} [resume="sparse_checksum"]
+   *   The policy to use when resuming partially transferred (incomplete) files.
+   *
+   *   `none` - Transfer the entire file again.
+   *
+   *   `attributes` - Resume if the files' attributes match.
+   *
+   *   `sparse_checksum` - Resume if the files' attributes and sparse (fast) checksums
+   *   match.
+   *
+   *   `full_checksum` - Resume if the files' attributes and full checksums match.
+   *   Note that computing full checksums of large files takes time, and heavily
+   *   utilizes the CPU.
+   * @property {String} [source_root="/"] A path to prepend to the source paths specified
+   *   in `paths`. If this is not specified, then `paths` should contain absolute
+   *   paths.
+   * @property {Number} [ssh_port=33001] The server's TCP port that is listening
+   *   for SSH connections. fasp™ initiates transfers through SSH.
+   * @property {Number} [target_rate_cap_kbps] Limit the transfer rate that the
+   *   user can adjust the target and minimum rates to. Default: no limit.
+   * @property {Number} [target_rate_kbps] The desired speed of the transfer. If
+   *   there is competing network traffic, fasp™ may share this bandwidth, depending
+   *   on the `rate_policy`.
+   *
+   *   Default: Server-side target rate default setting (aspera.conf). Will respect
+   *   both local and server-side target rate caps if set.
+   * @property {String} [token] Used for token-based authorization, which involves
+   *   the server-side application generating a token that gives the client rights
+   *   to transfer a predetermined set of files.
+   *
+   * @example
+   * ##### Minimal example
+   * {
+   *   "paths": [
+   *     {
+   *       "source": "/foo/1"
+   *     }
+   *   ],
+   *   "remote_host": "10.0.203.80",
+   *   "remote_user": "aspera",
+   *   "direction": "send"
+   * }
+   *
+   * ##### Download example
+   * {
+   *   "paths": [
+   *     {
+   *       "source": "tinyfile0001"
+   *     }, {
+   *       "source": "tinyfile0002"
+   *     }
+   *   ],
+   *   "remote_host": "demo.asperasoft.com",
+   *   "remote_user": "asperaweb",
+   *   "authentication": "password",
+   *   "remote_password": "**********",
+   *   "fasp_port": 33001,
+   *   "ssh_port": 33001,
+   *   "http_fallback": true,
+   *   "http_fallback_port": 443,
+   *   "direction": "receive",
+   *   "create_dir": false,
+   *   "source_root": "aspera-test-dir-tiny",
+   *   "destination_root": "/temp",
+   *   "rate_policy": "high",
+   *   "target_rate_kbps": 1000,
+   *   "min_rate_kbps": 100,
+   *   "lock_rate_policy": false,
+   *   "target_rate_cap_kbps": 2000,
+   *   "lock_target_rate": false,
+   *   "lock_min_rate": false,
+   *   "resume": "sparse_checksum",
+   *   "cipher": "aes-128",
+   *   "cookie": "foobarbazqux",
+   *   "dgram_size": 1492,
+   *   "preserve_times": true,
+   *   "tags": {
+   *     "your_company": {
+   *       "key": "value"
+   *     }
+   *   }
+   * }
+   */
+   
+   /**
+    * The data format for the connect web app parameters.
+    *
+    * @typedef {Object} AsperaConnectSettings
+    * @property {String} app_id A secure, random identifier for all transfers
+    *   associated with this webapp. Do not hardcode this id. Do not use the same
+    *   id for different users. Do not including the host name, product name in the id.
+    *   Do not use monotonically increasing ids. If you do not provide one, a
+    *   random id will be generated for you and persisted in localStorage.
+    * @property {String} back_link Link to the webapp.
+    * @property {String} request_id Universally Unique IDentifier for the webapp.
+    *
+    * @example
+    * {
+    *   "app_id": "TUyMGQyNDYtM2M1NS00YWRkLTg0MTMtOWQ2OTkxMjk5NGM4",
+    *   "back_link": "http://demo.asperasoft.com",
+    *   "request_id": "36d3c2a4-1856-47cf-9865-f8e3a8b47822"
+    * }
+    */
+    
+    /**
+     * This object is returned if an error occurs. It contains an error code and a message.
+     *
+     * *Note that this is not related to the Javascript `Error` object, but is used
+     * only to document the format of errors returned by this API.*
+     *
+     * @typedef {Object} Error
+     *
+     * @example
+     * {
+     *   "error": {
+     *     "code": Number,
+     *     "internal_message": String,
+     *     "user_message": String
+     *   }
+     * }
+     */
+     
+     /**
+      *
+      */
+     
+     /**
+      * This object can be passed to an asynchronous API call to get the results
+      *   of the call.
+      *
+      * #### Format
+      * ```
+      * {
+      *   success: function(Object) { ... },
+      *   error: function(Error) { ... }
+      * }
+      * ```
+      * The argument passed to the `success` function depends on the original method
+      * invoked. The argument to the `error` function is an {@link Error} object.
+      *
+      * If an Error is thrown during a callback, it is logged to window.console
+      * (if supported by the browser).
+      *
+      * @typedef {Object} Callbacks
+      */
 
 // AW4.Connect
 
@@ -1298,790 +1633,6 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  */
 
 /** section: Objects
- * class Error
- *
- * This object is returned if an error occurs. It contains an error code
- * and a message.
- *
- * *Note that this is not related to the JavaScript `Error`
- * object, but is used only to document the format of errors returned by this
- * API.*
- *
- * ##### Format
- *
- *     {
- *       "error": {
- *         "code": Number,
- *         "internal_message": String,
- *         "user_message": String
- *       }
- *     }
- */
-
- /** section: Objects
-  * class AllTransfersInfo
-  *
-  * The data format for statistics for all the existing transfers.
-  *
-  * See [[TransferInfo]].
-  *
-  * ##### Example
-  *
-  *     {
-  *       "iteration_token": 28,
-  *       "result_count": 3,
-  *       "transfers": [
-  *         TransferInfo,
-  *         TransferInfo,
-  *         TransferInfo
-  *       ]
-  *     }
-  */
-
-/**
- * AllTransfersInfo.iteration_token -> Number
- *
- * A marker that represents the moment in time
- * that the transfer status was retrieved. If it is passed as an argument to a
- * getAllTransfers call, the result set will only contain transfers that
- * have had activity since the previous call. Note that this token
- * persists, such that it is still valid if the user restarts Connect.
- *
- * Default: `0`
- */
-
-/**
- * AllTransfersInfo.result_count -> Number
- *
- * The number of [[TransferInfo]] objects that [[AllTransfersInfo.transfers]] array contains.
- *
- * Default: `0`
- */
-
-/**
- * AllTransfersInfo.transfers -> Array
- *
- * An array that contains [[TransferInfo]] objects.
- *
- * Default: `[]`
- */
-
-/** section: Objects
- * class AsperaConnectSettings
- *
- * The data format for the connect web app parameters
- *
- * ##### Example
- *
- *     {
- *       "app_id": "TUyMGQyNDYtM2M1NS00YWRkLTg0MTMtOWQ2OTkxMjk5NGM4",
- *       "back_link": "http://demo.asperasoft.com",
- *       "request_id": "36d3c2a4-1856-47cf-9865-f8e3a8b47822"
- *     }
- */
-
-/**
- * AsperaConnectSettings.app_id -> String
- *
- * A secure, random identifier for all transfers associated with this webapp.
- * Do not hardcode this id. Do not use the same id for different users.
- * Do not including the host name, product name in the id.
- * Do not use monotonically increasing ids.
- * If you do not provide one, a random id will be generated for you and persisted in localStorage.
- */
-
-/**
- * AsperaConnectSettings.back_link -> String
- *
- * Link to the webapp.
- */
-
-/**
- * AsperaConnectSettings.request_id -> String
- *
- * Universally Unique IDentifier for the webapp.
- */
-
-/** section: Objects
- * class TransferInfo
- *
- * The data format for statistics for one transfer session.
- *
- * See [[TransferSpec]] and [[AsperaConnectSettings]] for definitions.
- *
- * ##### Example
- *
- *     {
- *       "add_time": "2012-10-05T17:53:16",
- *       "aspera_connect_settings": AsperaConnectSettings,
- *       "bytes_expected": 102400,
- *       "bytes_written": 11616,
- *       "calculated_rate_kbps": 34,
- *       "current_file": "/temp/tinyfile0001",
- *       "elapsed_usec": 3000000,
- *       "end_time": "",
- *       "modify_time": "2012-10-05T17:53:18",
- *       "percentage": 0.113438,
- *       "previous_status": "initiating",
- *       "remaining_usec": 21000000,
- *       "start_time": "2012-10-05T17:53:16",
- *       "status": "running",
- *       "title": "tinyfile0001",
- *       "transfer_iteration_token": 18,
- *       "transfer_spec": TransferSpec,
- *       "transport": "fasp",
- *       "uuid": "add433a8-c99b-4e3a-8fc0-4c7a24284ada",
- *       "files": [
- *          {
- *            "bytes_expected": 10485760,
- *            "bytes_written": 1523456,
- *            "fasp_file_id": "3c40b511-5b2dfebb-a2e63483-9b58cb45-9cd9abff",
- *            "file": "/Users/aspera/Downloads/connect_downloads/10MB.3"
- *          }, {
- *            "bytes_expected": 10485760,
- *            "bytes_written": 10485760,
- *            "fasp_file_id": "d5b7deea-2d5878f4-222661f6-170ce0f2-68880a6c",
- *            "file": "/Users/aspera/Downloads/connect_downloads/10MB.2"
- *          }
- *       ]
- *     }
- */
-
-/**
- * TransferInfo.add_time -> String
- *
- * The time when the transfer was added (according to the system's clock).
- */
-
-/**
- * TransferInfo.aspera_connect_settings -> AsperaConnectSettings
- */
-
-/**
- * TransferInfo.bytes_expected -> Number
- *
- * The number of bytes that are still remaining to be written.
- */
-
-/**
- * TransferInfo.bytes_written -> Number
- *
- * The number of bytes that have already been written to disk.
- */
-
-/**
- * TransferInfo.calculated_rate_kbps -> Number
- *
- * The current rate of the transfer.
- */
-
-/**
- * TransferInfo.current_file -> String
- *
- * The full path of the current file.
- */
-
-/**
- * TransferInfo.elapsed_usec -> Number
- *
- * The duration of the transfer since it started transferring in microseconds.
- *
- * Default: `0`
- */
-
-/**
- * TransferInfo.end_time -> String
- *
- * The time when the transfer was completed.
- *
- * Default: `""`
- */
-
-/**
- * TransferInfo.modify_time -> String
- *
- * The last time the transfer was modified.
- *
- * Default: `""`
- */
-
-/**
- * TransferInfo.percentage -> Number
- *
- * The progress of the transfer over 1.
- *
- * Default: `0`
- */
-
-/**
- * TransferInfo.previous_status -> String
- *
- * The previous status of the transfer. See [[TransferInfo.status]]
- */
-
-/**
- * TransferInfo.remaining_usec -> Number
- *
- * The ETA of the transfer in microseconds.
- *
- * Default: `0`
- */
-
-/**
- * TransferInfo.start_time -> String
- *
- * The time when the transfer moved to initiating status.
- */
-
-/**
- * TransferInfo.status -> String
- *
- * The status of the transfer.
- *
- * See [[TRANSFER_STATUS]]
- *
- */
-
-/**
- * TransferInfo.title -> String
- *
- * The name of the file.
- */
-
-/**
- * TransferInfo.transfer_iteration_token -> Number
- *
- * A marker that represents the moment in time that the transfer status was
- * checked.
- */
-
-/**
- * TransferInfo.transfer_spec -> TransferSpec
- */
-
-/**
- * TransferInfo.transport -> String
- *
- * Values:
- *
- * 1. `"fasp"` (default)
- * 2. `"http"` - Set when a fasp transfer could not be performed and http fallback was used
- */
-
-/**
- * TransferInfo.uuid -> String
- *
- * The Universally Unique IDentifier for the transfer, so that it can be
- * differenced from any other.
- */
-
-/**
- * TransferInfo.files -> Array
- *
- * A list of the files that have been active on this transfer session, with
- * information about their ID, full path, and size and transferred info. Please
- * note that files that haven't been active yet on this session, won't be
- * reported (and you can assume bytes_written is 0)
- *
- * ##### Files format
- *
- *     [
- *       {
- *         "bytes_expected": 10485760,
- *         "bytes_written": 1523456,
- *         "fasp_file_id": "3c40b511-5b2dfebb-a2e63483-9b58cb45-9cd9abff",
- *         "file": "/Users/aspera/Downloads/connect_downloads/10MB.3"
- *       }, {
- *         "bytes_expected": 10485760,
- *         "bytes_written": 10485760,
- *         "fasp_file_id": "d5b7deea-2d5878f4-222661f6-170ce0f2-68880a6c",
- *         "file": "/Users/aspera/Downloads/connect_downloads/10MB.2"
- *       }
- *     ]
- */
-
-/** section: Objects
- * class TransferSpec
- *
- * The parameters for starting a transfer.
- *
- * ##### Minimal Example
- *
- *     {
- *       "paths": [
- *         {
- *           "source": "/foo/1"
- *         }
- *       ],
- *       "remote_host": "10.0.203.80",
- *       "remote_user": "aspera",
- *       "direction": "send"
- *     }
- *
- * ##### Download Example
- *
- *     {
- *       "paths": [
- *         {
- *           "source": "tinyfile0001"
- *         }, {
- *           "source": "tinyfile0002"
- *         }
- *       ],
- *       "remote_host": "demo.asperasoft.com",
- *       "remote_user": "asperaweb",
- *       "authentication": "password",
- *       "remote_password": "**********",
- *       "fasp_port": 33001,
- *       "ssh_port": 33001,
- *       "http_fallback": true,
- *       "http_fallback_port": 443,
- *       "direction": "receive",
- *       "create_dir": false,
- *       "source_root": "aspera-test-dir-tiny",
- *       "destination_root": "/temp",
- *       "rate_policy": "high",
- *       "target_rate_kbps": 1000,
- *       "min_rate_kbps": 100,
- *       "lock_rate_policy": false,
- *       "target_rate_cap_kbps": 2000,
- *       "lock_target_rate": false,
- *       "lock_min_rate": false,
- *       "resume": "sparse_checksum",
- *       "cipher": "aes-128",
- *       "cookie": "foobarbazqux",
- *       "dgram_size": 1492,
- *       "preserve_times": true,
- *       "tags": {
- *         "your_company": {
- *           "key": "value"
- *         }
- *       }
- *     }
- */
-
-/** section: Objects
- * class dataTransfer
- *
- * This object holds the data of the files that have been selected by the user. It
- * may hold one or more data items
- *
- * ##### Format  *
- *     {
- *       "dataTransfer" : {
- *         "files": [
- *           {
- *             "lastModifiedDate": "Wed Sep 24 12:22:02 2014",
- *             "name": "/Users/aspera/Desktop/foo.txt",
- *             "size": 386,
- *             "type": "text/plain"
- *           },
- *           {
- *             "lastModifiedDate": "Mon Sep 22 18:01:02 2014",
- *             "name": "/Users/aspera/Desktop/foo.rb",
- *             "size": 609,
- *             "type": "text/x-ruby-script"
- *           }
- *         ]
- *       }
- *     }
- *
- */
-
-/**
- * TransferSpec.authentication -> String
- *
- * *optional*
- *
- * The type of authentication to use.
- *
- * Values:
- *
- * 1. `"password"` (default)
- * 2. `"token"`
- */
-
-/**
- * TransferSpec.cipher -> String
- *
- * *optional*
- *
- * The algorithm used to encrypt data sent during a transfer. Use this option
- * when transmitting sensitive data. Increases CPU utilization.
- *
- * Values:
- *
- * 1. `"none"`
- * 2. `"aes-128"` (default)
- */
-
-/**
- * TransferSpec.content_protection -> String
- *
- * *optional*
- *
- * Enable content protection (encryption-at-rest), which keeps files encrypted
- * on the server. Encrypted files have the extension ".aspera-env".
- *
- * Values:
- *
- * 1. `"encrypt"`: Encrypt uploaded files. If `content_protection_passphrase`
- * is not specified, Connect will prompt for the passphrase.
- * 2. `"decrypt"`: Decrypt downloaded files. If `content_protection_passphrase`
- * is not specified, Connect will prompt for the passphrase.
- *
- * Default: disabled
- */
-
-/**
- * TransferSpec.content_protection_passphrase -> String
- *
- * *optional*
- *
- * A passphrase to use to encrypt or decrypt files when using
- * `content_protection`.
- *
- * Default: none
- */
-
-/**
- * TransferSpec.cookie -> String
- *
- * *optional*
- *
- * Data to associate with the transfer. The cookie is reported to both client-
- * and server-side applications monitoring fasp™ transfers. It is often used
- * by applications to identify associated transfers.
- *
- * Default: none
- */
-
-/**
- * TransferSpec.create_dir -> Boolean
- *
- * *optional*
- *
- * Creates the destination directory if it does not already exist. When
- * enabling this option, the destination path is assumed to be a directory
- * path.
- *
- * Values:
- *
- * 1. `false` (default)
- * 2. `true`
- */
-
-/**
- * TransferSpec.destination_root -> String
- *
- * *optional*
- *
- * The transfer destination file path. If destinations are specified in
- * `paths`, this value is prepended to each destination.
- *
- * Note that download destination paths are relative to the user's Connect
- * download directory setting unless `ConnectSpec.use_absolute_destination_path`
- * is enabled.
- *
- * Default: `"/"`
- */
-
-/**
- * TransferSpec.dgram_size -> Number
- *
- * *optional*
- *
- * The IP datagram size for fasp™ to use. If not specified, fasp™ will
- * automatically detect and use the path MTU as the datagram size.
- * Use this option only to satisfy networks with strict MTU requirements.
- *
- * Default: auto-detect
- */
-
-/**
- * TransferSpec.preserve_times -> Boolean
- *
- * *optional*
- *
- * When set to `true`, file timestamps are preserved during the transfer.
- *
- * Default: none
- */
-
-/**
- * TransferSpec.direction -> String
- *
- * *required*
- *
- * Whether to perform an upload or a download.
- *
- * Values:
- *
- * 1. `"send"` (upload)
- * 2. `"receive"` (download)
- */
-
-/**
- * TransferSpec.fasp_port -> Number
- *
- * *optional*
- *
- * The UDP port for fasp™ to use. The default value is satisfactory for most
- * situations. However, it can be changed to satisfy firewall requirements.
- *
- * Default: `33001`
- */
-
-/**
- * TransferSpec.http_fallback -> Boolean
- *
- * *optional*
- *
- * Attempts to perform an HTTP transfer if a fasp™ transfer cannot be
- * performed.
- *
- * Values:
- *
- * 1. `false` (default)
- * 2. `true`
- */
-
-/**
- * TransferSpec.http_fallback_port -> Number
- *
- * *optional*
- *
- * The port where the Aspera HTTP server is servicing HTTP transfers.
- * Defaults to port 443 if a `cipher` is enabled, or port 80 otherwise.
- *
- * Default: `80` or `443` (HTTPS)
- */
-
-/**
- * TransferSpec.lock_min_rate -> Boolean
- *
- * *optional*
- *
- * Prevents the user from changing the minimum rate during a transfer.
- *
- * Values:
- *
- * 1. `false` (default)
- * 2. `true`
- */
-
-/**
- * TransferSpec.lock_rate_policy -> Boolean
- *
- * *optional*
- *
- * Prevents the user from changing the rate policy during a transfer.
- *
- * Values:
- *
- * 1. `false` (default)
- * 2. `true`
- */
-
-/**
- * TransferSpec.lock_target_rate -> Boolean
- *
- * *optional*
- *
- * Prevents the user from changing the target rate during a transfer.
- *
- * Values:
- *
- * 1. `false` (default)
- * 2. `true`
- */
-
-/**
- * TransferSpec.min_rate_kbps -> Number
- *
- * *optional*
- *
- * The minimum speed of the transfer. fasp™ will only share bandwidth exceeding
- * this value.
- *
- * Note: This value has no effect if `rate_policy` is `"fixed"`.
- *
- * Default: Server-side minimum rate default setting (aspera.conf). Will
- * respect both local- and server-side minimum rate caps if set.
- */
-
-/**
- * TransferSpec.paths -> Array
- *
- * *required*
- *
- * A list of the file and directory paths to transfer. Use `destination_root`
- * to specify the destination directory.
- *
- * ##### Source list format
- *
- *     [
- *       {
- *         "source": "/foo"
- *       }, {
- *         "source": "/bar/baz"
- *       },
- *       ...
- *     ]
- *
- * Optionally specify a destination path - including the file name - for each
- * file. This format is useful for renaming files or sending to different
- * destinations. Note that for this format all paths must be file paths (not
- * directory paths).
- *
- * ##### Source-Destination pair format
- *
- *     [
- *       {
- *         "source": "/foo",
- *         "destination": "/qux/foofoo"
- *       }, {
- *         "source": "/bar/baz",
- *         "destination": "/qux/bazbaz"
- *       },
- *       ...
- *     ]
- */
-
-/**
- * TransferSpec.rate_policy -> String
- *
- * *optional*
- *
- * The congestion control behavior to use when sharing bandwidth.
- *
- * Values:
- *
- * 1. `"fixed"`: Transfer at the target rate, regardless of the actual network
- * capacity. Do not share bandwidth.
- * 2. `"high"`: When sharing bandwidth, transfer at twice the rate of a
- * transfer using a "fair" policy.
- * 3. `"fair"` (default): Share bandwidth equally with other traffic.
- * 4. `"low"`: Use only unutilized bandwidth.
- */
-
-/**
- * TransferSpec.remote_host -> String
- *
- * *required*
- *
- * The fully qualified domain name or IP address of the transfer server.
- */
-
-/**
- * TransferSpec.remote_password -> String
- *
- * *optional*
- *
- * The password to use when `authentication` is set to `"password"`. If this
- * value is not specified, Connect will prompt the user.
- */
-
-/**
- * TransferSpec.remote_user -> String
- *
- * *optional*
- *
- * The username to use for authentication. For password authentication, if
- * this value is not specified, Connect will prompt the user.
- */
-
-/**
- * TransferSpec.resume -> String
- *
- * *optional*
- *
- * The policy to use when resuming partially transferred (incomplete) files.
- *
- * Values:
- *
- * 1. `"none"`: Transfer the entire file again.
- * 2. `"attributes"`: Resume if the files' attributes match.
- * 3. `"sparse_checksum"` (default): Resume if the files' attributes and sparse
- * (fast) checksums match.
- * 4. `"full_checksum"`: Resume if the files' attributes and full checksums
- * match. Note that computing full checksums of large files takes time, and
- * heavily utilizes the CPU.
- */
-
-/**
- * TransferSpec.ssh_port -> Number
- *
- * *optional*
- *
- * The server's TCP port that is listening for SSH connections. fasp™ initiates
- * transfers through SSH.
- *
- * Default: `33001`
- */
-
-/**
- * TransferSpec.source_root -> String
- *
- * *optional*
- *
- * A path to prepend to the source paths specified in `paths`. If this is not
- * specified, then `paths` should contain absolute paths.
- *
- * Default: `"/"`
- */
-
-/**
- * TransferSpec.tags -> Object
- *
- * *optional*
- *
- * Additional tags to include in the `TransferSpec`. The tags will be available
- * in [[TransferInfo]]. This is useful for associating metadata with the
- * transfer.
- *
- * ##### Tags format
- *
- *     {
- *       "your_company": {
- *         "key": "value"
- *       }
- *     }
- */
-
-/**
- * TransferSpec.target_rate_cap_kbps -> Number
- *
- * *optional*
- *
- * Limit the transfer rate that the user can adjust the target and minimum
- * rates to.
- *
- * Default: no limit
- */
-
-/**
- * TransferSpec.target_rate_kbps -> Number
- *
- * *optional*
- *
- * The desired speed of the transfer. If there is competing network traffic,
- * fasp™ may share this bandwidth, depending on the `rate_policy`.
- *
- * Default: Server-side target rate default setting (aspera.conf). Will
- * respect both local- and server-side target rate caps if set.
- */
-
-/**
- * TransferSpec.token -> String
- *
- * *optional*
- *
- * Used for token-based authorization, which involves the server-side
- * application generating a token that gives the client rights to transfer
- * a predetermined set of files.
- *
- * Default: none
  */
 
 /** section: Objects

@@ -1,0 +1,9 @@
+package: jsdoc-template
+version: 3.3.0
+downloads: ['https://github.com/braintree/jsdoc-template/tree/3.3.0']
+description: >
+             A clean, responsive documentation template with search and navigation highlighting for JSDoc 3.
+distribution: yes
+package_modified: no
+contributed_back: no
+copyright: Copyright (c) 2011-2015 Michael Mathews
