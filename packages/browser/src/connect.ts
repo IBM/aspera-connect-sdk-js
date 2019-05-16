@@ -8,22 +8,6 @@ import {
   TRANSFER_STATUS
 } from './shared/constants';
 import { minRequestedVersion, SESSION_ID } from './shared/sharedInternals';
-
-/**
- * == API ==
- */
-
-/** section: API
- * AW4
- *
- * The Aspera Web namespace.
- */
-
-/** section: API
- * class AW4.Connect
- *
- * The [[AW4.Connect]] class contains all the Connect API methods.
- */
  
 interface ConnectOptions {
   connectLaunchWaitTimeoutMs?: number;
@@ -115,7 +99,7 @@ interface ICallbacks {
  * @param {Boolean} [options.dragDropEnabled=false] Enable drag and drop of files/folders
  *   into the browser.
  * @param {("http"|"extension")} [options.connectMethod] Specify the preferred method of
- *   Connect communication. Default is "extension" for minVersion >= 3.9.0. Otherwise, default
+ *   Connect communication. Default is "extension" for `minVersion` >= 3.9.0. Otherwise, default
  *   is "http".
  *
  * @example
@@ -401,55 +385,58 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * AW4.Connect#getAllTransfers(callbacks[, iterationToken]) -> null
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
-   * - iterationToken (String): (*optional*) If specified, return only
-   * transfers that have had activity since the last call.
+   * Get statistics for all transfers.
    *
    * *This method is asynchronous.*
    *
-   * Get statistics for all transfers.
+   * @function
+   * @name Connect#getAllTransfers
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
    *
-   * ##### Object returned to success callback as parameter
-   *
-   * See [[AllTransfersInfo]]
-   *
+   *   Object returned to success callback:
+   *   `{@link AllTransfersInfo}`
+   * @param {String} [iterationToken='0'] If specified, return only transfers that have
+   *   had activity since the last call.
+   * @return {null}
    */
   this.getAllTransfers = function (callbacks: ICallbacks, iterationToken: string = '0') {
-    // if (Utils.isNullOrUndefinedOrEmpty(iterationToken)) {
-    //   iterationToken = '0';
-    // }
     getAllTransfersHelper(iterationToken, callbacks);
     return null;
   };
 
   /**
-   * AW4.Connect#getStatus() -> STATUS
+   * Get current status of Connect.
    *
-   * Get current status of Connect
+   * @function
+   * @name Connect#getStatus
+   * @return {STATUS}
    */
   this.getStatus = function () {
     return connectStatus;
   };
-
+   
   /**
-   * AW4.Connect#initSession([applicationId]) -> Object | Error
-   *  - applicationId (String): (*optional*) An ID to represent this session.
-   * Transfers initiated during this session will be associated with the ID.
-   * To continue a previous session, use the same ID as before. Use a unique ID
-   * in order to keep transfer information private from other websites. An ID
-   * is automatically generated for you if not specified (default).
+   * Call this method after creating the {@link Connect} object. It is mandatory to call this
+   * function before making use of any other function of the API. If called more than
+   * once on the same instance, it will return an error.
    *
-   * Call this method after creating the [[AW4.Connect]] object. It is mandatory to call
-   * this function before making use of any other function of the API. If called more than
-   * once on the same instance, it will return an error
+   * Return format:
+   * ```
+   * {
+   *  "app_id": "MjY2ZTM0YWItMGM2NC00ODdhLWJkNzQtNzU0YzVjN2FjYjJj"
+   * }
+   * ```
    *
-   * ##### Return format
+   * @function
+   * @name Connect#initSession
+   * @param  {String} [applicationId] An ID to represent this session. Transfers
+   *   initiated during this session will be associated with the ID. To continue
+   *   a previous session, use the same ID as before. Use a unique ID in order to
+   *   keep transfer information private from other websites. IF not specified,
+   *   an ID is automatically generated for you.
    *
-   *      {
-   *        "app_id" : "APPLICATION_ID"
-   *      }
+   * @returns {Object}
    */
   this.initSession = function (applicationId?: string) {
     if (Utils.isNullOrUndefinedOrEmpty(APPLICATION_ID)) {
@@ -477,55 +464,56 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * AW4.Connect#modifyTransfer(transferId, options, callbacks) -> null
-   * - transferId (String): The ID of the transfer to modify.
-   * - options (Object): A subset of [[TransferSpec]]
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Change the speed of a running transfer.
    *
    * *This method is asynchronous.*
    *
-   * Change the speed of a running transfer.
+   * @function
+   * @name Connect#modifyTransfer
+   * @param {String} transferId The ID of the transfer to modify
+   * @param {Object} options A subset of {@link TransferSpec}
    *
-   * ##### `options`:
+   * Options:
+   * * `rate_policy`
+   * * `target_rate_kbps`
+   * * `min_rate_kbps`
+   * * `target_rate_cap_kbps`
+   * * `lock_rate_policy`
+   * * `lock_target_rate`
+   * * `lock_min_rate`
+   * @param {Callbacks} callbacks `success` and `error` functions to receive results.
    *
-   * See [[TransferSpec]] for definitions.
-   *
-   * 1. `rate_policy`
-   * 2. `target_rate_kbps`
-   * 3. `min_rate_kbps`
-   * 4. `target_rate_cap_kbps`
-   * 5. `lock_rate_policy`
-   * 6. `lock_target_rate`
-   * 7. `lock_min_rate`
-   *
-   * ##### Object returned to success callback as parameter
-   *
-   * See [[TransferSpec]]
+   * Object returned to success callback:
+   * `{@link TransferSpec}`
+   * @return {null}
    */
   this.modifyTransfer = function (transferId: string, options: Partial<ITransferSpec>, callbacks: ICallbacks) {
     connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/modify/' + transferId, options, SESSION_ID.value(), callbacks);
     return null;
   };
-
+   
   /**
-   * AW4.Connect#readAsArrayBuffer(options, callbacks) -> null | Error
-   * - options (Object): Object with the options needed for reading the file as 64-bit encoded data.
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Read file as 64-bit encoded data.
    *
    * *This method is asynchronous.*
    *
-   * ##### Options
-   * 1. 'path' ('String'):
-   *     Absolute path to the file we want to read the chunk from.
+   * @function
+   * @name Connect#readAsArrayBuffer
+   * @param {Object} options Object with options needed for reading the file.
    *
-   * ##### Object returned to success callback as parameter
+   * Options:
+   * * `path` (String) - Absolute path to the file we want to read.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   * results.
    *
-   *      {
-   *        "type" : "image/pjpeg",
-   *        "data" : "/9j/4AAQSkZ..."
-   *      }
+   * Object returned to success callback:
+   * ```
+   * {
+   *   "type" : "image/pjpeg",
+   *   "data" : "/9j/4AAQSkZ..."
+   * }
+   * ```
+   * @return {null|Error}
    */
   this.readAsArrayBuffer = function (options: { path: string }, callbacks: ICallbacks) {
     console.warn('AW4.Connect#readAsArrayBuffer will be deprecated in the future.');
@@ -538,29 +526,31 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * AW4.Connect#readChunkAsArrayBuffer(options, callbacks) -> null | Error
-   * - options (Object): Object with the options needed for reading a chunk
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Read 64-bit encoded chunk from file.
    *
    * *This method is asynchronous.*
    *
-   * ##### Options
-   * 1. 'path' ('String'):
-   *     Absolute path to the file we want to read the chunk from.
-   * 2. 'offset' ('Number'):
-   *     Offset (in bytes) that we want to start reading the file.
-   * 3. 'chunkSize' ('Number'):
-   *     The size (in bytes) of the chunk we want.
+   * @function
+   * @name Connect#readChunkAsArrayBuffer
+   * @param {Object} options Object with options needed for reading a chunk.
    *
-   * ##### Object returned to success callback as parameter
+   * Options:
+   * * `path` (String) - Absolute path to the file we want to read the chunk from.
+   * * `offset` (Number) - Offset (in bytes) that we want to start reading the file.
+   * * `chunkSize` (Number) - The size (in bytes) of the chunk we want.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   * results.
    *
-   *      {
-   *        "type" : "image/pjpeg",
-   *        "data" : "/9j/4AAQSkZ..."
-   *      }
-   *
+   * Object returned to success callback:
+   * ```
+   * {
+   *   "type" : "image/pjpeg",
+   *   "data" : "/9j/4AAQSkZ..."
+   * }
+   * ```
+   * @return {null|Error}
    */
+   
   this.readChunkAsArrayBuffer = function (options: { path: string, offset: number, chunkSize: number }, callbacks: ICallbacks) {
     console.warn('AW4.Connect#readChunkAsArrayBuffer will be deprecated in the future.');
     if (!options.path || typeof options.offset === 'undefined' || typeof options.chunkSize === 'undefined') {
@@ -571,21 +561,21 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * AW4.Connect#removeEventListener([type][, listener]) -> Boolean
-   * - type (EVENT): (*optional*) The type of event to stop receiving events for.
-   * - listener (Function): (*optional*) The function used to subscribe in
-   * [[AW4.Connect#addEventListener]].
-   *
    * Unsubscribe from Aspera Web events. If `type` is not specified,
    * all versions of the `listener` with different types will be removed.
    * If `listener` is not specified, all listeners for the `type` will be
    * removed. If neither `type` nor `listener` are specified, all listeners
    * will be removed.
    *
-   * ##### Return values
+   * Return values:
+   * * `true` - If we could find a listener with the parameters provided.
+   * * `false` - If we could not find a listener for the parameters provided.
    *
-   * 1. `true` : if we could find a listener for the parameters provided
-   * 2. `false` : if we could not find a listener for the parameters provided
+   * @function
+   * @name Connect#removeEventListener
+   * @param {EVENT} [type] The type of event to stop receiving events for.
+   * @param {Function} [listener] The function used to subscribe in {@link Connect#addEventListener}
+   * @return {Boolean}
    */
   this.removeEventListener = function (type?: string, listener?: () => any) {
     let listenerFound = false;
@@ -638,83 +628,55 @@ export function Connect (options: ConnectOptions) {
     }
     return listenerFound;
   };
-
+   
   /**
-   * AW4.Connect#removeTransfer(transferId, callbacks) -> null
-   * - transferId (String): The ID (`uuid`) of the transfer to delete.
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Remove the transfer - terminating it if necessary - from Connect.
    *
    * *This method is asynchronous.*
    *
-   * Remove the transfer - terminating it if necessary - from Connect.
+   * @function
+   * @name Connect#removeTransfer
+   * @param {String} transferId The ID(`uuid`) of the transfer to delete.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
    *
-   * ##### Object returned to success callback as parameter
-   *
-   * See [[TransferSpec]]
+   *   Object returned to success callback:
+   *   `{@link TransferSpec}`
+   * @return {null}
    */
   this.removeTransfer = function (transferId: string, callbacks: ICallbacks) {
     connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/remove/' + transferId, null, SESSION_ID.value(), callbacks);
     return null;
   };
-
-  /**
-   * AW4.Connect#resumeTransfer(transferId, options, callbacks) -> null
-   * - transferId (String): The ID (`uuid`) of the transfer to resume.
-   * - options (Object): A subset of [[TransferSpec]]
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
-   *
-   * *This method is asynchronous.*
-   *
-   * Resume a transfer that was stopped.
-   *
-   * ##### `options`:
-   *
-   * See [[TransferSpec]] for definitions.
-   *
-   * 1. `token`
-   * 2. `cookie`
-   * 3. `authentication`
-   * 4. `remote_user`
-   * 5. `remote_password`
-   * 6. `content_protection_passphrase`
-   *
-   * ##### Object returned to success callback as parameter
-   *
-   * See [[TransferSpec]]
-   */
+   
+   /**
+    * Resume a transfer that was stopped.
+    *
+    * *This method is asynchronous.*
+    *
+    * @function
+    * @name Connect#resumeTransfer
+    * @param {String} transferId The ID(`uuid`) of the transfer to resume
+    * @param {Object} options A subset of {@link TransferSpec}
+    *
+    * Options:
+    * * `token`
+    * * `cookie`
+    * * `authentication`
+    * * `remote_user`
+    * * `remote_password`
+    * * `content_protection_passphrase`
+    * @param {Callbacks} callbacks `success` and `error` functions to receive results.
+    *
+    * Object returned to success callback:
+    * `{@link TransferSpec}`
+    * @return {null}
+    */
   this.resumeTransfer = function (transferId: string, options: Partial<ITransferSpec>, callbacks: ICallbacks) {
     connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/resume/' + transferId, options, SESSION_ID.value(), callbacks);
     return null;
   };
 
-  /**
-   * AW4.Connect#setDragDropTargets(cssSelector, options, listener) -> null | Error
-   * - cssSelector (String): CSS selector for drop targets
-   * - options (Object): (*optional*) Drag and drop options for these targets
-   * - listener (Function): Function to be called when each of the event occurs
-   *
-   * *This method is asynchronous.*
-   *
-   * Sets drag and drop options for the element given in the cssSelector. Please note that
-   * dragDropEnabled option must have been set to `true` when instantiating Aspera Connect
-   * object.
-   *
-   * ##### `options`:
-   *
-   * 1. `dragEnter` (`Boolean`): `true` if drag enter event should trigger the listener. Default: `false`.
-   * 2. `dragOver` (`Boolean`): `true` if drag over event should trigger the listener. Default: `false`.
-   * 3. `dragLeave` (`Boolean`): `true` if drag leave event should trigger the listener. Default: `false`.
-   * 4. `drop` (`Boolean`): `true` if drop event should trigger the listener. Default: `true`.
-   *
-   *
-   * ##### Fields of the object returned to the listener
-   *
-   * 1. `event` (`Object`): DOM Event object as implemented by the browser.
-   * 2. `files` (`Object`): See [[dataTransfer]]. This is only valid on `drop` events.
-   *
-   */
   interface IDragDropOptions {
     dragEnter?: boolean;
     dragOver?: boolean;
@@ -722,6 +684,33 @@ export function Connect (options: ConnectOptions) {
     drop?: boolean;
   }
 
+  /**
+   * Sets drag and drop options for the element given in the cssSelector. Please note that
+   * the `dragDropEnabled` option must have been set to `true` when creating the {@link Connect}
+   * object.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name Connect#setDragDropTargets
+   * @param {String} cssSelector CSS selector for drop targets.
+   * @param {Object} [options] Drag and drop options for these targets.
+   *
+   *  Options:
+   *  * `dragEnter` (Boolean) - `true` if drag enter event should trigger the listener. Default: `false`.
+   *  * `dragOver` (Boolean) - `true` if drag over event should trigger the listener. Default: `false`.
+   *  * `dragLeave` (Boolean) - `true` if drag leave event should trigger the listener. Default: `false`.
+   *  * `drop` (Boolean) - `true` if drop event should trigger the listener. Default: `true`.
+   * @param {Function} listener Function to be called when each of the events occurs.
+   *
+   *   Format:
+   *   ```
+   *   function(event, files) { ... }
+   *   ```
+   *   * `event` (Object) - DOM Event object as implemented by the browser.
+   *   * `files` (Object) - See {@link dataTransfer}. This is only valid on `drop` events.
+   * @return {null|Error}
+   */
   this.setDragDropTargets = function (cssSelector: string, options: IDragDropOptions, listener: (evt: any) => any) {
     if (!DRAGDROP_ENABLED) {
       return Utils.createError(-1, 'Drop is not enabled in the initialization ' +
@@ -791,38 +780,40 @@ export function Connect (options: ConnectOptions) {
     return null;
   };
 
-  /**
-   * AW4.Connect#showAbout(callbacks) -> null
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
-   *
-   * *This method is asynchronous.*
-   *
-   * Displays the Aspera Connect "About" window.
-   *
-   * ##### Object returned to success callback as parameter
-   *
-   *     {}
-   */
+   /**
+    * Displays the IBM Aspera Connect "About" window.
+    *
+    * *This method is asynchronous.*
+    *
+    * @function
+    * @name Connect#showAbout
+    * @param {Callbacks} callbacks `success` and `error` functions to receive
+    *   results.
+    *
+    *   Object returned to success callback:
+    *   `{}`
+    * @return {null}
+    */
   this.showAbout = function (callbacks: ICallbacks) {
     connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/about', null, SESSION_ID.value(), callbacks);
     return null;
   };
 
   /**
-   * AW4.Connect#showDirectory(transferId, callbacks) -> null
-   * - transferId (String): The ID (`uuid`) of the transfer to show files for.
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Open the destination directory of the transfer using the system file
+   * browser.
    *
    * *This method is asynchronous.*
    *
-   * Open the destination directory of the transfer, using the system file
-   * browser.
+   * @function
+   * @name Connect#showDirectory
+   * @param {String} transferId The ID(`uuid`) of the transfer to show files for.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
    *
-   * ##### Object returned to success callback as parameter
-   *
-   *     {}
+   *   Object returned to success callback:
+   *   `{}`
+   * @return {null}
    */
   this.showDirectory = function (transferId: string, callbacks: ICallbacks) {
     connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/finder/' + transferId, null, SESSION_ID.value(), callbacks);
@@ -830,49 +821,49 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * AW4.Connect#showPreferences(callbacks) -> null
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Displays the IBM Aspera Connect "Preferences" window.
    *
    * *This method is asynchronous.*
    *
-   * Displays the Aspera Connect "Preferences" window.
+   * @function
+   * @name Connect#showPreferences
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
    *
-   * ##### Object returned to success callback as parameter
-   *
-   *     {}
+   *   Object returned to success callback:
+   *   `{}`
+   * @return {null}
    */
   this.showPreferences = function (callbacks: ICallbacks) {
     connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/preferences', null, SESSION_ID.value(), callbacks);
     return null;
   };
 
-  /**
-   * AW4.Connect#showSaveFileDialog(callbacks[, options]) -> null
-   * - callbacks (Callbacks): On success, returns the selected file path.
-   * Returns `null` if the user cancels the dialog.
-   * - options (Object): (*optional*) File chooser options
-   *
-   * *This method is asynchronous.*
-   *
-   * Displays a file chooser dialog for the user to pick a "save-to" path.
-   *
-   * ##### `options`:
-   *
-   * 1. `allowedFileTypes` ([[FileFilters]]): Filter the files displayed by file
-   * extension.
-   * 2. `suggestedName` (`String`): The file name to pre-fill the dialog with.
-   * 3. `title` (`String`): The name of the dialog window.
-   *
-   * ##### Object returned to success callback as parameter
-   *
-   * See [[dataTransfer]]. If user canceled the dialog, it will return an empty object
-   */
   interface ISaveFileDialogOptions {
     allowedFileTypes?: any;
     suggestedName?: string;
     title?: string;
   }
+  /**
+   * Displays a file chooser dialog for the user to pick a "save-to" path.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name Connect#showSaveFileDialog
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
+   *
+   * Object returned to success callback:
+   * See `{@link dataTransfer}`.
+   * @param {Object} [options] File chooser options
+   *
+   * Options:
+   * * `allowedFileTypes` ({@link FileFilters}) - Filter the files displayed by file extension.
+   * * `suggestedName` (String) - The file name to pre-fill the dialog with.
+   * * `title` (String) - The name of the dialog window.
+   * @return {null|Error}
+   */
   this.showSaveFileDialog = function (callbacks: ICallbacks, options?: ISaveFileDialogOptions) {
     // Prepare the options object, use our own local variable to avoid mutating user's object
     let localOptions: any = {};
@@ -886,36 +877,35 @@ export function Connect (options: ConnectOptions) {
     return null;
   };
 
-  /**
-   * AW4.Connect#showSelectFileDialog(callbacks[, options]) -> null
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
-   * - options (Object): (*optional*) File chooser options
-   *
-   * *This method is asynchronous.*
-   *
-   * Displays a file browser dialog for the user to select files. The select file
-   * dialog call(s) may be separated in time from the later startTransfer(s) call,
-   * but they must occur in the same Connect session.
-   *
-   * ##### `options`:
-   *
-   * 1. `allowedFileTypes` ([[FileFilters]]): Filter the files displayed by file
-   * extension.
-   * 2. `allowMultipleSelection` (`Boolean`): Allow the selection of multiple
-   * files. Default: `true`.
-   * 3. `title` (`String`): The name of the dialog window.
-   *
-   * ##### Object returned to success callback as parameter
-   *
-   * See [[dataTransfer]]. If user canceled the dialog, it will return an empty object
-   */
   interface ISelectFileDialog {
     allowedFileTypes?: any;
     allowMultipleSelection?: boolean;
     suggestedName?: string;
     title?: string;
   }
+  /**
+   * Displays a file browser dialog for the user to select files. The select file
+   * dialog call(s) may be separated in time from the later startTransfer(s) call,
+   * but they must occur in the same Connect session.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name Connect#showSelectFileDialog
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
+   *
+   * Object returned to success callback:
+   * See `{@link dataTransfer}`.
+   * @param {Object} [options] File chooser options
+   *
+   * Options:
+   * * `allowedFileTypes` ({@link FileFilters}) - Filter the files displayed by file extension.
+   * * `allowMultipleSelection` (Boolean) -  Allow the selection of multiple
+   *    files. Default: `true`.
+   * * `title` (String) - The name of the dialog window.
+   * @return {null|Error}
+   */
   this.showSelectFileDialog = function (callbacks: ICallbacks, options: ISelectFileDialog) {
     // Prepare the options object, use our own local variable to avoid mutating user's object
     let localOptions: any = {};
@@ -930,32 +920,32 @@ export function Connect (options: ConnectOptions) {
     return null;
   };
 
-  /**
-   * AW4.Connect#showSelectFolderDialog(callbacks[, options]) -> null
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
-   * - options (Object): (*optional*) File chooser options
-   *
-   * *This method is asynchronous.*
-   *
-   * Displays a file browser dialog for the user to select directories. The select
-   * folder dialog call(s) may be separated in time from the later startTransfer(s)
-   * call, but they must occur in the same Connect session.
-   *
-   * ##### `options`:
-   *
-   * 1. `allowMultipleSelection` (`Boolean`): Allow the selection of multiple
-   * folders. Default: `true`.
-   * 2. `title` (`String`): The name of the dialog window.
-   *
-   * ##### Object returned to success callback as parameter
-   *
-   * See [[dataTransfer]]. If user canceled the dialog, it will return an empty object
-   */
   interface ISelectFolderDialog {
     allowMultipleSelection?: boolean;
     title?: string;
   }
+  /**
+   * Displays a file browser dialog for the user to select directories. The select
+   * folder dialog call(s) may be separated in time from the later startTransfer(s)
+   * call, but they must occur in the same Connect session.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name Connect#showSelectFolderDialog
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
+   *
+   * Object returned to success callback:
+   * See `{@link dataTransfer}`.
+   * @param {Object} [options] File chooser options
+   *
+   * Options:
+   * * `allowMultipleSelection` (Boolean) -  Allow the selection of multiple
+   *    folders. Default: `true`.
+   * * `title` (String) - The name of the dialog window.
+   * @return {null|Error}
+   */
   this.showSelectFolderDialog = function (callbacks: ICallbacks, options: ISelectFolderDialog) {
     // Prepare the options object, use our own local variable to avoid mutating user's object
     let localOptions: any = {};
@@ -969,17 +959,18 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * AW4.Connect#showTransferManager(callbacks) -> null
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Displays the IBM Aspera Connect "Activity" window.
    *
    * *This method is asynchronous.*
    *
-   * Displays the Aspera Connect "Transfer Manager" window.
+   * @function
+   * @name Connect#showTransferManager
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
    *
-   * ##### Object returned to success callback as parameter
-   *
-   *     {}
+   *   Object returned to success callback:
+   *   `{}`
+   * @return {null}
    */
   this.showTransferManager = function (callbacks: ICallbacks) {
     connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/transfer-manager', null, SESSION_ID.value(), callbacks);
@@ -987,18 +978,19 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * AW4.Connect#showTransferMonitor(transferId, callbacks) -> null
-   * - transferId (String): The ID (`uuid`) of the corresponding transfer.
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Displays the IBM Aspera Connect "Transfer Monitor" window for the transfer.
    *
    * *This method is asynchronous.*
    *
-   * Displays the Aspera Connect "Transfer Monitor" window for the transfer.
+   * @function
+   * @name Connect#showTransferMonitor
+   * @param {String} transferId The ID(`uuid`) of the corresponding transfer.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
    *
-   * ##### Object returned to success callback as parameter
-   *
-   *     {}
+   *   Object returned to success callback:
+   *   `{}`
+   * @return {null}
    */
   this.showTransferMonitor = function (transferId: string, callbacks: ICallbacks) {
     connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/transfer-monitor/' + transferId, null, SESSION_ID.value(), callbacks);
@@ -1006,10 +998,12 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * AW4.Connect#start() -> null | error
+   * Start looking for Connect. Please note that this is called internally by {@link Connect#initSession}
+   * and it should only be called directory after a call to {@link Connect#stop}.
    *
-   * It will start looking for Connect. Please note that this is called when calling AW4.Connect#initSession
-   * and it should only be used after a call to AW4.Connect#stop
+   * @function
+   * @name Connect#start
+   * @return {null|Error}
    */
   this.start = function () {
     if (APPLICATION_ID === '') {
@@ -1029,31 +1023,35 @@ export function Connect (options: ConnectOptions) {
     };
     return requestHandler.init(options);
   };
-
+   
   /**
-   * AW4.Connect#startTransfer(transferSpec, connectSpecs, callbacks) -> Object | Error
-   * - transferSpec (TransferSpec): Transfer parameters
-   * - asperaConnectSettings (ConnectSpec): Aspera Connect options
-   * - callbacks (Callbacks): `success` and `error` functions to
-   * receive results. This call is successful if Connect is able to start the
-   * transfer. Note that an error could still occur after the transfer starts,
-   * e.g. if authentication fails. Use [[AW4.Connect#addEventListener]] to
-   * receive notification about errors that occur during a transfer session.
-   * This call fails if validation fails or the user rejects the transfer.
+   * Initiates a single transfer. Call {@link Connect#getAllTransfers} to get transfer
+   * statistics, or register an event listener through {@link Connect#addEventListener}.
    *
-   * *This method is asynchronous.*
-   *
-   * Initiates a single transfer. Call [[AW4.Connect#getAllTransfers]] to get transfer
-   * statistics, or register an event listener through [[AW4.Connect#addEventListener]].
-   *
-   * ##### Return format
-   *
-   * The `request_id`, which is returned immediately, may be for matching
+   * Return format:
+   * ```
+   * {
+   *  "request_id": "bb1b2e2f-3002-4913-a7b3-f7aef4e79132"
+   * }
+   * ```
+   * The `request_id`, which is returned immediately, may be used for matching
    * this transfer with its events.
    *
-   *      {
-   *        "request_id" : "bb1b2e2f-3002-4913-a7b3-f7aef4e79132"
-   *      }
+   * @function
+   * @name Connect#startTransfer
+   * @param {TransferSpec} transferSpec Transfer parameters.
+   * @param {ConnectSpec} connectSpec Connect options
+   * @param {Callbacks} callbacks `success` and `error` functions to receive results.
+   *   This call is successful if Connect is able to start the
+   *   transfer. Note that an error could still occur after the transfer starts,
+   *   e.g. if authentication fails. Use {@link Connect#addEventListener} to
+   *   receive notifications about errors that occur during a transfer session.
+   *   This call fails if validation fails or the user rejects the transfer.
+   *
+   * Object returned to success callback:
+   * `{@link TransferInfo}`
+   *
+   * @returns {Object|Error}
    */
   this.startTransfer = function (transferSpec: ITransferSpec, asperaConnectSettings: IAsperaConnectSettings, callbacks: ICallbacks) {
     if (Utils.isNullOrUndefinedOrEmpty(transferSpec)) {
@@ -1071,51 +1069,54 @@ export function Connect (options: ConnectOptions) {
 
     return this.startTransfers(transferSpecs, callbacks);
   };
-
+   
   /**
-   * AW4.Connect#startTransfers(transferSpecs, callbacks) -> Object | Error
-   * - transferSpecs (Object): See below
-   * - callbacks (Callbacks): `success` and `error` functions to
-   * receive results. This call is successful if Connect is able to start the
-   * transfer. Note that an error could still occur after the transfer starts,
-   * e.g. if authentication fails. Use [[AW4.Connect#addEventListener]] to
-   * receive notification about errors that occur during a transfer session.
-   * This call fails if validation fails or the user rejects the transfer.
+   * Initiates one or more transfers (_currently only the first `transfer_spec`
+   * is used_). Call {@link Connect#getAllTransfers} to get transfer
+   * statistics, or register an event listener through {@link Connect#addEventListener}.
    *
    * *This method is asynchronous.*
    *
-   * Initiates one or more transfers (_currently only the first `transfer_spec`
-   * is used_). Call [[AW4.Connect#getAllTransfers]] to get transfer
-   * statistics, or register an event listener through [[AW4.Connect#addEventListener]].
+   * Return format:
+   * ```
+   * {
+   *  "request_id": "bb1b2e2f-3002-4913-a7b3-f7aef4e79132"
+   * }
+   * ```
+   * The `request_id`, which is returned immediately, may be used for matching
+   * this transfer with its events.
    *
-   * Use this method when generating transfer specs using Aspera Node.
+   * @function
+   * @name Connect#startTransfers
+   * @param {Object} transferSpecs Transfer parameters.
    *
-   * ##### Return format
+   * Format:
+   * ```
+   * {
+   *   transfer_specs : [
+   *     {
+   *       transfer_spec : {@link TransferSpec},
+   *       aspera_connect_settings : {@link ConnectSpec}
+   *     },
+   *     {
+   *       transfer_spec : {@link TransferSpec},
+   *       aspera_connect_settings : {@link ConnectSpec}
+   *     },
+   *     ...
+   *   ]
+   * }
+   * ```
+   * @param {Callbacks} callbacks `success` and `error` functions to receive results.
+   *   This call is successful if Connect is able to start the
+   *   transfer. Note that an error could still occur after the transfer starts,
+   *   e.g. if authentication fails. Use {@link Connect#addEventListener} to
+   *   receive notifications about errors that occur during a transfer session.
+   *   This call fails if validation fails or the user rejects the transfer.
    *
-   * The `request_id`, which is returned immediately, may be for matching
-   * this start request with transfer events.
+   * Object returned to success callback:
+   * `{@link TransferInfo}`
    *
-   *      {
-   *        "request_id" : "bb1b2e2f-3002-4913-a7b3-f7aef4e79132"
-   *      }
-   *
-   * ##### Format for `transferSpecs`
-   *
-   * See [[TransferSpec]] and [[ConnectSpec]] for definitions.
-   *
-   *      {
-   *        transfer_specs : [
-   *          {
-   *            transfer_spec : TransferSpec,
-   *            aspera_connect_settings : ConnectSpec
-   *          },
-   *          {
-   *            transfer_spec : TransferSpec,
-   *            aspera_connect_settings : ConnectSpec
-   *          },
-   *          ...
-   *        ]
-   *      }
+   * @returns {Object|Error}
    */
   this.startTransfers = function (transferSpecs: ITransferSpecs, callbacks: ICallbacks) {
     if (Utils.isNullOrUndefinedOrEmpty(transferSpecs)) {
@@ -1138,64 +1139,62 @@ export function Connect (options: ConnectOptions) {
     connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/start', transferSpecs, SESSION_ID.value(), callbacks);
     return { request_id : requestId };
   };
-
+   
   /**
-   * AW4.Connect#stop() -> null
+   * Stop all requests from Connect to restart activity, please
+   * create a new {@link Connect} object or call {@link Connect#start}.
    *
-   * Stop all requests from AW4.Connect to restart activity, please
-   * create a new AW4.Connect object or call AW4.Connect#start
+   * @function
+   * @name Connect#stop
+   * @return {null}
    */
   this.stop = function () {
     return requestHandler.stopRequests();
   };
-
+   
   /**
-   * AW4.Connect#stopTransfer(transferId, callbacks) -> null
-   * - transferId (String): The ID (`uuid`) of the transfer to stop.
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
+   * Terminate the transfer. Use {@link Connect#resumeTransfer} to resume.
    *
    * *This method is asynchronous.*
    *
-   * Terminate the transfer. Use [[AW4.Connect#resumeTransfer]] to resume.
+   * @function
+   * @name Connect#stopTransfer
+   * @param {String} transferId The ID(`uuid`) of the transfer to stop.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
+   *
+   *   Object returned to success callback:
+   *   `{}`
+   * @return {null}
    */
   this.stopTransfer = function (transferId: string, callbacks: ICallbacks) {
     connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/stop/' + transferId, null, SESSION_ID.value(), callbacks);
     return null;
   };
-
+   
   /**
-   * AW4.Connect#version(callbacks) -> null
-   * - callbacks (Callbacks): `success` and `error` functions to receive
-   * results.
-   *
-   * Get the Aspera Connect version.
+   * Get the IBM Aspera Connect version.
    *
    * *This method is asynchronous.*
    *
-   * ##### Object returned to success callback as parameter
+   * @function
+   * @name Connect#version
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
    *
-   *     {
-   *       version : "3.6.0.8456"
-   *     }
+   *   Object returned to success callback:
+   *   ```
+   *   {
+   *     "version": "3.9.1.171801"
+   *   }
+   *   ```
+   * @return {null}
    */
   this.version = function (callbacks: ICallbacks) {
     if (Utils.isNullOrUndefinedOrEmpty(callbacks)) {
       return null;
     }
     connectHttpRequest(HTTP_METHOD.GET, '/connect/info/version', null, SESSION_ID.value(), callbacks);
-    return null;
-  };
-
-  /**
-   * AW4.Connect#invalidUri(callbacks) -> null
-   *
-   * For test only:
-   *  A request with an invalid uri should result in a response of "404 - not found".
-   */
-  this.invalidUri = function (callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/invalid/uri', null,
-      SESSION_ID.value(), callbacks);
     return null;
   };
 };
@@ -1230,6 +1229,23 @@ Connect.HTTP_METHOD = HTTP_METHOD;
  * // etc...
  */
 Connect.STATUS = STATUS;
+/**
+ * AW4.Connect.TRANSFER_STATUS
+ *
+ * The possible states of a transfer reported by`status` in {@link TransferInfo}.
+ * @typedef {Object} TRANSFER_STATUS
+ * @property {String} CANCELLED="cancelled" The user stopped the transfer.
+ * @property {String} COMPLETED="completed" The transfer finished successfully.
+ * @property {String} FAILED="failed" The transfer had an error.
+ * @property {String} INITIATING="initiating" The transfer reqeust was accepted. Now
+ *   starting transfer.
+ * @property {String} QUEUED="queued" The transfer is waiting for other transfers to finish.
+ *   The queue is configurable in Connect.
+ * @property {String} REMOVED="removed" The user deleted the transfer.
+ * @property {String} RUNNING="running" Transfer in progress.
+ * @property {String} WILLRETRY="willretry" Transfer waiting to retry after a
+ *   recoverable error.
+ */
 Connect.TRANSFER_STATUS = TRANSFER_STATUS;
 
 /**
@@ -1258,489 +1274,426 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  * }
  */
 
- /**
-  * The data format for statistics for on transfer session.
-  *
-  * See {@link TransferSpec} and {@link AsperaConnectSettings} for definitions.
-  *
-  * @typedef {Object} TransferInfo
-  * @property {String} add_time The time when the transfer was added (according
-  *   to the system's clock).
-  * @property {Object} aspera_connect_settings {@link AsperaConnectSettings}
-  * @property {Number} bytes_expected The number of bytes that are still
-  *   remaining to be written.
-  * @property {Number} bytes_written The number of bytes that have already been
-  *   written to disk.
-  * @property {Number} calculated_rate_kbps The current rate of the transfer in kbps.
-  * @property {String} current_file The full path of the current file.
-  * @property {Number} elapsed_usec The duration in microseconds of the transfer since it started
-  *   transferring.
-  * @property {String} end_time The time when the transfer was completed.
-  * @property {Array} files A list of files that have been active in this
-  *   transfer session. Note that files that have not been active yet in this session
-  *   will not be reported (and you can assume bytes_written is 0).
-  *
-  *   Format:
-  *   ```
-  *   [
-  *     {
-  *       "bytes_expected": 10485760,
-  *       "bytes_written": 1523456,
-  *       "fasp_file_id": "3c40b511-5b2dfebb-a2e63483-9b58cb45-9cd9abff",
-  *       "file": "/Users/aspera/Downloads/connect_downloads/10MB.3"
-  *     }, {
-  *       "bytes_expected": 10485760,
-  *       "bytes_written": 10485760,
-  *       "fasp_file_id": "d5b7deea-2d5878f4-222661f6-170ce0f2-68880a6c",
-  *       "file": "/Users/aspera/Downloads/connect_downloads/10MB.2"
-  *     }
-  *   ]
-  *   ```
-  * @property {String} modify_time The last time the transfer was modified
-  * @property {Number} percentage The progress of the transfer over 1.
-  * @property {String} previous_status The previous status of the transfer.
-  * @property {Number} remaining_usec The ETA of the transfer in microseconds.
-  * @property {String} start_time The time when the transfer moved to initiating
-  *   status.
-  * @property {String} status The status of the transfer. See {@link STATUS}.
-  * @property {String} title The name of the file.
-  * @property {Number} transfer_iteration_token A marker that represents the moment
-  *   in time that the transfer status was checked.
-  * @property {Object} transfer_spec {@link TransferSpec}
-  * @property {"fasp"|"http"} transport="fasp" `fasp` - (default) <br>
-  *   `http` - Set when a fasp transfer could not be performed and http fallback was used.
-  * @property {String} uuid
-  *
-  * @example
-  *     {
-  *       "add_time": "2012-10-05T17:53:16",
-  *       "aspera_connect_settings": {@link AsperaConnectSettings},
-  *       "bytes_expected": 102400,
-  *       "bytes_written": 11616,
-  *       "calculated_rate_kbps": 34,
-  *       "current_file": "/temp/tinyfile0001",
-  *       "elapsed_usec": 3000000,
-  *       "end_time": "",
-  *       "files": [
-  *          {
-  *            "bytes_expected": 10485760,
-  *            "bytes_written": 1523456,
-  *            "fasp_file_id": "3c40b511-5b2dfebb-a2e63483-9b58cb45-9cd9abff",
-  *            "file": "/Users/aspera/Downloads/connect_downloads/10MB.3"
-  *          }, {
-  *            "bytes_expected": 10485760,
-  *            "bytes_written": 10485760,
-  *            "fasp_file_id": "d5b7deea-2d5878f4-222661f6-170ce0f2-68880a6c",
-  *            "file": "/Users/aspera/Downloads/connect_downloads/10MB.2"
-  *          }
-  *       ]
-  *       "modify_time": "2012-10-05T17:53:18",
-  *       "percentage": 0.113438,
-  *       "previous_status": "initiating",
-  *       "remaining_usec": 21000000,
-  *       "start_time": "2012-10-05T17:53:16",
-  *       "status": "running",
-  *       "title": "tinyfile0001",
-  *       "transfer_iteration_token": 18,
-  *       "transfer_spec": {@link TransferSpec},
-  *       "transport": "fasp",
-  *       "uuid": "add433a8-c99b-4e3a-8fc0-4c7a24284ada",
-  *     }
-  */
-  
-  /**
-   * The parameters for starting a transfer.
-   *
-   * @typedef {Object} TransferSpec
-   *
-   * @property {"password"|"token"} [authentication="password"] The type of authentication to use.
-   * @property {"none"|"aes-128"} [cipher="aes-128"] The algorithm used to encrypt
-   *   data sent during a transfer. Use this option when transmitting sensitive data.
-   *   Increases CPU utilization.
-   * @property {"encrypt"|"decrypt"} [content_protection] Enable content protection
-   *   (encryption-at-rest), which keeps files encrypted on the server. Encrypted
-   *   files have the extension ".aspera-env". <br><br>
-   *   `encrypt` - Encrypt uploaded files. If `content_protection_passphrase` is
-   *   not specified, Connect will prompt for the passphrase. <br><br>
-   *   `decrypt` - Decrypt downloaded fiels. If `content_protection_passphrase` is
-   *   not specified, Connect will prompt for the passphrase.
-   * @property {String} [content_protection_passphrase] A passphrase to encrypt or
-   *   decrypt files when using `content_protection`.
-   * @property {String} [cookie] Data to associate with the transfer. The cookie is
-   *   reported to both client and server-side applications monitoring fasp™ transfers.
-   *   It is often used by applications to identify associated transfers.
-   * @property {Boolean} [create_dir=false] Creates the destination directory if it
-   *   does not already exist. When enabling this option, the destination path is
-   *   assumed to be a directory path.
-   * @property {String} [destination_root="/"] The transfer destination file path.
-   *   If destinations are specified in `paths`, this value is prepended to each destination.
-   *
-   *   Note that the download destination paths are relative to the user's Connect
-   *   download directory setting unless `ConnectSpec.use_absolute_destination_path`
-   *   is enabled.
-   * @property {Number} [dgram_size] The IP datagram size for fasp™ to use. If not
-   *   specified, fasp™ will automatically detect and use the path MTU as the
-   *   datagram size. Use this option only to satisfy networks with strict MTU
-   *   requirements.
-   * @property {"send"|"receive"} direction Whether to perform an upload or download.
-   *
-   *   `send` - Upload <br>
-   *   `receive` - Download
-   * @property {Number} [fasp_port=33001] The UDP port for fasp™ to use. The default value
-   *   is satisfactory for most situations. However, it can be changed to satisfy
-   *   firewall requirements.
-   * @property {Boolean} [http_fallback=false] Attempts to perform an HTTP transfer
-   *   if a fasp™ transfer cannot be performed.
-   * @property {Number} [http_fallback_port] The port where the Aspera HTTP server is
-   *   servicing HTTP transfers. Defaults to port 443 if a `cipher` is enabled, or
-   *   port 80 otherwise.
-   * @property {Boolean} [lock_min_rate=false] Prevents the user from changing the
-   *   minimum rate during a transfer.
-   * @property {Boolean} [lock_rate_policy=false] Prevents the user from changing the
-   *   rate policy during a transfer.
-   * @property {Boolean} [lock_target_rate=false] Prevents the user from changing the
-   *   target rate during a transfer.
-   * @property {Number} [min_rate_kbps] The minimum speed of the transfer. fasp™
-   *   will only share bandwidth exceeding this value.
-   *
-   *   Note: This value has no effect if `rate_policy` is `fixed`.
-   *
-   *   Default: Server-side minimum rate default setting (aspera.conf). Will respect
-   *   both local and server-side minimum rate caps if set.
-   * @property {Array} paths A list of the file and directory paths to transfer.
-   *   Use `destination_root` to specify the destination directory.
-   *
-   *   *Source list format*
-   *   ```
-   *     [
-   *       {
-   *         "source": "/foo"
-   *       }, {
-   *         "source": "/bar/baz"
-   *       },
-   *       ...
-   *     ]
-   *   ```
-   *   Optionally specify a destination path - including the file name - for each file.
-   *   This format is useful for renaming files or sending to different destinations.
-   *   Note that for this format all paths must be file paths (not directory paths).
-   *
-   *   *Source-Destination pair format*
-   *   ```
-   *     [
-   *       {
-   *         "source": "/foo",
-   *         "destination": "/qux/foofoo"
-   *       }, {
-   *         "source": "/bar/baz",
-   *         "destination": "/qux/bazbaz"
-   *       },
-   *       ...
-   *     ]
-   *   ```
-   * @property {"fixed"|"high"|"fair"|"low"} [rate_policy="fair"] The congestion
-   *   control behavior to use when sharing bandwidth.
-   *
-   *   `fixed` - Transfer at the target rate regardless of actual network capacity.
-   *   Do not share bandwidth.
-   *
-   *   `high` - When sharing bandwidth, transfer at twice the rate of a transfer using
-   *   "fair" policy.
-   *
-   *   `fair` - Share bandwidth equally with other traffic.
-   *
-   *   `low` - Use only unutilized bandwidth.
-   * @property {String} remote_host The fully qualified domain name or IP address
-   *   of the transfer server.
-   * @property {String} [remote_password] The password to use when `authentication`
-   *   is set to `password`. If this value is not specified, Connect will prompt
-   *   the user.
-   * @property {String} [remote_user] The username to use for authentication. For
-   *   password authentication, if this value is not specified, Connect will prompt
-   *   the user.
-   * @property {"none"|"attributes"|"sparse_checksum"|"full_checksum"} [resume="sparse_checksum"]
-   *   The policy to use when resuming partially transferred (incomplete) files.
-   *
-   *   `none` - Transfer the entire file again.
-   *
-   *   `attributes` - Resume if the files' attributes match.
-   *
-   *   `sparse_checksum` - Resume if the files' attributes and sparse (fast) checksums
-   *   match.
-   *
-   *   `full_checksum` - Resume if the files' attributes and full checksums match.
-   *   Note that computing full checksums of large files takes time, and heavily
-   *   utilizes the CPU.
-   * @property {String} [source_root="/"] A path to prepend to the source paths specified
-   *   in `paths`. If this is not specified, then `paths` should contain absolute
-   *   paths.
-   * @property {Number} [ssh_port=33001] The server's TCP port that is listening
-   *   for SSH connections. fasp™ initiates transfers through SSH.
-   * @property {Number} [target_rate_cap_kbps] Limit the transfer rate that the
-   *   user can adjust the target and minimum rates to. Default: no limit.
-   * @property {Number} [target_rate_kbps] The desired speed of the transfer. If
-   *   there is competing network traffic, fasp™ may share this bandwidth, depending
-   *   on the `rate_policy`.
-   *
-   *   Default: Server-side target rate default setting (aspera.conf). Will respect
-   *   both local and server-side target rate caps if set.
-   * @property {String} [token] Used for token-based authorization, which involves
-   *   the server-side application generating a token that gives the client rights
-   *   to transfer a predetermined set of files.
-   *
-   * @example
-   * ##### Minimal example
-   * {
-   *   "paths": [
-   *     {
-   *       "source": "/foo/1"
-   *     }
-   *   ],
-   *   "remote_host": "10.0.203.80",
-   *   "remote_user": "aspera",
-   *   "direction": "send"
-   * }
-   *
-   * ##### Download example
-   * {
-   *   "paths": [
-   *     {
-   *       "source": "tinyfile0001"
-   *     }, {
-   *       "source": "tinyfile0002"
-   *     }
-   *   ],
-   *   "remote_host": "demo.asperasoft.com",
-   *   "remote_user": "asperaweb",
-   *   "authentication": "password",
-   *   "remote_password": "**********",
-   *   "fasp_port": 33001,
-   *   "ssh_port": 33001,
-   *   "http_fallback": true,
-   *   "http_fallback_port": 443,
-   *   "direction": "receive",
-   *   "create_dir": false,
-   *   "source_root": "aspera-test-dir-tiny",
-   *   "destination_root": "/temp",
-   *   "rate_policy": "high",
-   *   "target_rate_kbps": 1000,
-   *   "min_rate_kbps": 100,
-   *   "lock_rate_policy": false,
-   *   "target_rate_cap_kbps": 2000,
-   *   "lock_target_rate": false,
-   *   "lock_min_rate": false,
-   *   "resume": "sparse_checksum",
-   *   "cipher": "aes-128",
-   *   "cookie": "foobarbazqux",
-   *   "dgram_size": 1492,
-   *   "preserve_times": true,
-   *   "tags": {
-   *     "your_company": {
-   *       "key": "value"
-   *     }
-   *   }
-   * }
-   */
-   
-   /**
-    * The data format for the connect web app parameters.
-    *
-    * @typedef {Object} AsperaConnectSettings
-    * @property {String} app_id A secure, random identifier for all transfers
-    *   associated with this webapp. Do not hardcode this id. Do not use the same
-    *   id for different users. Do not including the host name, product name in the id.
-    *   Do not use monotonically increasing ids. If you do not provide one, a
-    *   random id will be generated for you and persisted in localStorage.
-    * @property {String} back_link Link to the webapp.
-    * @property {String} request_id Universally Unique IDentifier for the webapp.
-    *
-    * @example
-    * {
-    *   "app_id": "TUyMGQyNDYtM2M1NS00YWRkLTg0MTMtOWQ2OTkxMjk5NGM4",
-    *   "back_link": "http://demo.asperasoft.com",
-    *   "request_id": "36d3c2a4-1856-47cf-9865-f8e3a8b47822"
-    * }
-    */
-    
-    /**
-     * This object is returned if an error occurs. It contains an error code and a message.
-     *
-     * *Note that this is not related to the Javascript `Error` object, but is used
-     * only to document the format of errors returned by this API.*
-     *
-     * @typedef {Object} Error
-     *
-     * @example
-     * {
-     *   "error": {
-     *     "code": Number,
-     *     "internal_message": String,
-     *     "user_message": String
-     *   }
-     * }
-     */
-     
-     /**
-      *
-      */
-     
-     /**
-      * This object can be passed to an asynchronous API call to get the results
-      *   of the call.
-      *
-      * #### Format
-      * ```
-      * {
-      *   success: function(Object) { ... },
-      *   error: function(Error) { ... }
-      * }
-      * ```
-      * The argument passed to the `success` function depends on the original method
-      * invoked. The argument to the `error` function is an {@link Error} object.
-      *
-      * If an Error is thrown during a callback, it is logged to window.console
-      * (if supported by the browser).
-      *
-      * @typedef {Object} Callbacks
-      */
-
-// AW4.Connect
-
 /**
- * == Objects ==
+ * The data format for statistics for on transfer session.
  *
- * Specifications for common objects used as arguments or result data.
- */
-
-/** section: Objects
- * class Callbacks
+ * See {@link TransferSpec} and {@link AsperaConnectSettings} for definitions.
  *
- * This object can be passed to an asynchronous API call to get the
- * results of the call.
+ * @typedef {Object} TransferInfo
+ * @property {String} add_time The time when the transfer was added (according
+ *   to the system's clock).
+ * @property {Object} aspera_connect_settings {@link AsperaConnectSettings}
+ * @property {Number} bytes_expected The number of bytes that are still
+ *   remaining to be written.
+ * @property {Number} bytes_written The number of bytes that have already been
+ *   written to disk.
+ * @property {Number} calculated_rate_kbps The current rate of the transfer in kbps.
+ * @property {String} current_file The full path of the current file.
+ * @property {Number} elapsed_usec The duration in microseconds of the transfer since it started
+ *   transferring.
+ * @property {String} end_time The time when the transfer was completed.
+ * @property {Array} files A list of files that have been active in this
+ *   transfer session. Note that files that have not been active yet in this session
+ *   will not be reported (and you can assume bytes_written is 0).
  *
- * ##### Format
- *
+ *   Format:
+ *   ```
+ *   [
  *     {
- *       success: function(Object) { ... },
- *       error: function(Error) { ... }
+ *       "bytes_expected": 10485760,
+ *       "bytes_written": 1523456,
+ *       "fasp_file_id": "3c40b511-5b2dfebb-a2e63483-9b58cb45-9cd9abff",
+ *       "file": "/Users/aspera/Downloads/connect_downloads/10MB.3"
+ *     }, {
+ *       "bytes_expected": 10485760,
+ *       "bytes_written": 10485760,
+ *       "fasp_file_id": "d5b7deea-2d5878f4-222661f6-170ce0f2-68880a6c",
+ *       "file": "/Users/aspera/Downloads/connect_downloads/10MB.2"
  *     }
+ *   ]
+ *   ```
+ * @property {String} modify_time The last time the transfer was modified
+ * @property {Number} percentage The progress of the transfer over 1.
+ * @property {String} previous_status The previous status of the transfer.
+ * @property {Number} remaining_usec The ETA of the transfer in microseconds.
+ * @property {String} start_time The time when the transfer moved to initiating
+ *   status.
+ * @property {String} status The status of the transfer. See {@link TRANSFER_STATUS}.
+ * @property {String} title The name of the file.
+ * @property {Number} transfer_iteration_token A marker that represents the moment
+ *   in time that the transfer status was checked.
+ * @property {Object} transfer_spec {@link TransferSpec}
+ * @property {"fasp"|"http"} transport="fasp" `fasp` - (default) <br>
+ *   `http` - Set when a fasp transfer could not be performed and http fallback was used.
+ * @property {String} uuid
  *
+ * @example
+ *     {
+ *       "add_time": "2012-10-05T17:53:16",
+ *       "aspera_connect_settings": {@link AsperaConnectSettings},
+ *       "bytes_expected": 102400,
+ *       "bytes_written": 11616,
+ *       "calculated_rate_kbps": 34,
+ *       "current_file": "/temp/tinyfile0001",
+ *       "elapsed_usec": 3000000,
+ *       "end_time": "",
+ *       "files": [
+ *          {
+ *            "bytes_expected": 10485760,
+ *            "bytes_written": 1523456,
+ *            "fasp_file_id": "3c40b511-5b2dfebb-a2e63483-9b58cb45-9cd9abff",
+ *            "file": "/Users/aspera/Downloads/connect_downloads/10MB.3"
+ *          }, {
+ *            "bytes_expected": 10485760,
+ *            "bytes_written": 10485760,
+ *            "fasp_file_id": "d5b7deea-2d5878f4-222661f6-170ce0f2-68880a6c",
+ *            "file": "/Users/aspera/Downloads/connect_downloads/10MB.2"
+ *          }
+ *       ],
+ *       "modify_time": "2012-10-05T17:53:18",
+ *       "percentage": 0.113438,
+ *       "previous_status": "initiating",
+ *       "remaining_usec": 21000000,
+ *       "start_time": "2012-10-05T17:53:16",
+ *       "status": "running",
+ *       "title": "tinyfile0001",
+ *       "transfer_iteration_token": 18,
+ *       "transfer_spec": {@link TransferSpec},
+ *       "transport": "fasp",
+ *       "uuid": "add433a8-c99b-4e3a-8fc0-4c7a24284ada",
+ *     }
+ */
+  
+/**
+ * The parameters for starting a transfer.
+ *
+ * @typedef {Object} TransferSpec
+ *
+ * @property {"password"|"token"} [authentication="password"] The type of authentication to use.
+ * @property {"none"|"aes-128"} [cipher="aes-128"] The algorithm used to encrypt
+ *   data sent during a transfer. Use this option when transmitting sensitive data.
+ *   Increases CPU utilization.
+ * @property {"encrypt"|"decrypt"} [content_protection] Enable content protection
+ *   (encryption-at-rest), which keeps files encrypted on the server. Encrypted
+ *   files have the extension ".aspera-env". <br><br>
+ *   `encrypt` - Encrypt uploaded files. If `content_protection_passphrase` is
+ *   not specified, Connect will prompt for the passphrase. <br><br>
+ *   `decrypt` - Decrypt downloaded fiels. If `content_protection_passphrase` is
+ *   not specified, Connect will prompt for the passphrase.
+ * @property {String} [content_protection_passphrase] A passphrase to encrypt or
+ *   decrypt files when using `content_protection`.
+ * @property {String} [cookie] Data to associate with the transfer. The cookie is
+ *   reported to both client and server-side applications monitoring fasp™ transfers.
+ *   It is often used by applications to identify associated transfers.
+ * @property {Boolean} [create_dir=false] Creates the destination directory if it
+ *   does not already exist. When enabling this option, the destination path is
+ *   assumed to be a directory path.
+ * @property {String} [destination_root="/"] The transfer destination file path.
+ *   If destinations are specified in `paths`, this value is prepended to each destination.
+ *
+ *   Note that the download destination paths are relative to the user's Connect
+ *   download directory setting unless `ConnectSpec.use_absolute_destination_path`
+ *   is enabled.
+ * @property {Number} [dgram_size] The IP datagram size for fasp™ to use. If not
+ *   specified, fasp™ will automatically detect and use the path MTU as the
+ *   datagram size. Use this option only to satisfy networks with strict MTU
+ *   requirements.
+ * @property {"send"|"receive"} direction Whether to perform an upload or download.
+ *
+ *   `send` - Upload <br>
+ *   `receive` - Download
+ * @property {Number} [fasp_port=33001] The UDP port for fasp™ to use. The default value
+ *   is satisfactory for most situations. However, it can be changed to satisfy
+ *   firewall requirements.
+ * @property {Boolean} [http_fallback=false] Attempts to perform an HTTP transfer
+ *   if a fasp™ transfer cannot be performed.
+ * @property {Number} [http_fallback_port] The port where the Aspera HTTP server is
+ *   servicing HTTP transfers. Defaults to port 443 if a `cipher` is enabled, or
+ *   port 80 otherwise.
+ * @property {Boolean} [lock_min_rate=false] Prevents the user from changing the
+ *   minimum rate during a transfer.
+ * @property {Boolean} [lock_rate_policy=false] Prevents the user from changing the
+ *   rate policy during a transfer.
+ * @property {Boolean} [lock_target_rate=false] Prevents the user from changing the
+ *   target rate during a transfer.
+ * @property {Number} [min_rate_kbps] The minimum speed of the transfer. fasp™
+ *   will only share bandwidth exceeding this value.
+ *
+ *   Note: This value has no effect if `rate_policy` is `fixed`.
+ *
+ *   Default: Server-side minimum rate default setting (aspera.conf). Will respect
+ *   both local and server-side minimum rate caps if set.
+ * @property {Array} paths A list of the file and directory paths to transfer.
+ *   Use `destination_root` to specify the destination directory.
+ *
+ *   *Source list format*
+ *   ```
+ *     [
+ *       {
+ *         "source": "/foo"
+ *       }, {
+ *         "source": "/bar/baz"
+ *       },
+ *       ...
+ *     ]
+ *   ```
+ *   Optionally specify a destination path - including the file name - for each file.
+ *   This format is useful for renaming files or sending to different destinations.
+ *   Note that for this format all paths must be file paths (not directory paths).
+ *
+ *   *Source-Destination pair format*
+ *   ```
+ *     [
+ *       {
+ *         "source": "/foo",
+ *         "destination": "/qux/foofoo"
+ *       }, {
+ *         "source": "/bar/baz",
+ *         "destination": "/qux/bazbaz"
+ *       },
+ *       ...
+ *     ]
+ *   ```
+ * @property {"fixed"|"high"|"fair"|"low"} [rate_policy="fair"] The congestion
+ *   control behavior to use when sharing bandwidth.
+ *
+ *   `fixed` - Transfer at the target rate regardless of actual network capacity.
+ *   Do not share bandwidth.
+ *
+ *   `high` - When sharing bandwidth, transfer at twice the rate of a transfer using
+ *   "fair" policy.
+ *
+ *   `fair` - Share bandwidth equally with other traffic.
+ *
+ *   `low` - Use only unutilized bandwidth.
+ * @property {String} remote_host The fully qualified domain name or IP address
+ *   of the transfer server.
+ * @property {String} [remote_password] The password to use when `authentication`
+ *   is set to `password`. If this value is not specified, Connect will prompt
+ *   the user.
+ * @property {String} [remote_user] The username to use for authentication. For
+ *   password authentication, if this value is not specified, Connect will prompt
+ *   the user.
+ * @property {"none"|"attributes"|"sparse_checksum"|"full_checksum"} [resume="sparse_checksum"]
+ *   The policy to use when resuming partially transferred (incomplete) files.
+ *
+ *   `none` - Transfer the entire file again.
+ *
+ *   `attributes` - Resume if the files' attributes match.
+ *
+ *   `sparse_checksum` - Resume if the files' attributes and sparse (fast) checksums
+ *   match.
+ *
+ *   `full_checksum` - Resume if the files' attributes and full checksums match.
+ *   Note that computing full checksums of large files takes time, and heavily
+ *   utilizes the CPU.
+ * @property {String} [source_root="/"] A path to prepend to the source paths specified
+ *   in `paths`. If this is not specified, then `paths` should contain absolute
+ *   paths.
+ * @property {Number} [ssh_port=33001] The server's TCP port that is listening
+ *   for SSH connections. fasp™ initiates transfers through SSH.
+ * @property {Number} [target_rate_cap_kbps] Limit the transfer rate that the
+ *   user can adjust the target and minimum rates to. Default: no limit.
+ * @property {Number} [target_rate_kbps] The desired speed of the transfer. If
+ *   there is competing network traffic, fasp™ may share this bandwidth, depending
+ *   on the `rate_policy`.
+ *
+ *   Default: Server-side target rate default setting (aspera.conf). Will respect
+ *   both local and server-side target rate caps if set.
+ * @property {String} [token] Used for token-based authorization, which involves
+ *   the server-side application generating a token that gives the client rights
+ *   to transfer a predetermined set of files.
+ *
+ * @example
+ * ##### Minimal example
+ * {
+ *   "paths": [
+ *     {
+ *       "source": "/foo/1"
+ *     }
+ *   ],
+ *   "remote_host": "10.0.203.80",
+ *   "remote_user": "aspera",
+ *   "direction": "send"
+ * }
+ *
+ * ##### Download example
+ * {
+ *   "paths": [
+ *     {
+ *       "source": "tinyfile0001"
+ *     }, {
+ *       "source": "tinyfile0002"
+ *     }
+ *   ],
+ *   "remote_host": "demo.asperasoft.com",
+ *   "remote_user": "asperaweb",
+ *   "authentication": "password",
+ *   "remote_password": "**********",
+ *   "fasp_port": 33001,
+ *   "ssh_port": 33001,
+ *   "http_fallback": true,
+ *   "http_fallback_port": 443,
+ *   "direction": "receive",
+ *   "create_dir": false,
+ *   "source_root": "aspera-test-dir-tiny",
+ *   "destination_root": "/temp",
+ *   "rate_policy": "high",
+ *   "target_rate_kbps": 1000,
+ *   "min_rate_kbps": 100,
+ *   "lock_rate_policy": false,
+ *   "target_rate_cap_kbps": 2000,
+ *   "lock_target_rate": false,
+ *   "lock_min_rate": false,
+ *   "resume": "sparse_checksum",
+ *   "cipher": "aes-128",
+ *   "cookie": "foobarbazqux",
+ *   "dgram_size": 1492,
+ *   "preserve_times": true,
+ *   "tags": {
+ *     "your_company": {
+ *       "key": "value"
+ *     }
+ *   }
+ * }
+ */
+   
+/**
+ * The data format for the connect web app parameters.
+ *
+ * @typedef {Object} AsperaConnectSettings
+ * @property {String} app_id A secure, random identifier for all transfers
+ *   associated with this webapp. Do not hardcode this id. Do not use the same
+ *   id for different users. Do not including the host name, product name in the id.
+ *   Do not use monotonically increasing ids. If you do not provide one, a
+ *   random id will be generated for you and persisted in localStorage.
+ * @property {String} back_link Link to the webapp.
+ * @property {String} request_id Universally Unique IDentifier for the webapp.
+ *
+ * @example
+ * {
+ *   "app_id": "TUyMGQyNDYtM2M1NS00YWRkLTg0MTMtOWQ2OTkxMjk5NGM4",
+ *   "back_link": "http://demo.asperasoft.com",
+ *   "request_id": "36d3c2a4-1856-47cf-9865-f8e3a8b47822"
+ * }
+ */
+     
+/**
+ * This object is returned if an error occurs. It contains an error code and a message.
+ *
+ * *Note that this is not related to the Javascript `Error` object, but is used
+ * only to document the format of errors returned by this API.*
+ *
+ * @typedef {Object} Error
+ *
+ * @example
+ * {
+ *   "error": {
+ *     "code": Number,
+ *     "internal_message": String,
+ *     "user_message": String
+ *   }
+ * }
+ */
+  
+/**
+ * This object can be passed to an asynchronous API call to get the results
+ *   of the call.
+ *
+ * #### Format
+ * ```
+ * {
+ *   success: function(Object) { ... },
+ *   error: function(Error) { ... }
+ * }
+ * ```
  * The argument passed to the `success` function depends on the original method
- * invoked. The argument to the `error` function is an [[Error]] object.
+ * invoked. The argument to the `error` function is an {@link Error} object.
  *
  * If an Error is thrown during a callback, it is logged to window.console
  * (if supported by the browser).
- */
-
-/** section: Objects
- */
-
-/** section: Objects
- * class ConnectSpec
  *
- * Connect-specific parameters when starting a transfer.
- *
- * ##### Example
- *
- *     {
- *       "allow_dialogs" : false,
- *       "back_link" : "www.foo.com",
- *       "return_paths" : false,
- *       "return_files" : false,
- *       "use_absolute_destination_path" : true
- *     }
+ * @typedef {Object} Callbacks
  */
-
+ 
 /**
- * ConnectSpec.allow_dialogs -> Boolean
+ * This object holds the data of the files that have been selected by the user. It
+ *   may hold one or more data items.
  *
- * *optional*
- *
- * If this value is `false`, Connect will no longer prompt or display windows
- * automatically, except to ask the user to authorize transfers if the server
- * is not on the list of trusted hosts.
- *
- * Values:
- *
- * 1. `true` (default)
- * 2. `false`
- */
-
-/**
- * ConnectSpec.back_link -> String
- *
- * *optional*
- *
- * A URL to associate with the transfer. Connect will display this link
- * in the context menu of the transfer.
- *
- * Default: The URL of the current page
- */
-
-/**
- * ConnectSpec.return_files -> Boolean
- *
- * *optional*
- *
- * If this value is `false`, [[TransferInfo]] will not contain
- * [[TransferInfo.files]]. Use this option to prevent performance deterioration
- * when transferring large number of files.
- *
- * Values:
- *
- * 1. `true` (default)
- * 2. `false`
- */
-
-/**
- * ConnectSpec.return_paths -> Boolean
- *
- * *optional*
- *
- * If this value is `false`, [[TransferInfo]] will not contain
- * [[TransferSpec.paths]]. Use this option to prevent performance deterioration
- * when specifying a large number of source paths.
- *
- * Values:
- *
- * 1. `true` (default)
- * 2. `false`
- */
-
-/**
- * ConnectSpec.use_absolute_destination_path -> Boolean
- *
- * *optional*
- *
- * By default, the destination of a download is relative to the user's Connect
- * download directory setting. Setting this value to `true` overrides this
- * behavior, using absolute paths instead.
- *
- * Values:
- *
- * 1. `false` (default)
- * 2. `true`
- */
-
-/** section: Objects
- * class FileFilters
- *
- * A set of file extension filters.
- *
- * ##### Example
- *
- *     [
+ * #### Format
+ * ```
+ * {
+ *   "dataTransfer" : {
+ *     "files": [
  *       {
- *         filter_name : "Text file",
- *         extensions : ["txt"]
+ *         "lastModifiedDate": "Wed Jan 24 12:22:02 2019",
+ *         "name": "/Users/aspera/Desktop/foo.txt",
+ *         "size": 386,
+ *         "type": "text/plain"
  *       },
  *       {
- *         filter_name : "Image file",
- *         extensions : ["jpg", "png"]
- *       },
- *       {
- *         filter_name : "All types",
- *         extensions : ["*"]
+ *         "lastModifiedDate": "Mon Jan 22 18:01:02 2019",
+ *         "name": "/Users/aspera/Desktop/foo.rb",
+ *         "size": 609,
+ *         "type": "text/x-ruby-script"
  *       }
  *     ]
+ *   }
+ * }
+ * ```
+ *
+ * @typedef {Object} dataTransfer
  */
+
+/**
+ * A set of file extension filters.
+ *
+ * #### Example
+ * ```
+ * [
+ *   {
+ *     filter_name : "Text file",
+ *     extensions : ["txt"]
+ *   },
+ *   {
+ *     filter_name : "Image file",
+ *     extensions : ["jpg", "png"]
+ *   },
+ *   {
+ *     filter_name : "All types",
+ *     extensions : ["*"]
+ *   }
+ * ]
+ * ```
+ *
+ * @typedef {Object} FileFilters
+ */
+ 
+ /**
+  * Connect-specific parameters when starting a transfer.
+  *
+  * @typedef {Object} ConnectSpec
+  * @property {Boolean} [allow_dialogs=true] If this value is `false`, Connect will no longer prompt or display windows
+  *   automatically, except to ask the user to authorize transfers if the server
+  *   is not on the list of trusted hosts.
+  * @property {String} [back_link=URL of current page] A URL to associate with the transfer. Connect will display this link
+  *   in the context menu of the transfer.
+  * @property {Boolean} [return_files=true] If this value is `false`, {@link TransferInfo} will not contain
+  *   `files`. Use this option to prevent performance deterioration
+  *   when transferring large number of files.
+  * @property {Boolean} [return_paths=true] If this value is `false`, the `transfer_spec` property in {@link TransferInfo} will not contain
+  *   `paths`. Use this option to prevent performance deterioration
+  *   when specifying a large number of source paths.
+  * @property {Boolean} [use_absolute_destination_path=false] By default, the destination of a download is relative to the user's Connect
+  *   download directory setting. Setting this value to `true` overrides this
+  *   behavior, using absolute paths instead.
+  *
+  * @example
+  * {
+  *   "allow_dialogs" : false,
+  *   "back_link" : "www.foo.com",
+  *   "return_paths" : false,
+  *   "return_files" : false,
+  *   "use_absolute_destination_path" : true
+  * }
+  */
