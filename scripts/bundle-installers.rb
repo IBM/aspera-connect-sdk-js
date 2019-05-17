@@ -17,7 +17,7 @@ def bundle_installers(output_dir)
   Encoding.default_external = Encoding::UTF_8
   Encoding.default_internal = Encoding::UTF_8
 
-  imports_dir = "#{$scriptdir}/../../imports"
+  imports_dir = "#{$scriptdir}/../imports"
   bin_dir = "#{output_dir}/bin"
 
   # FileUtils.rm_rf(output_dir)
