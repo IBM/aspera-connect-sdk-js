@@ -3,7 +3,7 @@
   variables to the AW4 namespace
 */
 
-let connectVersionInternal = "";
+let connectVersionInternal = '';
 
 export let connectVersion = {
   set: (v: string) => {
@@ -14,7 +14,7 @@ export let connectVersion = {
   }
 };
 
-let minRequestedVersionInternal = "";
+let minRequestedVersionInternal = '';
 
 export let minRequestedVersion = {
   set: (v: string) => {
@@ -24,7 +24,7 @@ export let minRequestedVersion = {
     return minRequestedVersionInternal;
   }
 };
- 
+
 interface IReqImplStatus {
   INITIALIZING: number;
   RETRYING: number;
@@ -35,45 +35,54 @@ interface IReqImplStatus {
   OUTDATED: number;
   DEGRADED: number;
   EXTENSION_INSTALL: number;
-  toString(status: number): string;
+  toString (status: number): string;
 }
 
-const STATUS: IReqImplStatus =  {
-    INITIALIZING : 0,
-    RETRYING : 1,
-    RUNNING : 2,
-    FAILED : 3,
-    STOPPED : 4,
-    WAITING : 5,
-    OUTDATED : 6,
-    DEGRADED : 7,
-    EXTENSION_INSTALL: 8,
-    toString : function(status: number): string {
-      if (status == STATUS.INITIALIZING)
-          return "initializing";
-      if (status == STATUS.RETRYING)
-          return "retrying";
-      if (status == STATUS.RUNNING)
-          return "running";
-      if (status == STATUS.FAILED)
-          return "failed";
-      if (status == STATUS.STOPPED)
-          return "stopped";
-      if (status == STATUS.WAITING)
-          return "waiting";
-      if (status == STATUS.OUTDATED)
-          return "outdated";
-      if (status == STATUS.DEGRADED)
-          return "degraded";
-      if (status == STATUS.EXTENSION_INSTALL)
-          return "extension installation";
-      return "unknown";
+const STATUS: IReqImplStatus = {
+  INITIALIZING : 0,
+  RETRYING : 1,
+  RUNNING : 2,
+  FAILED : 3,
+  STOPPED : 4,
+  WAITING : 5,
+  OUTDATED : 6,
+  DEGRADED : 7,
+  EXTENSION_INSTALL: 8,
+  toString : function (status: number): string {
+    if (status === STATUS.INITIALIZING) {
+      return 'initializing';
+    }
+    if (status === STATUS.RETRYING) {
+      return 'retrying';
+    }
+    if (status === STATUS.RUNNING) {
+      return 'running';
+    }
+    if (status === STATUS.FAILED) {
+      return 'failed';
+    }
+    if (status === STATUS.STOPPED) {
+      return 'stopped';
+    }
+    if (status === STATUS.WAITING) {
+      return 'waiting';
+    }
+    if (status === STATUS.OUTDATED) {
+      return 'outdated';
+    }
+    if (status === STATUS.DEGRADED) {
+      return 'degraded';
+    }
+    if (status === STATUS.EXTENSION_INSTALL) {
+      return 'extension installation';
+    }
+    return 'unknown';
   }
 };
 
 export { STATUS, IReqImplStatus };
 
-let sessionIdInternal = "";
+let sessionIdInternal = '';
 
 export let SESSION_ID = {
   set: (id: string) => {
@@ -84,7 +93,7 @@ export let SESSION_ID = {
   }
 };
 
-let sessionKeyInternal = "";
+let sessionKeyInternal = '';
 
 export let SESSION_KEY = {
   set: (key: string) => {
