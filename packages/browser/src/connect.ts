@@ -4,7 +4,7 @@
  * @property {Module} Utils {@link module:Utils}
  * @property {Module} Logger {@link module:Logger}
  */
- 
+
 import * as Utils from './utils';
 import * as Logger from './logger';
 import RequestHandler from './request/request';
@@ -15,7 +15,7 @@ import {
   TRANSFER_STATUS
 } from './shared/constants';
 import { minRequestedVersion, SESSION_ID } from './shared/sharedInternals';
- 
+
 interface ConnectOptions {
   connectLaunchWaitTimeoutMs?: number;
   id?: string;
@@ -69,7 +69,7 @@ interface ITransferSpecs {
   transfer_specs: [{
     transfer_spec: ITransferSpec,
     aspera_connect_settings: IAsperaConnectSettings
-  }]
+  }];
 }
 
 interface IEvtListener {
@@ -77,8 +77,8 @@ interface IEvtListener {
 }
 
 interface ICallbacks {
-  success(response: any): any;
-  error?(response: any): any;
+  success (response: any): any;
+  error? (response: any): any;
 }
 
 /**
@@ -126,7 +126,7 @@ export function Connect (options: ConnectOptions) {
   let PLUGIN_ID = options.id || 'aspera-web';
   let PLUGIN_CONTAINER_ID = options.containerId || 'aspera-web-container';
   let SDK_LOCATION = Utils.getFullURI(options.sdkLocation) || '//d3gcli72yxqn2z.cloudfront.net/connect/v4';
-  let APPLICATION_ID: any  = '';
+  let APPLICATION_ID: any = '';
   let AUTHORIZATION_KEY = options.authorizationKey || '';
   let POLLING_TIME = options.pollingTime || 2000;
   let MINIMUM_VERSION = options.minVersion || '';
@@ -419,7 +419,7 @@ export function Connect (options: ConnectOptions) {
   this.getStatus = function () {
     return connectStatus;
   };
-   
+
   /**
    * Call this method after creating the {@link AW4.Connect} object. It is mandatory to call this
    * function before making use of any other function of the API. If called more than
@@ -495,7 +495,7 @@ export function Connect (options: ConnectOptions) {
     connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/modify/' + transferId, options, SESSION_ID.value(), callbacks);
     return null;
   };
-   
+
   /**
    * Read file as 64-bit encoded data.
    *
@@ -554,7 +554,7 @@ export function Connect (options: ConnectOptions) {
    * ```
    * @return {null|Error}
    */
-   
+
   this.readChunkAsArrayBuffer = function (options: { path: string, offset: number, chunkSize: number }, callbacks: ICallbacks) {
     console.warn('AW4.Connect#readChunkAsArrayBuffer will be deprecated in the future.');
     if (!options.path || typeof options.offset === 'undefined' || typeof options.chunkSize === 'undefined') {
@@ -632,7 +632,7 @@ export function Connect (options: ConnectOptions) {
     }
     return listenerFound;
   };
-   
+
   /**
    * Remove the transfer - terminating it if necessary - from Connect.
    *
@@ -652,7 +652,7 @@ export function Connect (options: ConnectOptions) {
     connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/remove/' + transferId, null, SESSION_ID.value(), callbacks);
     return null;
   };
-   
+
    /**
     * Resume a transfer that was stopped.
     *
@@ -917,9 +917,9 @@ export function Connect (options: ConnectOptions) {
       options = {};
     }
     localOptions.title = options.title || '';
-    localOptions.suggestedName = options!.suggestedName || '';
+    localOptions.suggestedName = options.suggestedName || '';
     localOptions.allowMultipleSelection = Utils.isNullOrUndefinedOrEmpty(options.allowMultipleSelection) || options.allowMultipleSelection;
-    localOptions.allowedFileTypes = options!.allowedFileTypes || '';
+    localOptions.allowedFileTypes = options.allowedFileTypes || '';
     connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-open-file-dialog/', localOptions, SESSION_ID.value(), callbacks);
     return null;
   };
@@ -1027,7 +1027,7 @@ export function Connect (options: ConnectOptions) {
     };
     return requestHandler.init(options);
   };
-   
+
   /**
    * Initiates a single transfer. Call {@link AW4.Connect#getAllTransfers} to get transfer
    * statistics, or register an event listener through {@link AW4.Connect#addEventListener}.
@@ -1062,18 +1062,18 @@ export function Connect (options: ConnectOptions) {
       return Utils.createError(-1, 'Invalid transferSpec parameter');
     }
 
-    let aspera_connect_settings = asperaConnectSettings || {};
+    let settings = asperaConnectSettings || {};
 
     let transferSpecs: ITransferSpecs = {
       transfer_specs : [{
         transfer_spec : transferSpec,
-        aspera_connect_settings : aspera_connect_settings
+        aspera_connect_settings : settings
       }]
     };
 
     return this.startTransfers(transferSpecs, callbacks);
   };
-   
+
   /**
    * Initiates one or more transfers (_currently only the first `transfer_spec`
    * is used_). Call {@link AW4.Connect#getAllTransfers} to get transfer
@@ -1143,7 +1143,7 @@ export function Connect (options: ConnectOptions) {
     connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/start', transferSpecs, SESSION_ID.value(), callbacks);
     return { request_id : requestId };
   };
-   
+
   /**
    * Stop all requests from Connect to restart activity, please
    * create a new {@link AW4.Connect} object or call {@link AW4.Connect#start}.
@@ -1155,7 +1155,7 @@ export function Connect (options: ConnectOptions) {
   this.stop = function () {
     return requestHandler.stopRequests();
   };
-   
+
   /**
    * Terminate the transfer. Use {@link AW4.Connect#resumeTransfer} to resume.
    *
@@ -1175,7 +1175,7 @@ export function Connect (options: ConnectOptions) {
     connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/stop/' + transferId, null, SESSION_ID.value(), callbacks);
     return null;
   };
-   
+
   /**
    * Get the IBM Aspera Connect version.
    *
@@ -1201,7 +1201,7 @@ export function Connect (options: ConnectOptions) {
     connectHttpRequest(HTTP_METHOD.GET, '/connect/info/version', null, SESSION_ID.value(), callbacks);
     return null;
   };
-};
+}
 
 /**
  * AW4.Connect.EVENT
@@ -1367,7 +1367,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  *       "uuid": "add433a8-c99b-4e3a-8fc0-4c7a24284ada",
  *     }
  */
-  
+
 /**
  * The parameters for starting a transfer.
  *
@@ -1561,7 +1561,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  *   }
  * }
  */
-   
+
 /**
  * The data format for the connect web app parameters.
  *
@@ -1581,7 +1581,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  *   "request_id": "36d3c2a4-1856-47cf-9865-f8e3a8b47822"
  * }
  */
-     
+
 /**
  * This object is returned if an error occurs. It contains an error code and a message.
  *
@@ -1599,7 +1599,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  *   }
  * }
  */
-  
+
 /**
  * This object can be passed to an asynchronous API call to get the results
  *   of the call.
@@ -1619,7 +1619,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  *
  * @typedef {Object} Callbacks
  */
- 
+
 /**
  * This object holds the data of the files that have been selected by the user. It
  *   may hold one or more data items.
@@ -1672,7 +1672,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  *
  * @typedef {Object} FileFilters
  */
- 
+
  /**
   * Connect-specific parameters when starting a transfer.
   *
