@@ -28,7 +28,6 @@ export const STATUS = {
   EXTENSION_INSTALL: 'EXTENSION_INSTALL'
 };
 
-
 export const EVENT = {
   ALL: 'all',
   TRANSFER: 'transfer',
@@ -54,14 +53,14 @@ export const SESSION_LASTKNOWN_KEY = 'aspera-last-known-session-key';
 export const SESSION_LASTKNOWN_PORT = 'aspera-last-known-port';
 
 export const INSTALL_EVENT = {
-  DOWNLOAD_CONNECT : "downloadconnect",
-  REFRESH_PAGE : "refresh",
-  IFRAME_REMOVED : "removeiframe",
-  IFRAME_LOADED : "iframeloaded",
-  TROUBLESHOOT : "troubleshoot",
-  CONTINUE : "continue",
-  RESIZE : "px",
-  RETRY : "retry",
+  DOWNLOAD_CONNECT : 'downloadconnect',
+  REFRESH_PAGE : 'refresh',
+  IFRAME_REMOVED : 'removeiframe',
+  IFRAME_LOADED : 'iframeloaded',
+  TROUBLESHOOT : 'troubleshoot',
+  CONTINUE : 'continue',
+  RESIZE : 'px',
+  RETRY : 'retry',
   EXTENSION_INSTALL : 'extension_install',
   DOWNLOAD_EXTENSION : 'download_extension'
 };
