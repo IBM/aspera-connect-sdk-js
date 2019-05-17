@@ -13,7 +13,6 @@ pipeline {
   environment {
     PLATFORM = 'mac-10.13-64'
     PATH = "$WORKSPACE/atc/mac-10.13-64/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
-    ABLD_CMD = "ruby buildsystem/bin/abld --release -p $PLATFORM"
   }
   stages {
     stage('Copy Artifacts') {
