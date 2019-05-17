@@ -1,13 +1,16 @@
 {
   "private": true,
   "scripts": {
-    "build": "run-s build:browser bundle",
+    "build": "run-s build:browser build:bundle build:zip",
     "build:browser": "npm --prefix packages/browser run build",
-    "bundle": "./scripts/bundle-sdk.sh"
+    "build:bundle": "./scripts/bundle-sdk.sh",
+    "build:zip": "./scripts/zip-sdk.sh",
+    "clean": "rimraf *.zip dist packages/browser/docs packages/browser/esm packages/browser/build packages/browser/dist"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",
-    "replace-in-file": "^4.1.0"
+    "replace-in-file": "^4.1.0",
+    "rimraf": "^2.6.3"
   },
   "dependencies": {}
 }
