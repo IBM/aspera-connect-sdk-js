@@ -15,7 +15,7 @@ pipeline {
     PATH = "$WORKSPACE/atc/mac-10.13-64/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
   }
   stages {
-    stage('Copy Artifacts') {
+    stage('Copy Installers') {
       steps {
         copyArtifacts filter: 'BUILD/mac-10.13-64-release/bin/IBMAsperaConnect*.dmg', fingerprintArtifacts: true, flatten: true, projectName: 'apps-trunk-build-mac-10.13-64', target: 'imports/dist/sdk'
         copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-trunk-build-win-v140-32', target: 'imports/dist/sdk'
