@@ -1,8 +1,10 @@
 /**
+ * @desc Contains logging wrapper functions for the developer.
+ *
  * @module Logger
  */
- 
-import { LS_LOG_KEY } from './shared/constants';
+
+ import { LS_LOG_KEY } from './shared/constants';
 /**
  * section: API
  * class AW4.Logger
@@ -76,12 +78,17 @@ export function error (message: string) {
 }
 
 /**
- * AW4.Logger.setLevel(level) -> No return value
- * - level (Number): 0 for INFO, 1 for DEBUG, 2 for TRACE
+ * Sets the logging level for the Connect SDK.
  *
- * Sets the logging level for Connect SDK
- *
- * Default: `0`
+ * @function
+ * @static
+ * @name setLevel
+ * @param {Number} level=0
+ * Levels:
+ * * `0` - INFO
+ * * `1` - DEBUG
+ * * `2` - TRACE
+ * @return {null}
  */
 export function setLevel (level: number) {
   LogLevel = level;

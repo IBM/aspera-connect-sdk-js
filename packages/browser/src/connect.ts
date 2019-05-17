@@ -1,3 +1,10 @@
+/**
+ * @namespace AW4
+ *
+ * @property {Module} Utils {@link module:Utils}
+ * @property {Module} Logger {@link module:Logger}
+ */
+ 
 import * as Utils from './utils';
 import * as Logger from './logger';
 import RequestHandler from './request/request';
@@ -79,6 +86,7 @@ interface ICallbacks {
  *
  * @name Connect
  * @class
+ * @memberof AW4
  * @param {Object} options Configuration parameters for Connect
  * @param {Number} [options.connectLaunchWaitTimeoutMs=5000] How long to wait in milliseconds
  *   for Connect to launch. If we reach this timeout without a successful request to Connect,
@@ -110,10 +118,6 @@ interface ICallbacks {
  * let asperaWeb = new AW4.Connect(options) // returns instance of AW4.Connect
  */
 export function Connect (options: ConnectOptions) {
-  /**
-   * Whether this component is visible or not
-   * @name Connect#visible
-   */
   if (Utils.isNullOrUndefinedOrEmpty(options)) {
     options = {};
   }
@@ -310,7 +314,7 @@ export function Connect (options: ConnectOptions) {
 
   /**
    * @function
-   * @name Connect#addEventListener
+   * @name AW4.Connect#addEventListener
    * @description Subscribe for Connect events. The first time the listener is
    *   called it will receive an event for each of the transfers already displayed
    *   in Connect, such that the listener will know the complete state of all transfers.
@@ -360,7 +364,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#authenticate
+   * @name AW4.Connect#authenticate
    * @param {Object} authSpec Authentication credentials.
    *
    *  Options for `authSpec` (subset of {@link TransferSpec}):
@@ -390,7 +394,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#getAllTransfers
+   * @name AW4.Connect#getAllTransfers
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
@@ -409,7 +413,7 @@ export function Connect (options: ConnectOptions) {
    * Get current status of Connect.
    *
    * @function
-   * @name Connect#getStatus
+   * @name AW4.Connect#getStatus
    * @return {STATUS}
    */
   this.getStatus = function () {
@@ -429,7 +433,7 @@ export function Connect (options: ConnectOptions) {
    * ```
    *
    * @function
-   * @name Connect#initSession
+   * @name AW4.Connect#initSession
    * @param  {String} [applicationId] An ID to represent this session. Transfers
    *   initiated during this session will be associated with the ID. To continue
    *   a previous session, use the same ID as before. Use a unique ID in order to
@@ -469,7 +473,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#modifyTransfer
+   * @name AW4.Connect#modifyTransfer
    * @param {String} transferId The ID of the transfer to modify
    * @param {Object} options A subset of {@link TransferSpec}
    *
@@ -498,7 +502,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#readAsArrayBuffer
+   * @name AW4.Connect#readAsArrayBuffer
    * @param {Object} options Object with options needed for reading the file.
    *
    * Options:
@@ -531,7 +535,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#readChunkAsArrayBuffer
+   * @name AW4.Connect#readChunkAsArrayBuffer
    * @param {Object} options Object with options needed for reading a chunk.
    *
    * Options:
@@ -572,7 +576,7 @@ export function Connect (options: ConnectOptions) {
    * * `false` - If we could not find a listener for the parameters provided.
    *
    * @function
-   * @name Connect#removeEventListener
+   * @name AW4.Connect#removeEventListener
    * @param {EVENT} [type] The type of event to stop receiving events for.
    * @param {Function} [listener] The function used to subscribe in {@link Connect#addEventListener}
    * @return {Boolean}
@@ -635,7 +639,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#removeTransfer
+   * @name AW4.Connect#removeTransfer
    * @param {String} transferId The ID(`uuid`) of the transfer to delete.
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
@@ -655,7 +659,7 @@ export function Connect (options: ConnectOptions) {
     * *This method is asynchronous.*
     *
     * @function
-    * @name Connect#resumeTransfer
+    * @name AW4.Connect#resumeTransfer
     * @param {String} transferId The ID(`uuid`) of the transfer to resume
     * @param {Object} options A subset of {@link TransferSpec}
     *
@@ -692,7 +696,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#setDragDropTargets
+   * @name AW4.Connect#setDragDropTargets
    * @param {String} cssSelector CSS selector for drop targets.
    * @param {Object} [options] Drag and drop options for these targets.
    *
@@ -786,7 +790,7 @@ export function Connect (options: ConnectOptions) {
     * *This method is asynchronous.*
     *
     * @function
-    * @name Connect#showAbout
+    * @name AW4.Connect#showAbout
     * @param {Callbacks} callbacks `success` and `error` functions to receive
     *   results.
     *
@@ -806,7 +810,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#showDirectory
+   * @name AW4.Connect#showDirectory
    * @param {String} transferId The ID(`uuid`) of the transfer to show files for.
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
@@ -826,7 +830,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#showPreferences
+   * @name AW4.Connect#showPreferences
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
@@ -850,7 +854,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#showSaveFileDialog
+   * @name AW4.Connect#showSaveFileDialog
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
@@ -891,7 +895,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#showSelectFileDialog
+   * @name AW4.Connect#showSelectFileDialog
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
@@ -932,7 +936,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#showSelectFolderDialog
+   * @name AW4.Connect#showSelectFolderDialog
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
@@ -964,7 +968,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#showTransferManager
+   * @name AW4.Connect#showTransferManager
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
@@ -983,7 +987,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#showTransferMonitor
+   * @name AW4.Connect#showTransferMonitor
    * @param {String} transferId The ID(`uuid`) of the corresponding transfer.
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
@@ -1002,7 +1006,7 @@ export function Connect (options: ConnectOptions) {
    * and it should only be called directory after a call to {@link Connect#stop}.
    *
    * @function
-   * @name Connect#start
+   * @name AW4.Connect#start
    * @return {null|Error}
    */
   this.start = function () {
@@ -1038,7 +1042,7 @@ export function Connect (options: ConnectOptions) {
    * this transfer with its events.
    *
    * @function
-   * @name Connect#startTransfer
+   * @name AW4.Connect#startTransfer
    * @param {TransferSpec} transferSpec Transfer parameters.
    * @param {ConnectSpec} connectSpec Connect options
    * @param {Callbacks} callbacks `success` and `error` functions to receive results.
@@ -1087,7 +1091,7 @@ export function Connect (options: ConnectOptions) {
    * this transfer with its events.
    *
    * @function
-   * @name Connect#startTransfers
+   * @name AW4.Connect#startTransfers
    * @param {Object} transferSpecs Transfer parameters.
    *
    * Format:
@@ -1145,7 +1149,7 @@ export function Connect (options: ConnectOptions) {
    * create a new {@link Connect} object or call {@link Connect#start}.
    *
    * @function
-   * @name Connect#stop
+   * @name AW4.Connect#stop
    * @return {null}
    */
   this.stop = function () {
@@ -1158,7 +1162,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#stopTransfer
+   * @name AW4.Connect#stopTransfer
    * @param {String} transferId The ID(`uuid`) of the transfer to stop.
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
@@ -1178,7 +1182,7 @@ export function Connect (options: ConnectOptions) {
    * *This method is asynchronous.*
    *
    * @function
-   * @name Connect#version
+   * @name AW4.Connect#version
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *

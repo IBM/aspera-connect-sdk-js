@@ -18,21 +18,6 @@ let check_firefox = function (ua: any, minver: number) {
   return (ver >= minver);
 };
 
-/**
- * AW4.Utils.BROWSER -> Object
- *
- * Contains the type of browser that we are currently on (based on user agent):
- *
- * 1. `AW4.Utils.BROWSER.OPERA` (`Boolean`)
- * 2. `AW4.Utils.BROWSER.IE` (`Boolean`)
- * 3. `AW4.Utils.BROWSER.CHROME` (`Boolean`)
- * 4. `AW4.Utils.BROWSER.FIREFOX` (`Boolean`)
- * 5. `AW4.Utils.BROWSER.FIREFOX_LEGACY` (`Boolean`)
- * 6. `AW4.Utils.BROWSER.EDGE_WITH_EXTENSION` (`Boolean`)
- * 7. `AW4.Utils.BROWSER.EDGE_LEGACY` (`Boolean`)
- * 8. `AW4.Utils.BROWSER.SAFARI` (`Boolean`)
- * 9. `AW4.Utils.BROWSER.SAFARI_NO_NPAPI` (`Boolean`)
- **/
 export default {
   OPERA: /opera|opr/i.test(ua) && !/edge/i.test(ua),
   IE: /msie|trident/i.test(ua) && !/edge/i.test(ua),

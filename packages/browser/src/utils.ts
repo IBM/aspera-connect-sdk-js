@@ -1,25 +1,39 @@
 /**
+ * @desc Contains helper functions for the developer.
+ *
  * @module Utils
- */
- 
+ * @property {Object} BROWSER Contains the type of browser that we are currently
+ *   on (based on user agent).
+ *
+ *   Format:
+ *   ```
+ *   {
+ *     "OPERA": false,
+ *     "IE": false,
+ *     "CHROME": true,
+ *     "FIREFOX": false,
+ *     "FIREFOX_LEGACY": false,
+ *     "EDGE_WITH_EXTENSION": false,
+ *     "EDGE_LEGACY": false,
+ *     "SAFARI": false,
+ *     "SAFARI_NO_NPAPI": false
+ *   }
+ *   ```
+ **/
+
 import * as Logger from './logger';
 import BROWSER from './shared/browser'
 import {
-  FASP_API, //export directly
+  FASP_API,
   CURRENT_API,
   LS_CONTINUED_KEY,
-  LS_CONNECT_APP_ID, //export directly
+  LS_CONNECT_APP_ID,
   SS_SESSION_LASTKNOWN_ID,
 } from './shared/constants'
 import { SESSION_ID, SESSION_KEY } from './shared/sharedInternals';
 import * as aesjs from 'aes-js';
 const crypt = { aesjs: aesjs };
 
-/** section: API
- * class AW4.Utils
- *
- * The [[AW4.Utils]] class contains helper functions for the developer.
- **/
 SESSION_ID.set(generateUuid());
 SESSION_KEY.set(generateRandomStr(32))
 
@@ -27,9 +41,6 @@ let SDK_LOCATION: string = '';
 var nextObjId = 0;
 var initUrlWampParams = '';
 
-/**
- * @ignore
- */
 export function getInitUrl() {
   return CURRENT_API + '://initialize/?key=' + SESSION_KEY.value() + '&id=' + SESSION_ID.value() + initUrlWampParams;
 };
@@ -38,9 +49,6 @@ export function getInitUrl() {
 // Compatibility functions
 ////////////////////////////////////////////////////////////////////////////
 
-/**
- * @ignore
- */
 export function createError (errorCode: any, message: any) {
   var internalMessage = '';
   if (errorCode == -1) {
@@ -51,7 +59,6 @@ export function createError (errorCode: any, message: any) {
 
 
 /**
- * @ignore
  * - str
  */
 export function parseJson (str: any) {
@@ -79,7 +86,6 @@ export function isNullOrUndefinedOrEmpty (x: any) {
 };
 
 /**
- * @ignore
  * AW4.Utils.versionLessThan(version1, version2) -> bool
  *  - version1 (Number):  a version Integer
  *  - version2 (Number):  a version Integer
@@ -130,9 +136,6 @@ export function versionLessThan (a: string, b: string) {
   return false;
 };
 
-/**
- * @ignore
- */
 export function checkVersionException (): boolean {
   if (typeof(localStorage) == 'undefined')
     return false;
@@ -147,19 +150,12 @@ export function checkVersionException (): boolean {
   return false;
 };
 
-/**
- * @ignore
- */
 export function addVersionException (): void {
   if (typeof(localStorage) == 'undefined')
     return;
   localStorage.setItem(LS_CONTINUED_KEY, String(Math.round(new Date().getTime() / 1000)));
 };
 
-/**
- * @ignore
- * Generate a random uuid string.
- */
 export function generateUuid (): string {
   var date = new Date().getTime();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -175,9 +171,6 @@ export function generateUuid (): string {
   });
 };
 
-/**
- * @ignore
- */
 export function generateRandomStr (size: number): string {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -188,9 +181,6 @@ export function generateRandomStr (size: number): string {
   return text;
 };
 
-/**
- * @ignore
- */
 export function encrypt (data: any) {
   var dataBytes = crypt.aesjs.utils.utf8.toBytes(data);
   var key = crypt.aesjs.utils.utf8.toBytes(SESSION_KEY.value());
@@ -226,22 +216,20 @@ export function decrypt (data: any) {
 };
 
 /**
-  * AW4.Utils.launchConnect(callback) -> null
-  * - callback (function):  It will be called once we have determined if
-  *  connect is installed in the system [CHROME/OPERA]
-  *
-  * Attempt to launch connect. It will handle different browser
-  * implementations to not end in an error page or launch multiple
-  * times.
-  *
-  * [CHROME/OPERA] will return true if Connect is installed
-  *
-  * ##### Object returned to success callback as parameter
-  *
-  * 1. `true` : if Aspera Connect is installed
-  * 2. `false` : if Aspera Connect is either not installed or we couldn't
-  * detect it.
-  **/
+ * Attempt to launch Connect. It will handle different browser
+ * implementations to not end in an error page or launch multiple
+ * times.
+ *
+ * @function
+ * @static
+ * @name launchConnect
+ * @param {Callbacks} callbacks `success` and `error` functions to receive results.
+ *
+ * Result returned to success callback:
+ * * `true` - If Connect is installed.
+ * * `false` - If Connect is either not installed or we could not detect it.
+ * @return {null}
+ */
 export function launchConnect (userCallback?: (t: boolean) => any) {
   let isRegistered = false;
   let callback = (installed: boolean) => {
@@ -282,13 +270,21 @@ export function launchConnect (userCallback?: (t: boolean) => any) {
 };
 
 /**
-  * AW4.Utils.getFullURI(relativeURL) -> String
-  *  - relativeURL (String):  The relative URL that we want the full path to,
-  *  it must be relative to the current page being rendered. If a full URL is
-  *  provided, it will return the same.
-  *
-  *  @returns {String} - the full URL or null
-  **/
+ * Returns full URL from relative URL
+ *
+ * @function
+ * @static
+ * @name getFullURI
+ *
+ * @param {String} relativeURL The relative URL that we want the full path to. It
+ *   must be relative to the current page being rendered. If a full URL is
+ *   provided, it will return the same.
+ * @return {String}
+ * @example
+ * // If current rendered page is https://example.com/my/page
+ * let relativeURL = 'foo.txt'
+ * AW4.Utils.getFullURI(relativeURL) // returns "https://example.com/my/page/foo.txt"
+ */
 export function getFullURI (relativeURL: string | undefined): string | null {
   if (typeof relativeURL !== 'string') {
     return null;
@@ -304,10 +300,19 @@ export function getFullURI (relativeURL: string | undefined): string | null {
 }
 
 /**
-  * AW4.Utils.utoa(inputString) -> String
-  * - inputString: The inputString can be utf8 or unicode. The output string is
-  * a base64 string.
-  **/
+ * Output base64 string from utf8 or unicode string
+ *
+ * @function
+ * @static
+ * @name utoa
+ *
+ * @param {String} inputString utf8 or unicode string input.
+ * @return {String}
+ *
+ * @example
+ * let inputString = 'foo'
+ * AW4.Utils.atou(inputString) // returns "Zm9v"
+ */
 export function utoa (inputString: string) {
   if (window.btoa) {
     return window.btoa(unescape(encodeURIComponent(inputString)));
@@ -317,10 +322,19 @@ export function utoa (inputString: string) {
 }
 
 /**
-  * AW4.Utils.atou(inputString) -> String
-  * - inputString: The input string is a base64 string. The output is a unicode
-  * string.
-  **/
+ * Output unicode string from base64 string
+ *
+ * @function
+ * @static
+ * @name atou
+ *
+ * @param {String} inputString base64 string input.
+ * @return {String}
+ *
+ * @example
+ * let inputString = 'Zm9v'
+ * AW4.Utils.atou(inputString) // returns "foo"
+ */
 export function atou (inputString: string) {
   if (window.atob) {
     return decodeURIComponent(escape(window.atob(inputString)));
@@ -329,9 +343,6 @@ export function atou (inputString: string) {
   }
 }
 
-/**
- * @ignore
- */
 export function nextObjectId () {
   // Return an incrementing id even if file was reloaded
   // if (typeof(AW4.nextObjId) == 'undefined')
@@ -339,9 +350,6 @@ export function nextObjectId () {
   return nextObjId++;
 }
 
-/**
- * @ignore
- */
 export function getLocalStorage(key: string) {
 	     try {
 	         if (typeof(localStorage) == 'undefined')
@@ -354,9 +362,6 @@ export function getLocalStorage(key: string) {
 	     }
 	 }
 
-/**
- * @ignore
- */
 export function setLocalStorage(key: string, value: string) {
 	     try {
 	         if (typeof(localStorage) == 'undefined')
