@@ -1,5 +1,3 @@
-/* tslint:disable:no-empty */
-
 import BROWSER from '../shared/browser';
 import { STATUS } from '../shared/sharedInternals';
 import * as Utils from '../utils';

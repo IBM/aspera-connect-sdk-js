@@ -1,5 +1,3 @@
-/* tslint:disable:no-empty */
-
 import BROWSER from '../shared/browser';
 import { STATUS, SESSION_ID, SESSION_KEY } from '../shared/sharedInternals';
 import * as Logger from '../logger';
