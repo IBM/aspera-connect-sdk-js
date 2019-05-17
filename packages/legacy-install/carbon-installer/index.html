@@ -25,11 +25,6 @@
           <span id="launching-container-text" class="text"></span>
           <div class="aspera-icon spinner"></div>
         </div>
-        <div id="security-update-container" class="message">
-          <span id="security-update-container-text" class="text"></span>
-          <a id="security-update-container-download-link" style="display:none;" class="button download-latest download-button" download href="" onclick="sendParentMessage('downloadconnect');"></a>
-          <a id="security-update-container-continue-link" style="display:none;" class="button" href="" onclick="sendParentMessage('continue'); return false"></a>
-        </div>
         <div id="running-container" class="message">
           <span id="running-container-text" class="text"></span>
           <div class="aspera-icon check"></div>
@@ -47,7 +42,8 @@
             <span id="step-one-new"></span>
             <span id="step-one-text"  style="display: inline-block;"></span>
           </div>
-          <span class="step-one-img" style="display: inline-block;"><svg id="pictogram-puzzle"></svg></span>
+          <span id="step-one-puzzle-img" class="pictograms"><svg id="step-one-puzzle"></svg></span>
+          <span id="step-one-download-box-img" class="pictograms"><svg id="step-one-download-box"></svg></span>
           <div id="step-one-button" class="big-button-active" style="display: inline-block;">
             <a id="step-one-inside-button" class="filled-button" style="display: inline-block;"></a>
           </div>
@@ -55,9 +51,10 @@
         <div id="install-step-two">
           <span id="step-two-checkmark" class="green-checkmark" style="display: inline-block;"><svg></svg></span>
           <span id="step-two-text" class="steps" style="display: inline-block;"></span>
-          <span class="step-one-img" style="display: inline-block;"><svg id="pictogram-download"></svg></span>
+          <span id="step-two-download-box-img" class="pictograms"><svg id="step-two-download-box"></svg></span>
+          <span id="step-two-openbox-img" class="pictograms"><svg id="step-two-openbox"></svg></span>
           <div id="step-two-button" class="big-button-non-active"  style="display: inline-block;">
-            <a id="step-two-inside-button" href="" class="not-filled-button" style="display: inline-block;" download></a>
+            <a id="step-two-inside-button" href="" class="not-filled-button" style="display: inline-block;"></a>
           </div>
         </div>
         <div id="install-step-three">
@@ -66,7 +63,8 @@
             <span id="step-three-new"></span>
             <span id="step-three-text"  style="display: inline-block;"></span>
           </div>
-          <span class="step-three-img" style="display: inline-block;"><svg id="pictogram-openbox"></svg></span>
+          <span id="step-three-openbox-img" class="pictograms"><svg id="step-three-openbox"></svg></span>
+          <span id="step-three-puzzle-img" class="pictograms"><svg id="step-three-puzzle"></svg></span>
           <div id="step-three-button" class="big-button-non-active" style="display: inline-block;">
             <button id="step-three-inside-button" class="not-filled-button" style="display: inline-block;"></button>
           </div>
@@ -81,11 +79,19 @@
       </div>
     </div>
     <div id="download-bottom" class="download-indicator">
-      <svg id="download-svg" viewBox="0 0 140 110">
-        <polygon id="download-svg-polygon" points="0,0 140,0 140,101 100,101 27,101 22,106 17,101 0,101" />
-        <p id="download-installer-text"></p>
-        <p id="run-installer-text"></p>
+      <svg class="download-svg-polygon" viewBox="0 0 140 110">
+        <path d="M0,0 L140,0 L140,105 L40,105 L35,110 L30,105 L0,105 Z" fill="#3d3d3d" />
+        <p id="download-bottom-text" class="installer-text"></p>
+        <p id="run-bottom-text" class="installer-text"></p>
+      </svg>
+    </div>
+    <div id="download-upper" class="download-indicator-top">
+      <svg class="download-svg-polygon" viewBox="0 0 140 110">
+        <path d="M0,110 L0,10 L25,10 L30,5 L35,10 L140,10 L140,110 Z" fill="#3d3d3d" />
+        <p id="download-upper-text"class="installer-text"></p>
+        <p id="run-upper-text" class="installer-text"></p>
       </svg>
     </div>
   </body>
 </html>
+

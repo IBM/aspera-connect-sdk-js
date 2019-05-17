@@ -238,16 +238,21 @@ var prepareDownloadExtensionButton = function(element, href) {
     element.textContent = localize('install-ext', language());
   }
   element.setAttribute('lang', language());
-  element.setAttribute('href', getExtensionStoreLink());
-  element.setAttribute('target', "_blank");
+  if (!element.getAttribute('href') || element.getAttribute('href') == '') {
+    console.log("Setting Extension store link: " + getExtensionStoreLink());
+    element.setAttribute('href', getExtensionStoreLink());
+    element.setAttribute('target', "_blank");
+  }
 };
 
+var downloadIndicatorTimer;
 var fadeOutDownloadIndicator = function(image) {
-  var opacity = 1;
-  var timer = setInterval(function(){
+  clearInterval(downloadIndicatorTimer);
+  opacity = 1;
+  downloadIndicatorTimer = setInterval(function(){
     if(opacity <= 0){
       image.style.display = 'none';
-      clearInterval(timer);
+      clearInterval(downloadIndicatorTimer);
     }
     image.style.opacity = opacity;
     opacity -=  0.05;
@@ -268,40 +273,56 @@ var hideAllBySelector = function(document, selector) {
   }
 };
 
-var changeStateToInstall = function(state) {
+var changeStateToInstall = function() {
+  // var iframe = window.parent.document.getElementById('aspera-iframe-container');
+  // var innerDoc = (iframe.contentDocument) ? iframe.contentDocument : iframe.contentWindow.document;
   document.getElementById('step-one-checkmark').style.visibility = 'visible';
   document.getElementById('step-two-checkmark').style.visibility = 'hidden';
   document.getElementById('step-three-checkmark').style.visibility = 'hidden';
   if (BROWSER.SAFARI || BROWSER.IE) {
-    setButtonToDisabled(document.getElementById('step-one-inside-button'));
-    setButtonToDisabled(document.getElementById('step-three-inside-button'));
     document.getElementById('step-two-inside-button').setAttribute('href', '');
-    document.getElementById('download-installer-text').style.display = 'none';
+    document.getElementById('step-two-button').style.opacity = '1';
     document.getElementById('step-two-inside-button').onclick = function(){
-      document.getElementById('download-bottom').style.display = 'inline-block';
-      prepareDownloadIndicator(document.getElementById('run-installer-text'), state);
+      if (BROWSER.SAFARI) {
+        document.getElementById('download-upper').style.display = 'inline-block';
+        document.getElementById('run-upper-text').style.display = 'inline-block';
+        document.getElementById('download-upper-text').style.display = 'none';
+        prepareDownloadIndicator(document.getElementById('run-upper-text'), 'install');
+        fadeOutDownloadIndicator(document.getElementById('download-upper'));
+      } else {
+        document.getElementById('download-bottom').style.display = 'inline-block';
+        document.getElementById('run-bottom-text').style.display = 'inline-block';
+        document.getElementById('download-bottom-text').style.display = 'none';
+        prepareDownloadIndicator(document.getElementById('run-bottom-text'), 'install');
+        fadeOutDownloadIndicator(document.getElementById('download-bottom'));
+      }
       return false;
     }
     prepareInstallButton(document.getElementById('step-two-inside-button'), isOutdated, '');
     prepareNotActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
     prepareActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
     prepareNotActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
-  } else if (BROWSER.EDGE || BROWSER.FIREFOX || BROWSER.CHROME) {
-    setButtonToDisabled(document.getElementById('step-one-inside-button'));
-    setButtonToDisabled(document.getElementById('step-two-inside-button'));
+  } else if (BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX || BROWSER.CHROME) {
     prepareInstallButton(document.getElementById('step-three-inside-button'), isOutdated, '');
-    document.getElementById('download-installer-text').style.display = 'none';
     document.getElementById('step-three-inside-button').disabled = false;
     document.getElementById('step-three-inside-button').onclick = function(){
-      document.getElementById('download-bottom').style.display = 'inline-block';
-      prepareDownloadIndicator(document.getElementById('run-installer-text'), state);
+      if (BROWSER.FIREFOX) {
+        document.getElementById('download-upper-text').style.display = 'none';
+        document.getElementById('download-upper').style.display = 'inline-block';
+        prepareDownloadIndicator(document.getElementById('run-upper-text'), 'install');
+        fadeOutDownloadIndicator(document.getElementById('download-upper'));
+      } else {
+        document.getElementById('download-bottom-text').style.display = 'none';
+        document.getElementById('download-bottom').style.display = 'inline-block';
+        prepareDownloadIndicator(document.getElementById('run-bottom-text'), 'install');
+        fadeOutDownloadIndicator(document.getElementById('download-bottom'));
+      }
       return false;
     }
     prepareNotActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
     prepareNotActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
     prepareActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
   }
-  fadeOutDownloadIndicator(document.getElementById('download-bottom'));
 };
 
 var setExtensionStore = function(elem) {
@@ -322,6 +343,8 @@ var handleMessage = function(event) {
     return;
   // update message
   var state = event.data;
+  // var iframe = window.parent.document.getElementById('aspera-iframe-container');
+  // var innerDoc = (iframe.contentDocument) ? iframe.contentDocument : iframe.contentWindow.document;
   if (state === 'launching'
     || state === 'update'
     || state === 'retry'
@@ -335,56 +358,93 @@ var handleMessage = function(event) {
   {
     if (state === 'download' && isDownloadRecent())
       state = 'install';
-    document.getElementsByClassName('connect-status-banner-container')[0].style.display = state == 'launching' || 'running' || 'unsupported_browser' ? 'inline-block' : 'none';
-    if (state === 'extension_install' || state === 'download' || state === 'install' || state === 'outdated' || state === 'failed' || state === 'retry'){
+    document.getElementsByClassName('connect-status-banner-container')[0].style.display = state == 'launching' || state == 'running' || state == 'unsupported_browser' ? 'inline-block' : 'none';
+    document.getElementsByClassName('three-step-installer')[0].style.display = state == 'launching' || state == 'running' || state == 'unsupported_browser' ? 'none' : 'inline-block';
+    if (state === 'extension_install' || state === 'download' || state === 'install' || state === 'outdated' || state === 'failed' || state === 'update'){
       sendParentMessage('100%');
-      document.documentElement.style.height = '452px';
+      document.height = '452px';
       document.getElementsByClassName('connect-status-banner-container')[0].style.display = 'none';
-      document.getElementsByClassName('three-step-installer')[0].style.display = 'inline-block';
+      document.getElementById("ext-install-welcome").textContent = localize("required", language());
       document.getElementById("extension-title").textContent = localize("ext-install", language());
-
-      if (state == 'outdated') {
-        isOutdated = true;
-      }
       if (BROWSER.SAFARI || BROWSER.IE) {
+        document.getElementById('step-one-download-box').style.display = 'inline';
+        document.getElementById('step-two-openbox').style.display = 'inline';
+        document.getElementById('step-three-puzzle').style.display = 'inline';
+        document.getElementById('step-one-download-box-img').style.display = 'inline-block';
+        document.getElementById('step-two-openbox-img').style.display = 'inline-block';
+        document.getElementById('step-three-puzzle-img').style.display = 'inline-block';
         document.getElementById('step-one-inside-button').textContent = localize('download-app', language());
+        document.getElementById('step-two-button').style.marginLeft = '37px';
+        document.getElementById('step-three-button').style.marginLeft = '35px';
+        document.getElementById('step-two-openbox-img').style.marginLeft = '12.5px';
+        document.getElementById('step-three-puzzle-img').style.marginLeft = '14px';
+        document.getElementById('step-three-new').style.visibility = 'visible';
+        document.getElementById('step-one-text').style.lineHeight = '32px';
+        document.getElementById('step-three-text').style.lineHeight = '1';
+        document.getElementById('install-step-three').style.marginTop = '27px';
+        document.getElementById('step-three-inside-button').style.cursor = 'pointer';
+        document.getElementById('step-three-new').textContent = localize('new', language());
+        document.getElementById('install-step-three').className += 'install-extension-step';
+        document.getElementById('step-one-inside-button').setAttribute('download', '');
         if (BROWSER.SAFARI) {
           document.getElementById('text-how').textContent = localize('how', language());
         }
-        if (state === 'outdated') {
+        if (state === 'outdated' || state == 'update') {
           document.getElementById('step-two-inside-button').textContent = localize('upgrade-connect', language());
         } else {
           document.getElementById('step-two-inside-button').textContent = localize('install-connect', language());
         }
         document.getElementById('step-three-inside-button').textContent = localize('enable-extension', language());
-      } else if (BROWSER.EDGE || BROWSER.FIREFOX || BROWSER.CHROME) {
+      } else if (BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX || BROWSER.CHROME) {
+        document.getElementById('step-two-button').style.marginLeft = '35px';
+        document.getElementById('step-three-button').style.marginLeft = '37px';
+        document.getElementById('step-two-download-box-img').style.marginLeft = '14px';
+        document.getElementById('step-three-openbox-img').style.marginLeft = '12.5px';
+        document.getElementById('step-one-puzzle').style.display = 'inline';
+        document.getElementById('step-two-download-box').style.display = 'inline';
+        document.getElementById('step-three-openbox').style.display = 'inline';
+        document.getElementById('step-one-puzzle-img').style.display = 'inline-block';
+        document.getElementById('step-two-download-box-img').style.display = 'inline-block';
+        document.getElementById('step-three-openbox-img').style.display = 'inline-block';
         document.getElementById('step-three-how').style.display = 'none';
+        document.getElementById('step-one-new').style.visibility = 'visible';
+        document.getElementById('step-three-text').style.lineHeight = '32px';
+        document.getElementById('step-one-text').style.lineHeight = '1';
+        document.getElementById('step-three-inside-button').style.cursor = 'pointer';
+        document.getElementById('step-one-new').textContent = localize('new', language());
+        document.getElementById('install-step-one').classList.add('install-extension-step');
         document.getElementById('step-one-inside-button').textContent = localize('install-extension', language());
         document.getElementById('step-two-inside-button').textContent = localize('download-app', language());
-        if (state === 'outdated') {
+        document.getElementById('step-two-inside-button').setAttribute('download', '');
+        prepareDownloadExtensionButton(document.getElementById('step-one-inside-button'), getExtensionStoreLink());
+        if (state === 'outdated' || state == 'update') {
           document.getElementById('step-three-inside-button').textContent = localize('upgrade-connect', language());
         } else {
           document.getElementById('step-three-inside-button').textContent = localize('install-connect', language());
         }
       }
-      if (state === 'extension_install' || state === 'outdated' || state === 'failed' || state === 'retry') {
+      if (state == 'outdated' || state == 'update' || state == 'failed') {
+        if (BROWSER.SAFARI || BROWSER.IE)
+          state = 'download'
+        else if (BROWSER.FIREFOX || BROWSER.CHROME || BROWSER.EDGE_WITH_EXTENSION)
+          if (!isExtensionInstalled(1000))
+            state = 'extension_install'
+          else
+            state = 'download'
+      }
+      if (state === 'extension_install') {
         if (BROWSER.SAFARI || BROWSER.IE) {
-          setButtonToDisabled(document.getElementById('step-one-inside-button'));
-          setButtonToDisabled(document.getElementById('step-two-inside-button'));
-          //add onclick and How? button with hover over
-          document.getElementById('step-three-new').style.display = 'inline';
-          document.getElementById('step-three-new').textContent = localize('new', language());
+          document.getElementById('step-two-button').style.opacity = '0.5';
+          document.getElementById('step-three-inside-button').disabled = false;
           document.getElementById('step-one-checkmark').style.visibility = 'visible';
           document.getElementById('step-two-checkmark').style.visibility = 'visible';
           document.getElementById('step-three-checkmark').style.visibility = 'hidden';
           prepareNotActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
           prepareNotActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
           prepareActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
-        } else if (BROWSER.EDGE || BROWSER.FIREFOX || BROWSER.CHROME) {
-          setButtonToDisabled(document.getElementById('step-two-inside-button'));
-          setButtonToDisabled(document.getElementById('step-three-inside-button'));
-          document.getElementById('step-one-inside-button').setAttribute('href', '');
-          document.getElementById('step-one-new').style.display = "inline";
+          // document.getElementById('step-three-inside-button').onclick = function(){triggerExtensionCheck();}
+        } else if (BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX || BROWSER.CHROME) {
+          document.getElementById('step-three-button').style.opacity = '0.5';
           document.getElementById('step-one-checkmark').style.visibility = 'hidden';
           document.getElementById('step-two-checkmark').style.visibility = 'hidden';
           document.getElementById('step-three-checkmark').style.visibility = 'hidden';
@@ -393,16 +453,25 @@ var handleMessage = function(event) {
           prepareNotActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
         }
       } else if (state === 'download') {
-        document.getElementById('step-three-button').style.opacity = '1';
-        document.getElementById('run-installer-text').style.display = 'none';
+        if (BROWSER.SAFARI || BROWSER.IE) {
+          document.getElementById('step-two-button').style.opacity = '1';
+        } else if (BROWSER.FIREFOX || BROWSER.CHROME || BROWSER.EDGE_WITH_EXTENSION) {
+          document.getElementById('step-three-button').style.opacity = '1';
+        }
+        document.getElementById('run-bottom-text').style.display = 'none';
           if (BROWSER.SAFARI || BROWSER.IE) {
-            setButtonToDisabled(document.getElementById('step-two-inside-button'));
-            setButtonToDisabled(document.getElementById('step-three-inside-button'));
             document.getElementById('step-one-inside-button').setAttribute('href', '');
             document.getElementById('step-one-inside-button').onclick = function(){
               downloadClicked = true;
-              document.getElementById('download-bottom').style.display = 'inline-block';
-              prepareDownloadIndicator(document.getElementById('download-installer-text'), state);
+              if (BROWSER.SAFARI) {
+                document.getElementById('download-upper').style.display = 'inline-block';
+                prepareDownloadIndicator(document.getElementById('download-upper-text'), state);
+                fadeOutDownloadIndicator(document.getElementById('download-upper'));
+              } else {
+                document.getElementById('download-bottom').style.display = 'inline-block';
+                prepareDownloadIndicator(document.getElementById('download-bottom-text'), state);
+                fadeOutDownloadIndicator(document.getElementById('download-bottom'));
+              }
               sendParentMessage('downloadconnect');
             }
             document.getElementById('step-one-checkmark').style.visibility = 'hidden';
@@ -411,16 +480,19 @@ var handleMessage = function(event) {
             prepareActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
             prepareNotActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
             prepareNotActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
-          } else if (BROWSER.FIREFOX || BROWSER.EDGE || BROWSER.CHROME) {
-            document.getElementById('step-one-new').style.display = 'none';
-            document.getElementById('run-installer-text').style.display = 'none';
-            setButtonToDisabled(document.getElementById('step-one-inside-button'));
-            setButtonToDisabled(document.getElementById('step-three-inside-button'));
-            document.getElementById('step-two-inside-button').setAttribute('href', '');
+          } else if (BROWSER.FIREFOX || BROWSER.EDGE_WITH_EXTENSION || BROWSER.CHROME) {
+            document.getElementById('run-bottom-text').style.display = 'none';
             document.getElementById('step-two-inside-button').onclick = function(){
               downloadClicked = true;
-              document.getElementById('download-bottom').style.display = 'inline-block';
-              prepareDownloadIndicator(document.getElementById('download-installer-text'), state);
+              if (BROWSER.FIREFOX) {
+                prepareDownloadIndicator(document.getElementById('download-upper-text'), state);
+                document.getElementById('download-upper').style.display = 'inline-block';
+                fadeOutDownloadIndicator(document.getElementById('download-upper'));
+              } else {
+                prepareDownloadIndicator(document.getElementById('download-bottom-text'), state);
+                document.getElementById('download-bottom').style.display = 'inline-block';
+                fadeOutDownloadIndicator(document.getElementById('download-bottom'));
+              }
               sendParentMessage('downloadconnect');
             }
             document.getElementById('step-one-checkmark').style.visibility = 'visible';
@@ -430,23 +502,21 @@ var handleMessage = function(event) {
             prepareActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
             prepareNotActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
           }
-          fadeOutDownloadIndicator(document.getElementById('download-bottom'));
-
         } else if (state == 'install') { //state install
         //wait 10 sec before showing install state if previous state was download and we're waiting for download to be completed.
           if (downloadClicked) {
-            setTimeout(changeStateToInstall, 10000);
+            setTimeout(function(){changeStateToInstall();}, 10000);
           } else {
             changeStateToInstall();
           }
-        }
+        } 
       } else {
       sendParentMessage('80px');
-      document.documentElement.style.height = '80px';
+      document.height = '80px';
       document.getElementsByClassName('connect-logo')[0].style.display = 'inline-block';
       document.getElementById('launching-container').style.display = state == 'launching' ? 'inline-block' : 'none';
       document.getElementById('running-container').style.display = state == 'running' ? 'inline-block' : 'none';
-      document.getElementsByClassName('three-step-installer')[0].style.display = state == 'extension_install' || state == 'download' || state == 'install' ? 'inline-block' : 'none';
+      document.getElementsByClassName('three-step-installer')[0].style.display = state == 'extension_install' || state == 'download' || state == 'install' || state == 'outdated' || state == 'failed' || state == 'update' ? 'inline-block' : 'none';
       document.getElementById('unsupported-container').style.display = state == 'unsupported_browser' ? 'inline-block' : 'none';
       if (state == 'launching') {
         document.getElementById('launching-container-text').textContent = localize('launching', language());
@@ -455,7 +525,7 @@ var handleMessage = function(event) {
       } else if (state == 'unsupported_browser') {
         var unsupported = localize('not-supported', language());
         var unsupported_with_link = unsupported.replace("<a>", "<a href=\"https://test-connect.asperasoft.com\" target=\"_blank\">");
-        document.getElementById('unsupported-text').textContent = unsupported_with_link;
+        document.getElementById('unsupported-text').innerHTML = unsupported_with_link;
       } else if (state == 'running') {
         recordConnectInstall();
       }
@@ -463,7 +533,7 @@ var handleMessage = function(event) {
   } else if (state.indexOf('downloadlink') === 0) {
     var href = state.substring(state.indexOf('=') + 1);
     downloadLink = href;
-    if (BROWSER.CHROME || BROWSER.FIREFOX || BROWSER.EDGE) {
+    if (BROWSER.CHROME || BROWSER.FIREFOX || BROWSER.EDGE_WITH_EXTENSION) {
       prepareDownloadExtensionButton(document.getElementById('step-one-inside-button'), href);
       prepareDownloadButton(document.getElementById('step-two-inside-button'), href);
       prepareInstallButton(document.getElementById('step-three-inside-button'), isOutdated, href);
@@ -472,8 +542,6 @@ var handleMessage = function(event) {
       prepareInstallButton(document.getElementById('step-two-inside-button'), isOutdated, href);
       prepareDownloadExtensionButton(document.getElementById('step-three-inside-button'), href);
     }
-    prepareDownloadButton(document.getElementById('security-update-container-download-link'), href);
-    prepareContinueButton(document.getElementById('security-update-container-continue-link'), href);
   } else if (state.indexOf('insertstylesheet') === 0) {
     //Add custom css files
     var cssHref = state.substring(state.indexOf('=') + 1);
@@ -494,53 +562,32 @@ var handleOnLoad = function(event) {
       " <a href=\"#\" onclick=\"openTab('https://test-connect.asperasoft.com'); return false;\">" +
       localize('troubleshoot', language()) +
       "</a>";
+    // var iframe = window.parent.document.getElementById('aspera-iframe-container');
+    // var innerDoc = (iframe.contentDocument) ? iframe.contentDocument : iframe.contentWindow.document;
     if (BROWSER.SAFARI || BROWSER.IE) {
       document.getElementById('step-three-new').textContent = localize('new', language());
       document.getElementById('step-one-inside-button').textContent = localize('download-app', language());
       document.getElementById('step-two-inside-button').textContent = localize('install-connect', language());
       document.getElementById('step-three-inside-button').textContent = localize('enable-extension', language());
-    } else if (BROWSER.EDGE || BROWSER.FIREFOX || BROWSER.CHROME) {
+    } else if (BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX || BROWSER.CHROME) {
       document.getElementById('step-one-new').textContent = localize('new', language());
       document.getElementById('step-one-inside-button').textContent = localize('install-extension', language());
       document.getElementById('step-two-inside-button').textContent = localize('download-app', language());
       document.getElementById('step-three-inside-button').textContent = localize('install-connect', language());
     }
-    document.getElementById('step-one-text').textContent = localize('step-1', language());
-    document.getElementById('step-two-text').textContent = localize('step-2', language());
-    document.getElementById('step-three-text').textContent = localize('step-3', language());
-    document.getElementById('already-installed-text').textContent = localize('already-installed', language());
-    document.getElementById('troubleshoot-link').textContent = localize('troubleshoot', language());
-    document.getElementById('ext-install-welcome').textContent = localize('required', language());
-    document.getElementById("extension-title").textContent = localize("ext-install", language());
-    document.getElementById('download-bottom-text').textContent = localize('download-bottom', language());
-    document.getElementById('launching-container-text').textContent = 'Launching IBM Aspera Connect...';
-    document.getElementById('update-container-text').textContent = 'This site requires a newer version of IBM Aspera Connect.';
-    document.getElementById('retry-link').textContent = localize('retry-button', language());
-    document.getElementById('security-update-container-text').textContent = localize('security-update', language());
-    document.getElementById('running-container-text').textContent = 'IBM Aspera Connect is running!';
-    document.getElementById('download-troubleshoot').textContent = localize('troubleshoot', language());
-    document.getElementById('step-one-inside-button').textContent = localize('install-extension', language());
-    document.getElementById('step-two-inside-button').textContent = localize('download-app', language());
-    document.getElementById('step-three-inside-button').textContent = localize('install-connect', language());
-    document.getElementById('download-top-text').textContent = localize('downloading', language());
-    document.getElementById('download-connect-link').textContent = localize('download-connect', language());
-    document.getElementById('download-connect-again').textContent = localize('download-connect', language());
-    document.getElementById('download-fail').textContent = localize('download-fail', language());
-    document.getElementById('install-finished').textContent = localize('install-finished', language());
-    document.getElementById('install-refresh').textContent = localize('refresh-button', language());
-    var unsupported = localize('not-supported', language());
-    var unsupported_with_link = unsupported.replace("<a>", "<a href=\"https://test-connect.asperasoft.com\" target=\"_blank\">");
-    document.getElementById('unsupported-text').textContent = unsupported_with_link;
-    document.getElementById('step-one-text').textContent = localize('step-1', language());
-    document.getElementById('step-two-text').textContent = localize('step-2', language());
-    document.getElementById('step-three-text').textContent = localize('step-3', language());
-    if (longLanguage) {
-      document.getElementById('retry-container-text-troubleshoot').style.fontSize = '11px';
-      document.getElementById('retry-container-text-troubleshoot').style.width = language().indexOf('fr') === 0 ? '13%' : '11%';
-      document.getElementById('download-connect-link').style.fontSize = '11px';
-      document.getElementById('retry-container-text-troubleshoot').style.marginLeft = language().indexOf('es') === 0 ? '10px' : null;
-      document.getElementById('update-container-link').style.fontSize = '11px';
-    }
+      document.getElementById('step-one-text').textContent = localize('step-1', language());
+      document.getElementById('step-two-text').textContent = localize('step-2', language());
+      document.getElementById('step-three-text').textContent = localize('step-3', language());
+      document.getElementById('already-installed-text').textContent = localize('already-installed', language());
+      document.getElementById('troubleshoot-link').textContent = localize('troubleshoot', language());
+      document.getElementById('ext-install-welcome').textContent = localize('required', language());
+      document.getElementById("extension-title").textContent = localize("ext-install", language());
+      document.getElementById('download-bottom-text').textContent = localize('download-bottom', language());
+      document.getElementById('launching-container-text').textContent = localize('launching', language());
+      document.getElementById('running-container-text').textContent = localize('running', language());
+      var unsupported = localize('not-supported', language());
+      var unsupported_with_link = unsupported.replace("<a>", "<a href=\"https://test-connect.asperasoft.com\" target=\"_blank\">");
+      document.getElementById('unsupported-text').textContent = unsupported_with_link;
   } catch (e) {
     if (parent.postMessage) {
       //An error occured while running this code, just display the standard message

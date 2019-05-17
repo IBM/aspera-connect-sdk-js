@@ -223,7 +223,7 @@ body {
 }
 
 .green-checkmark {
-  margin-left: 136.3px;
+  margin-left: 110.3px;
   height: 18px;
   width: 18px;
   vertical-align: middle;
@@ -233,54 +233,60 @@ body {
 #step-one-new-container, #step-three-new-container {
   position: relative;
   display: inline-block;
-  margin-left: 8px;
+  margin-left: 13px;
   width: 41px;
   height: 32px;
 }
 
 #step-one-new, #step-three-new {
-  display: none;
+  visibility: hidden;
   vertical-align: middle;
   float: left;
   clear: left;
-  margin-top: 0px;
+  margin-top: -5px;
   margin-left: 0px;
+  margin-bottom: 7px;
   font-size: 10px;
   font-weight: 600;
   font-style: normal;
   font-stretch: normal;
-  line-height: 1;
+  line-height: 1; 
   letter-spacing: normal;
   color: #5596e6;
 }
 
 #step-one-text, #step-three-text {
   vertical-align: middle;
-  margin-top: -5px;
   float: left;
   font-size: 14px;
   font-weight: normal;
   font-style: normal;
   font-stretch: normal;
-  line-height: 32px;
+  /* line-height: 1; */
   letter-spacing: normal;
   text-align: center;
   vertical-align: middle;
   color: #5a6872;
 }
-
+#step-two-text {
+  margin-left: 13px;
+}
  #install-step-one {
     position:relative;
     white-space: nowrap;
-    margin-top: 21px;
-    height: 32px;
+    margin-top: 19px;
+    /* height: 32px; */
     vertical-align: middle;
 }
 
+.install-extension-step {
+  padding-top: 5px;
+  height: 32px;
+}
 .steps {
   height: 32px;
   position: relative;
-  margin-left: 8px;
+  margin-left: 13px;
   width: 41px;
   font-size: 14px;
   font-weight: normal;
@@ -293,34 +299,37 @@ body {
   color: #5a6872;
 }
 
-.step-one-img {
-    height: 32px;
-    position: relative;
-    margin-left: 14px;
-    vertical-align: middle; 
-}
-.step-three-img {
-    height: 32px;
-    position: relative;
-    margin-left: 12.5px;
-    line-height: 32px;
-    vertical-align: middle;
+.pictograms {
+  display: none;
+  height: 32px;
+  width: 32px;
+  position: relative;
+  margin-left: 14px;
+  vertical-align: middle; 
 }
 
-#pictogram-puzzle {
+#step-one-download-box-img, #step-one-puzzle-img, #step-two-download-box-img, #step-two-openbox-img, #step-three-openbox-img, #step-three-puzzle-img {
+  display: none;
+}
+#step-one-puzzle, #step-three-puzzle {
+  display: none;
   width: 32px;
   height: 32px;
   background-image: url('pictogram_puzzle.svg');
 }
-
-#pictogram-openbox{
+/* #step-one-svg, #step-two-svg, #step-three-svg {
+  display: inline;
+} */
+#step-two-openbox, #step-three-openbox {
+  display: none;
   vertical-align: top;
   width: 36px;
   height: 29px;
   background-image: url('pictogram_openbox.svg');
 }
 
-#pictogram-download{
+#step-one-download-box, #step-two-download-box{
+  display: none;
   width: 32px;
   height: 32px;
   background-image: url('pictogram_download.svg');
@@ -345,26 +354,22 @@ body {
   vertical-align: middle;
 }
 
-#step-three-button {
-  margin-left: 33px;
-  background-color: white;
-}
 .filled-button {
-    background-color: #3d70b2;
-    width: 176px;
-    height: 26px;
-    margin: 2px;
-    border: none;
-    font-size: 14px;
-    font-weight: 600;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 26px;
-    letter-spacing: normal;
-    text-align: center;
-    vertical-align: middle;
-    text-decoration: none;
-    color: #ffffff;
+  background-color: #3d70b2;
+  width: 176px;
+  height: 26px;
+  margin: 2px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 26px;
+  letter-spacing: normal;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  color: #ffffff;
 }
 
 .not-filled-button {
@@ -386,7 +391,7 @@ body {
 }
 
 #install-step-two, #install-step-three {
-  margin-top: 38px;
+  margin-top: 32px;
   position:relative;
    white-space: nowrap; 
   height: 32px;
@@ -396,6 +401,7 @@ body {
 #already-installed {
   margin-top: 40px;
   margin-left: 206px;
+  margin-bottom: 52px;
   width: 230px;
   height: 15px;
   text-decoration: none;
@@ -502,6 +508,20 @@ body {
   transform-origin: center top;
 }
 
+.download-indicator-top {
+  position:fixed;
+  margin:0;
+  -webkit-animation-name: bounce;
+  -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
+   -webkit-animation-iteration-count: infinite;  /*Safari 4.0 - 8.0  */
+  animation-name: bounce;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  -webkit-transform-origin: center top;
+  transform-origin: center top;
+  animation-direction: reverse;
+}
+
 #download-connect-link {
   width: 15%;
   font-size: 14px;
@@ -526,10 +546,19 @@ body {
   display: none;
   position: absolute;
   left: 61px;
-  bottom: 83px;
+  bottom: 27px;
   width: 140px;
   height: 110px;
   /* background-color: #3d3d3d; */
+}
+
+#download-upper {
+  display: none;
+  position: absolute;
+  right: 61px;
+  top: 27px;
+  width: 140px;
+  height: 110px;
 }
 
 #download-installer {
@@ -540,18 +569,14 @@ body {
   display: none;
 }
 
-#download-svg {
+.download-svg-polygon {
   position: absolute;
   z-index: -1;
   width: 140px;
   height: 110px;
 }
 
-#download-svg-polygon {
-  fill:#3d3d3d;
-}
-
-#download-installer-text, #run-installer-text {
+.installer-text {
   display: none;
   position: relative;
   margin-left: 16px;
