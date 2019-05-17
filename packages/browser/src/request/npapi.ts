@@ -24,6 +24,8 @@ class NPAPIrequestImplementation {
   npapiPlugin: IConnectPlugin | null = null;
   pluginId: string = '';
   listenerId: string = '';
+  
+  constructor() {}
 
   isSupportedByBrowser () {
     if (BROWSER.IE || BROWSER.SAFARI && !BROWSER.SAFARI_NO_NPAPI) {
