@@ -19,51 +19,50 @@
  *     "SAFARI_NO_NPAPI": false
  *   }
  *   ```
- **/
+ */
 
 import * as Logger from './logger';
-import BROWSER from './shared/browser'
+import BROWSER from './shared/browser';
 import {
   FASP_API,
   CURRENT_API,
   LS_CONTINUED_KEY,
   LS_CONNECT_APP_ID,
-  SS_SESSION_LASTKNOWN_ID,
-} from './shared/constants'
+  SS_SESSION_LASTKNOWN_ID
+} from './shared/constants';
 import { SESSION_ID, SESSION_KEY } from './shared/sharedInternals';
 import * as aesjs from 'aes-js';
 const crypt = { aesjs: aesjs };
 
 SESSION_ID.set(generateUuid());
-SESSION_KEY.set(generateRandomStr(32))
+SESSION_KEY.set(generateRandomStr(32));
 
 let SDK_LOCATION: string = '';
-var nextObjId = 0;
-var initUrlWampParams = '';
+let nextObjId = 0;
+let initUrlWampParams = '';
 
-export function getInitUrl() {
+export function getInitUrl () {
   return CURRENT_API + '://initialize/?key=' + SESSION_KEY.value() + '&id=' + SESSION_ID.value() + initUrlWampParams;
-};
+}
 
 ////////////////////////////////////////////////////////////////////////////
 // Compatibility functions
 ////////////////////////////////////////////////////////////////////////////
 
 export function createError (errorCode: any, message: any) {
-  var internalMessage = '';
-  if (errorCode == -1) {
+  let internalMessage = '';
+  if (errorCode === -1) {
     internalMessage = 'Invalid request';
   }
-  return {error: {code: errorCode, internal_message: internalMessage, user_message: message}};
-};
-
+  return { error: { code: errorCode, internal_message: internalMessage, user_message: message } };
+}
 
 /**
  * - str
  */
 export function parseJson (str: any) {
-  var obj;
-  if ( typeof str === 'string' && (str.length === 0 || str.replace(/\s/g, '') === '{}')) {
+  let obj;
+  if (typeof str === 'string' && (str.length === 0 || str.replace(/\s/g, '') === '{}')) {
     return {};
   }
   try {
@@ -72,18 +71,18 @@ export function parseJson (str: any) {
     obj = createError(-1, e);
   }
   return obj;
-};
+}
 
 ////////////////////////////////////////////////////////////////////////////
 // Helper Functions
 ////////////////////////////////////////////////////////////////////////////
 
 /**
- * x - variable we want to check
+ * x - letiable we want to check
  */
 export function isNullOrUndefinedOrEmpty (x: any) {
   return x === '' || x === null || typeof x === 'undefined';
-};
+}
 
 /**
  * AW4.Utils.versionLessThan(version1, version2) -> bool
@@ -106,27 +105,27 @@ export function isNullOrUndefinedOrEmpty (x: any) {
  * it
  */
 export function versionLessThan (a: string, b: string) {
-  var versionToArray = function( version: string ) {
-    var splits = version.split('.');
-    var versionArray = new Array();
-    for (var i = 0; i < splits.length; i++) {
-      var versionPart = parseInt(splits[i], 10);
+  let versionToArray = function (version: string) {
+    let splits = version.split('.');
+    let versionArray = new Array();
+    for (let i = 0; i < splits.length; i++) {
+      let versionPart = parseInt(splits[i], 10);
       if (!isNaN(versionPart)) {
         versionArray.push(versionPart);
       }
     }
     return versionArray;
   };
-  var a_arr = versionToArray(a);
-  var b_arr = versionToArray(b);
-  var i;
-  for ( i = 0; i < Math.min(a_arr.length, b_arr.length); i++ ) {
+  let aArr = versionToArray(a);
+  let bArr = versionToArray(b);
+  let i;
+  for (i = 0; i < Math.min(aArr.length, bArr.length); i++) {
     // if i=2, a=[0,0,1,0] and b=[0,0,2,0]
-    if( a_arr[i] < b_arr[i] ) {
+    if (aArr[i] < bArr[i]) {
       return true;
     }
     // if i=2, a=[0,0,2,0] and b=[0,0,1,0]
-    if( a_arr[i] > b_arr[i] ) {
+    if (aArr[i] > bArr[i]) {
       return false;
     }
     // a[i] and b[i] exist and are equal:
@@ -134,31 +133,33 @@ export function versionLessThan (a: string, b: string) {
   }
   // all numbers equal (or all are equal and we reached the end of a or b)
   return false;
-};
+}
 
 export function checkVersionException (): boolean {
-  if (typeof(localStorage) == 'undefined')
+  if (typeof(localStorage) === 'undefined') {
     return false;
-  var prevContinuedSeconds = Number(localStorage.getItem(LS_CONTINUED_KEY));
+  }
+  let prevContinuedSeconds = Number(localStorage.getItem(LS_CONTINUED_KEY));
   if (prevContinuedSeconds !== undefined && prevContinuedSeconds !== null) {
-    var currentTimeSeconds = Math.round(new Date().getTime()/1000);
-    if ((currentTimeSeconds - prevContinuedSeconds) < 60*24){
+    let currentTimeSeconds = Math.round(new Date().getTime() / 1000);
+    if ((currentTimeSeconds - prevContinuedSeconds) < 60 * 24) {
       Logger.debug('User opted out of update');
       return true;
     }
   }
   return false;
-};
+}
 
 export function addVersionException (): void {
-  if (typeof(localStorage) == 'undefined')
+  if (typeof(localStorage) === 'undefined') {
     return;
+  }
   localStorage.setItem(LS_CONTINUED_KEY, String(Math.round(new Date().getTime() / 1000)));
-};
+}
 
 export function generateUuid (): string {
-  var date = new Date().getTime();
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+  let date = new Date().getTime();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     let r: any;
     // @ts-ignore
     r = ((date + 16) * Math.random()).toFixed() % 16;
@@ -169,34 +170,35 @@ export function generateUuid (): string {
     }
     return r.toString(16);
   });
-};
+}
 
 export function generateRandomStr (size: number): string {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let text = '';
+  let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  for (var i = 0; i < size; i++)
+  for (let i = 0; i < size; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
-  
+  }
+
   return text;
-};
+}
 
 export function encrypt (data: any) {
-  var dataBytes = crypt.aesjs.utils.utf8.toBytes(data);
-  var key = crypt.aesjs.utils.utf8.toBytes(SESSION_KEY.value());
-  var iv = crypt.aesjs.utils.utf8.toBytes(generateRandomStr(16));
+  let dataBytes = crypt.aesjs.utils.utf8.toBytes(data);
+  let key = crypt.aesjs.utils.utf8.toBytes(SESSION_KEY.value());
+  let iv = crypt.aesjs.utils.utf8.toBytes(generateRandomStr(16));
   // The counter is optional, and if omitted will begin at 1
-  var aesOfb = new crypt.aesjs.ModeOfOperation.ofb(key, iv);
-  var encryptedBytesString = aesOfb.encrypt(dataBytes);
+  let aesOfb = new crypt.aesjs.ModeOfOperation.ofb(key, iv);
+  let encryptedBytesString = aesOfb.encrypt(dataBytes);
 
   // To print or store the binary data, you may convert it to hex
-  var encryptedHex = crypt.aesjs.utils.hex.fromBytes(iv)+'.'+crypt.aesjs.utils.hex.fromBytes(encryptedBytesString);
+  let encryptedHex = crypt.aesjs.utils.hex.fromBytes(iv) + '.' + crypt.aesjs.utils.hex.fromBytes(encryptedBytesString);
   return encryptedHex;
-};
+}
 
 export function decrypt (data: any) {
   let arr = data.split('.');
-  if(arr.length != 2){
+  if (arr.length !== 2) {
     return data;
   }
 
@@ -209,11 +211,11 @@ export function decrypt (data: any) {
   // decrypt a new instance must be instantiated.
   let aesOfb = new crypt.aesjs.ModeOfOperation.ofb(key, iv);
   let decryptedBytes = aesOfb.decrypt(encryptedBytes);
- 
+
   // Convert our bytes back into text
   // let decryptedText = crypt.aesjs.utils.utf8.fromBytes(decryptedBytes);
   return decryptedBytes;
-};
+}
 
 /**
  * Attempt to launch Connect. It will handle different browser
@@ -233,24 +235,24 @@ export function decrypt (data: any) {
 export function launchConnect (userCallback?: (t: boolean) => any) {
   let isRegistered = false;
   let callback = (installed: boolean) => {
-      if (typeof userCallback === 'function') {
-          userCallback(installed);
-      }
-  }
+    if (typeof userCallback === 'function') {
+      userCallback(installed);
+    }
+  };
 
   let launchUri = getInitUrl();
   Logger.log('Starting Connect session: ' + launchUri);
   if (BROWSER.CHROME || BROWSER.OPERA) {
     document.body.focus();
-    document.body.onblur = function() {
-        isRegistered = true;
+    document.body.onblur = function () {
+      isRegistered = true;
     };
-    //will trigger onblur
+    // will trigger onblur
     document.location.href = launchUri;
-    //Note: timeout could vary as per the browser version, have a higher value
+    // Note: timeout could lety as per the browser version, have a higher value
     setTimeout(function () {
-        document.body.onblur = null;
-        callback(isRegistered);
+      document.body.onblur = null;
+      callback(isRegistered);
     }, 500);
   } else if (BROWSER.EDGE_LEGACY) {
     document.location.href = launchUri;
@@ -267,7 +269,7 @@ export function launchConnect (userCallback?: (t: boolean) => any) {
   }
   // ELSE is handled by the NPAPI plugin
   return null;
-};
+}
 
 /**
  * Returns full URL from relative URL
@@ -350,30 +352,32 @@ export function nextObjectId () {
   return nextObjId++;
 }
 
-export function getLocalStorage(key: string) {
-	     try {
-	         if (typeof(localStorage) == 'undefined')
-	             return '';
-	         return localStorage.getItem(key);
-	     } catch(error) {
-	         // Accessing local storage can be blocked by third party cookie settings
-	         console.log('Error accessing localStorage: ' + JSON.stringify(error));
-	         return '';
-	     }
-	 }
+export function getLocalStorage (key: string) {
+  try {
+    if (typeof(localStorage) === 'undefined') {
+      return '';
+    }
+	  return localStorage.getItem(key);
+  } catch (error) {
+    // Accessing local storage can be blocked by third party cookie settings
+	  console.log('Error accessing localStorage: ' + JSON.stringify(error));
+	  return '';
+  }
+}
 
-export function setLocalStorage(key: string, value: string) {
-	     try {
-	         if (typeof(localStorage) == 'undefined')
-	             return '';
-	         return localStorage.setItem(key, value);
-	     } catch(error) {
-	         // Accessing local storage can be blocked by third party cookie settings
-	         console.log('Error accessing localStorage: ' + JSON.stringify(error));
-	         return;
-	     }
-	 }
-   
+export function setLocalStorage (key: string, value: string) {
+  try {
+    if (typeof(localStorage) === 'undefined') {
+      return '';
+    }
+	  return localStorage.setItem(key, value);
+  } catch (error) {
+	  // Accessing local storage can be blocked by third party cookie settings
+	  console.log('Error accessing localStorage: ' + JSON.stringify(error));
+	  return;
+  }
+}
+
 export {
   BROWSER,
   CURRENT_API,
@@ -383,4 +387,4 @@ export {
   SESSION_ID,
   SESSION_KEY,
   SS_SESSION_LASTKNOWN_ID
-}
+};
