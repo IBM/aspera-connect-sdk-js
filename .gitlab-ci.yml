@@ -2,7 +2,7 @@ variables:
   BUILD_IMAGE: gitlab-registry.aspera.us/devops/docker-aspera-builder:v0.4.0-rc.17
 
 before_script:
-  - npm install tslint
+  - npm install -g tslint
 
 stages:
   - test
