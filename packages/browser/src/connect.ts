@@ -421,7 +421,7 @@ export function Connect (options: ConnectOptions) {
   };
    
   /**
-   * Call this method after creating the {@link Connect} object. It is mandatory to call this
+   * Call this method after creating the {@link AW4.Connect} object. It is mandatory to call this
    * function before making use of any other function of the API. If called more than
    * once on the same instance, it will return an error.
    *
@@ -578,7 +578,7 @@ export function Connect (options: ConnectOptions) {
    * @function
    * @name AW4.Connect#removeEventListener
    * @param {EVENT} [type] The type of event to stop receiving events for.
-   * @param {Function} [listener] The function used to subscribe in {@link Connect#addEventListener}
+   * @param {Function} [listener] The function used to subscribe in {@link AW4.Connect#addEventListener}
    * @return {Boolean}
    */
   this.removeEventListener = function (type?: string, listener?: () => any) {
@@ -690,7 +690,7 @@ export function Connect (options: ConnectOptions) {
 
   /**
    * Sets drag and drop options for the element given in the cssSelector. Please note that
-   * the `dragDropEnabled` option must have been set to `true` when creating the {@link Connect}
+   * the `dragDropEnabled` option must have been set to `true` when creating the {@link AW4.Connect}
    * object.
    *
    * *This method is asynchronous.*
@@ -1002,8 +1002,8 @@ export function Connect (options: ConnectOptions) {
   };
 
   /**
-   * Start looking for Connect. Please note that this is called internally by {@link Connect#initSession}
-   * and it should only be called directory after a call to {@link Connect#stop}.
+   * Start looking for Connect. Please note that this is called internally by {@link AW4.Connect#initSession}
+   * and it should only be called directory after a call to {@link AW4.Connect#stop}.
    *
    * @function
    * @name AW4.Connect#start
@@ -1029,8 +1029,8 @@ export function Connect (options: ConnectOptions) {
   };
    
   /**
-   * Initiates a single transfer. Call {@link Connect#getAllTransfers} to get transfer
-   * statistics, or register an event listener through {@link Connect#addEventListener}.
+   * Initiates a single transfer. Call {@link AW4.Connect#getAllTransfers} to get transfer
+   * statistics, or register an event listener through {@link AW4.Connect#addEventListener}.
    *
    * Return format:
    * ```
@@ -1048,7 +1048,7 @@ export function Connect (options: ConnectOptions) {
    * @param {Callbacks} callbacks `success` and `error` functions to receive results.
    *   This call is successful if Connect is able to start the
    *   transfer. Note that an error could still occur after the transfer starts,
-   *   e.g. if authentication fails. Use {@link Connect#addEventListener} to
+   *   e.g. if authentication fails. Use {@link AW4.Connect#addEventListener} to
    *   receive notifications about errors that occur during a transfer session.
    *   This call fails if validation fails or the user rejects the transfer.
    *
@@ -1076,8 +1076,8 @@ export function Connect (options: ConnectOptions) {
    
   /**
    * Initiates one or more transfers (_currently only the first `transfer_spec`
-   * is used_). Call {@link Connect#getAllTransfers} to get transfer
-   * statistics, or register an event listener through {@link Connect#addEventListener}.
+   * is used_). Call {@link AW4.Connect#getAllTransfers} to get transfer
+   * statistics, or register an event listener through {@link AW4.Connect#addEventListener}.
    *
    * *This method is asynchronous.*
    *
@@ -1100,11 +1100,11 @@ export function Connect (options: ConnectOptions) {
    *   transfer_specs : [
    *     {
    *       transfer_spec : {@link TransferSpec},
-   *       aspera_connect_settings : {@link ConnectSpec}
+   *       aspera_connect_settings : {@link AW4.ConnectSpec}
    *     },
    *     {
    *       transfer_spec : {@link TransferSpec},
-   *       aspera_connect_settings : {@link ConnectSpec}
+   *       aspera_connect_settings : {@link AW4.ConnectSpec}
    *     },
    *     ...
    *   ]
@@ -1113,7 +1113,7 @@ export function Connect (options: ConnectOptions) {
    * @param {Callbacks} callbacks `success` and `error` functions to receive results.
    *   This call is successful if Connect is able to start the
    *   transfer. Note that an error could still occur after the transfer starts,
-   *   e.g. if authentication fails. Use {@link Connect#addEventListener} to
+   *   e.g. if authentication fails. Use {@link AW4.Connect#addEventListener} to
    *   receive notifications about errors that occur during a transfer session.
    *   This call fails if validation fails or the user rejects the transfer.
    *
@@ -1146,7 +1146,7 @@ export function Connect (options: ConnectOptions) {
    
   /**
    * Stop all requests from Connect to restart activity, please
-   * create a new {@link Connect} object or call {@link Connect#start}.
+   * create a new {@link AW4.Connect} object or call {@link AW4.Connect#start}.
    *
    * @function
    * @name AW4.Connect#stop
@@ -1157,7 +1157,7 @@ export function Connect (options: ConnectOptions) {
   };
    
   /**
-   * Terminate the transfer. Use {@link Connect#resumeTransfer} to resume.
+   * Terminate the transfer. Use {@link AW4.Connect#resumeTransfer} to resume.
    *
    * *This method is asynchronous.*
    *
@@ -1259,7 +1259,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  * @typedef {Object} AllTransfersInfo
  * @property {Number} iteration_token=0 A marker that represents the moment in time
  *   that the transfer status was retrieved. If it is passed as an argument to
- *   a {@link Connect#getAllTransfers} call, the response returned will only contain transfers
+ *   a {@link AW4.Connect#getAllTransfers} call, the response returned will only contain transfers
  *   that have had activity since the previous call. Note that this token persists
  *   even if the user restarts Connect.
  * @property {Number} result_count=0 The number of {@link TransferInfo} objects returned

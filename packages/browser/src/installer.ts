@@ -4,72 +4,7 @@ import * as Logger from './logger';
 import { connectVersion, connectVersions, minRequestedVersion } from './shared/sharedInternals';
 import NativeMessageExtRequestImplementation from './request/native-message-ext';
 import SafariAppExtRequestImplementation from './request/safari-app-ext';
-/**
- * == API ==
- **/
 
-/** section: API
- * AW4
- *
- * The Aspera Web namespace.
- **/
-
-/** section: API
- * class AW4.ConnectInstaller
- *
- * The [[AW4.ConnectInstaller]] class offers support for connect installation.
- **/
-
- /**
- * new AW4.ConnectInstaller([options])
- * - options (Object): Configuration parameters for the plug-in.
- *
- * Creates a new [[AW4.ConnectInstaller]] object.
- *
- * ##### Options
- *
- * 1. `sdkLocation` (`String`):
- *     URL to the SDK location that has to be served in the same level of security
- *     as the web page (http/https). It has to be in the following format:\
- *     `//domain/path/to/connect/sdk`\
- *     Default: \
- *     `//d3gcli72yxqn2z.cloudfront.net/connect/v4`.
- *
- *     If the installer cannot reach the needed files (by checking for connectversions.js
- *     or connectversions.min.js) on the default server it will automatically fallback to
- *     locate them at the hosted SDKs location.
- *
- *     The client web application can choose to load connectinstaller-4.js (or connectinstaller-4.min.js)
- *     from a local deployment of the Connect SDK (by specifying an `sdklocation`).
- *     The Connect installer tries to reach the default cloudfront.net location and, if reachable,
- *     delivers the Connect installer from the cloudfront.net.
- *     If cloudfront.net is not reachable, connectinstaller-4.js will deliver the Connect
- *     installer from the provided `sdkLocation`.
- *
- * 2. `stylesheetLocation` (`String`):
- *     URL to an stylesheet that has to be served in the same level of security
- *     as the web page (http/https). It has to be in the following format:\
- *     `//domain/path/to/css/file.css`\
- *     Default: ``
- * 3. `iframeId` (`String`):
- *     Id of the iframe that is going to be inserted in the DOM
- *     Default: `aspera-iframe-container`
- * 4. `iframeClass` (`String`):
- *     Class to be added to the iframe that is going to be inserted in the DOM,
- *     for easier use with the custom stylesheet
- *     Default: `aspera-iframe-container`
- * 5. `style` (`String`):
- *     Style of the Connect bar design. There are two options currently, blue or carbon.
- *     Default style is carbon.
- *
- * ##### Example
- *
- * The following JavaScript creates an [[AW4.ConnectInstaller]] object to manage
- * the installation process.
- *
- *     var asperaInstaller = new AW4.ConnectInstaller();
- *
- **/
  interface IConnectInstallerOptions {
    sdkLocation?: string;
    stylesheetLocation?: string;
@@ -78,47 +13,53 @@ import SafariAppExtRequestImplementation from './request/safari-app-ext';
    style?: string;
  }
  
-function ConnectInstaller (options: IConnectInstallerOptions) {
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Public constants
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * AW4.ConnectInstaller.EVENT -> Object
-     *
-     * Event types:
-     *
-     * 1. `AW4.ConnectInstaller.EVENT.DOWNLOAD_CONNECT` (`"downloadconnect"`)
-     * 2. `AW4.ConnectInstaller.EVENT.REFRESH_PAGE` (`"refresh"`)
-     * 3. `AW4.ConnectInstaller.EVENT.IFRAME_REMOVED` (`"removeiframe"`)
-     * 4. `AW4.ConnectInstaller.EVENT.IFRAME_LOADED` (`"iframeloaded"`)
-     * 5. `AW4.ConnectInstaller.EVENT.TROUBLESHOOT` (`"troubleshoot"`)
-     * 6. `AW4.ConnectInstaller.EVENT.CONTINUE` (`"continue"`)
-     * 7. `AW4.ConnectInstaller.EVENT.RETRY` (`"retry"`)
-     * 8. `AW4.ConnectInstaller.EVENT.EXTENSION_INSTALL` (`"extension_install"`)
-     **/
-    // AW4.ConnectInstaller.EVENT = {
-    //     DOWNLOAD_CONNECT : "downloadconnect",
-    //     REFRESH_PAGE : "refresh",
-    //     IFRAME_REMOVED : "removeiframe",
-    //     IFRAME_LOADED : "iframeloaded",
-    //     TROUBLESHOOT : "troubleshoot",
-    //     CONTINUE : "continue",
-    //     RESIZE : "px",
-    //     RETRY : "retry",
-    //     EXTENSION_INSTALL : 'extension_install',
-    //     DOWNLOAD_EXTENSION : 'download_extension'
-    // };
-
-    /**
-     * AW4.ConnectInstaller.supportsInstallingExtensions
-     *
-     * If you have a custom Connect install experience that can handle the EXTENSION_INSTALL state, set this value to 'true'
-     * This value is used by AW4.Connect to determine if EXTENSION_INSTALL event should be used.
-     **/
-    // AW4.ConnectInstaller.supportsInstallingExtensions = false;
-
+/**
+ * @classdesc Contains methods to support Connect installation
+ *
+ * @name ConnectInstaller
+ * @class
+ * @memberof AW4
+ *
+ * @property {Object} EVENT Event types
+ *
+ *   Types:
+ *   * `EVENT.DOWNLOAD_CONNECT` - "downloadconnect"
+ *   * `EVENT.REFERESH_PAGE` - "refresh"
+ *   * `EVENT.IFRAME_REMOVED` - "removeiframe"
+ *   * `EVENT.IFRAME_LOADED` - "iframeloaded"
+ *   * `EVENT.TROUBLESHOOT` - "troubleshoot"
+ *   * `EVENT.CONTINUE` - "continue"
+ * @property {Boolean} supportsInstallingExtensions=false To enable Connect extensions,
+ *   this property must be set to `true`.
+ *
+ *   If you have a custom Connect install experience that can handle the EXTENSION_INSTALL state, set this value to 'true'
+ *   This value is used by {@link AW4.Connect} to determine if the EXTENSION_INSTALL event should be used.
+ *
+ * @param {String} [iframeClass="aspera-iframe-container"] Class to be added to
+ *   the iframe that is going to be inserted in the DOM, for easier use with a custom stylesheet.
+ * @param {String} [iframeId="aspera-iframe-container"] Id of the iframe that is
+ *   going to be inserted in the DOM.
+ * @param {String} [sdkLocation="//d3gcli72yxqn2z.cloudfront.net/connect/v4"] URL
+ *   to the SDK location to serve Connect installers from. Needs to be served in
+ *   the same level of security as the web page (HTTP/HTTPS). This option is often used
+ *   if you are hosting your own instance of the Connect SDK.
+ *
+ *   Format:
+ *   `//domain/path/to/connect/sdk`
+ * @param {"blue"|"carbon"} [style="carbon"] Style of the Connect bar design.
+ * @param {String} [stylesheetLocation] URL to a stylesheet. Needs to be served
+ *   in the same level of security as the web page (HTTP/HTTPS).
+ *
+ *   Format:
+ *   `//domain/path/to/css/file.css`
+ *
+ * @example
+ * let options = {
+ *   style: 'carbon'
+ * }
+ * let asperaInstaller = new AW4.ConnectInstaller(options)
+ */
+export function ConnectInstaller (options: IConnectInstallerOptions) {
     ////////////////////////////////////////////////////////////////////////////
     // Private constants
     ////////////////////////////////////////////////////////////////////////////
@@ -339,13 +280,6 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
     // API Functions
     ////////////////////////////////////////////////////////////////////////////
 
-    /*
-     * AW4.ConnectInstaller#addEventListener(listener) -> null
-     * - listener (Function): function that will be called when the event is fired
-     *
-     * ##### Event types ([[AW4.ConnectInstaller.EVENT]])
-     *
-     **/
     var addEventListener = function(listener: any) {
         if (typeof listener !== 'function') {
             return null;
@@ -355,79 +289,82 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
     };
 
     /**
-     * AW4.ConnectInstaller#installationJSON(callback) -> null
-     * - callback (Function): function that will be called when the result is retrieved.
-     *
-     * Querys the SDK for the current system's information, returning the full spec of all the
+     * Queries the Connect SDK for the current system's information, returning the full spec of all the
      * documentation and binaries available for it.
      *
-     * ##### Object returned to the callback function as parameter
+     * @function
+     * @name AW4.ConnectInstaller#installationJSON
+     * @param {Function} callbacks Function that will be called when the result is
+     *   retrieved.
      *
-     *      {
-     *        "title": "Aspera Connect for Windows",
-     *        "platform": {
-     *            "os": "win32"
-     *       },
-     *        "navigator": {
-     *            "platform": "Win32"
-     *        },
-     *        "version": "3.6.0.105660",
-     *        "id": "urn:uuid:589F9EE5-0489-4F73-9982-A612FAC70C4E",
-     *        "updated": "2012-10-30T10:16:00+07:00",
-     *        "links": [
-     *            {
-     *                "title": "Windows Installer",
-     *                "type": "application/octet-stream",
-     *                "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/bin/AsperaConnect-ML-3.6.0.105660.msi",
-     *                "hreflang": "en",
-     *                "rel": "enclosure"
-     *            },
-     *            {
-     *                "title": "Aspera Connect PDF Documentation for Windows",
-     *                "type": "application/pdf",
-     *                "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/zh-cn/pdf/Connect_3.6.0_Windows_User_Guide_SimplifiedChinese.pdf",
-     *                "hreflang": "zh-cn",
-     *                "rel": "documentation"
-     *            },
-     *            {
-     *                "title": "Aspera Connect PDF Documentation for Windows",
-     *                "type": "application/pdf",
-     *                "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/ja-jp/pdf/Connect_3.6.0_Windows_User_Guide_Japanese.pdf",
-     *                "hreflang": "ja-jp",
-     *                "rel": "documentation"
-     *            },
-     *            {
-     *                "title": "Aspera Connect PDF Documentation for Windows",
-     *                "type": "application/pdf",
-     *                "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/en/pdf/Connect_3.6.0_Windows_User_Guide_English.pdf",
-     *                "hreflang": "en",
-     *                "rel": "documentation"
-     *            },
-     *            {
-     *                "title": "Aspera Connect PDF Documentation for Windows",
-     *                "type": "application/pdf",
-     *                "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/es/pdf/Connect_3.6.0_Windows_User_Guide_Spanish.pdf",
-     *                "hreflang": "es",
-     *                "rel": "documentation"
-     *            },
-     *            {
-     *                "title": "Aspera Connect PDF Documentation for Windows",
-     *                "type": "application/pdf",
-     *                "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/fr/pdf/Connect_3.6.0_Windows_User_Guide_French.pdf",
-     *                "hreflang": "fr",
-     *                "rel": "documentation"
-     *            },
-     *            {
-     *                "title": "Aspera Connect Release Notes for Windows",
-     *                "type": "text/html",
-     *                "href": "http://www.asperasoft.com/en/release_notes/default_1/release_notes_55",
-     *                "hreflang": "en",
-     *                "rel": "release-notes"
-     *            }
-     *          ]
-     *      }
-     *
-     **/
+     *   Object returned to callback function:
+     *   ```
+     *   {
+     *     "title": "Aspera Connect for Windows",
+     *     "platform": {
+     *         "os": "win32"
+     *    },
+     *     "navigator": {
+     *         "platform": "Win32"
+     *     },
+     *     "version": "3.6.0.105660",
+     *     "id": "urn:uuid:589F9EE5-0489-4F73-9982-A612FAC70C4E",
+     *     "updated": "2012-10-30T10:16:00+07:00",
+     *     "links": [
+     *         {
+     *             "title": "Windows Installer",
+     *             "type": "application/octet-stream",
+     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/bin/AsperaConnect-ML-3.6.0.105660.msi",
+     *             "hreflang": "en",
+     *             "rel": "enclosure"
+     *         },
+     *         {
+     *             "title": "Aspera Connect PDF Documentation for Windows",
+     *             "type": "application/pdf",
+     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/zh-cn/pdf/Connect_3.6.0_Windows_User_Guide_SimplifiedChinese.pdf",
+     *             "hreflang": "zh-cn",
+     *             "rel": "documentation"
+     *         },
+     *         {
+     *             "title": "Aspera Connect PDF Documentation for Windows",
+     *             "type": "application/pdf",
+     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/ja-jp/pdf/Connect_3.6.0_Windows_User_Guide_Japanese.pdf",
+     *             "hreflang": "ja-jp",
+     *             "rel": "documentation"
+     *         },
+     *         {
+     *             "title": "Aspera Connect PDF Documentation for Windows",
+     *             "type": "application/pdf",
+     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/en/pdf/Connect_3.6.0_Windows_User_Guide_English.pdf",
+     *             "hreflang": "en",
+     *             "rel": "documentation"
+     *         },
+     *         {
+     *             "title": "Aspera Connect PDF Documentation for Windows",
+     *             "type": "application/pdf",
+     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/es/pdf/Connect_3.6.0_Windows_User_Guide_Spanish.pdf",
+     *             "hreflang": "es",
+     *             "rel": "documentation"
+     *         },
+     *         {
+     *             "title": "Aspera Connect PDF Documentation for Windows",
+     *             "type": "application/pdf",
+     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/fr/pdf/Connect_3.6.0_Windows_User_Guide_French.pdf",
+     *             "hreflang": "fr",
+     *             "rel": "documentation"
+     *         },
+     *         {
+     *             "title": "Aspera Connect Release Notes for Windows",
+     *             "type": "text/html",
+     *             "href": "http://www.asperasoft.com/en/release_notes/default_1/release_notes_55",
+     *             "hreflang": "en",
+     *             "rel": "release-notes"
+     *         }
+     *       ]
+     *   }
+     *   ```
+     * @return {null}
+     */
     var installationJSON = function(callback: any) {
         if (typeof callback !== 'function') {
             return null;
@@ -488,13 +425,23 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
         return null;
     };
 
+    // TODO: Below spec notes success/error callbacks, but it's actually success/timedout.
+    // Why are we changing the callback paradigm?
     /**
-     * AW4.ConnectInstaller#isExtensionInstalled(timeout, callback) -> null
-     * - timeout (Number): Milliseconds to wait before extension is considered missing.
-     * - callbacks (Callbacks): `success` and `timedout` functions to receive results.
+     * @ignore
+     *
+     * Determines if user has already installed the Connect extensions.
      *
      * *This method is asynchronous.*
-     **/
+     *
+     * @function
+     * @name AW4.ConnectInstaller#isExtensionInstalled
+     * @param {Number} timeout Timeout (in milliseconds) to wait before the extension
+     *   is considered not to be installed.
+     * @param {Callbacks} callbacks `success` and `error` functions to receive
+     *   results.
+     * @return {null}
+     */
     var isExtensionInstalled = function(timeout: number, callback: any) {
         // Prereq: asperaweb-4 needs to be loaded first
         let extReqImpl: any = new NativeMessageExtRequestImplementation();
@@ -508,13 +455,12 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
     }
 
     /**
-     * AW4.ConnectInstaller#doesBrowserNeedExtensionStore() -> Boolean
+     * Determine if current browser requires web store to install extensions.
      *
-     * ##### Return values
-     *
-     * 1. `true` : if the current browser requires the web store to install extensions.
-     * 2. `false` : if current browser doesn't require extension installation.
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#doesBrowserNeedExtensionStore
+     * @return {Boolean}
+     */
     var doesBrowserNeedExtensionStore = function() {
         if (Utils.BROWSER.CHROME === true ||
             Utils.BROWSER.FIREFOX === true ||
@@ -527,13 +473,17 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
     };
 
     /**
-     * AW4.ConnectInstaller#getExtensionStoreLink() -> String
+     * For supported browsers, returns a url for extension installation.
      *
-     * ##### Return values
+     * @function
+     * @name AW4.ConnectInstaller#getExtensionStoreLink
+     * @return {String}
      *
-     * For support browsers, returns a url for extension installation.
-     *
-     **/
+     * @example
+     * // On a Chrome browser
+     * asperaInstaller.getExtensionStoreLink()
+     * // returns "https://chrome.google.com/webstore/detail/ibm-aspera-connect/kpoecbkildamnnchnlgoboipnblgikpn"
+     */
     var getExtensionStoreLink = function() {
         if (Utils.BROWSER.FIREFOX === true) {
             return 'https://addons.mozilla.org/en-US/firefox/addon/ibm-aspera-connect';
@@ -726,15 +676,16 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
     }, false);
 
     /**
-     * AW4.ConnectInstaller#showLaunching(timeout) -> null
-     * - timeout (Number): (*optional*) Timeout to show the banner in milliseconds. If at any point
-     * during this timeout [[AW4.ConnectInstaller#connected]] or [[AW4.ConnectInstaller#dismiss]]
-     * are called, the banner will not show up. Default: `3500`.
-     *
-     * Displays a banner in the top of the screen explaining the user that Aspera Connect
+     * Displays a banner at the top of the screen explaining to the user that Connect
      * is trying to be launched.
      *
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#showLaunching
+     * @param {Number} [timeout=3500] Timeout to show the banner in milliseconds. If at any point
+     *   during this timeout {@link AW4.ConnectInstaller#connected} or {@link AW4.ConnectInstaller#dismiss}
+     *   are called, the banner will not appear.
+     * @return {null}
+     */
     var showLaunching = function(timeout = 3500) {
         if (showInstallTimerID !== 0) {
             clearTimeout(showInstallTimerID);
@@ -760,34 +711,37 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
     };
 
     /**
-     * AW4.ConnectInstaller#showDownload() -> null
+     * Displays a banner at the top of the screen notifying the user to download Connect.
      *
-     * Displays a banner in the top of the screen urging the user to download Aspera Connect.
-     *
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#showDownload
+     * @return {null}
+     */
     var showDownload = function() {
         show('download');
     };
 
     /**
-     * AW4.ConnectInstaller#showInstall() -> null
+     * Displays a banner at the top of the screen explaining to the user what to do once
+     * Connect has been downloaded.
      *
-     * Displays a banner in the top of the screen explaining the user what he has to do once
-     * Aspera Connect has been downloaded
-     *
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#showInstall
+     * @return {null}
+     */
     var showInstall = function() {
         show('install');
         Utils.setLocalStorage("aspera-install-attempted", "true");
     };
 
     /**
-     * AW4.ConnectInstaller#showUpdate() -> null
-     *
-     * Displays a banner in the top of the screen urging the user to update Aspera Connect
+     * Displays a banner at the top of the screen notifying the user to update Connect
      * to the latest version.
      *
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#showUpdate
+     * @return {null}
+     */
     var showUpdate = function() {
         if(isSecurityUpdate() && allowContinue()){
             show('continue');
@@ -797,20 +751,24 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
     };
 
     /**
-     * AW4.ConnectInstaller#showRetry() -> null
+     * Displays a banner with the option to retry launching Connect.
      *
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#showRetry
+     * @return {null}
+     */
     var showRetry = function() {
         show('retry');
         retry_count++;
     };
 
     /**
-     * AW4.ConnectInstaller#showExtensionInstall() -> null
+     * Displays a page with instructions to install the browser extension.
      *
-     * Displays a page about the instruction to install native browser extension
-     *
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#showExtensionInstall
+     * @return {null}
+     */
     var showExtensionInstall = function() {
         show('extension_install');
 
@@ -822,24 +780,27 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
     };
 
     /**
-     * AW4.ConnectInstaller#showUnsupportedBrowser() -> null
+     * Displays a banner explaining that the browser is not supported by Connect.
      *
-     * Displays a banner explaining that the browser is not supported by Connect
-     *
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#showUnsupportedBrowser
+     * @return {null}
+     */
     var showUnsupportedBrowser = function() {
         show('unsupported_browser');
     };
 
     /**
-     * AW4.ConnectInstaller#connected(timeout) -> null
-     * - timeout (Number): (*optional*) If specified, this will add a timeout to the
-     * dismiss function. Default: `2000`.
-     *
-     * Displays a temporary message that connect has been found, and after *timeout* dismisses the
+     * Displays a temporary message that Connect has been found, and after `timeout` dismisses the
      * banner
      *
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#connected
+     *
+     * @param {Number} [timeout=2000] Timeout (in milliseconds) until the banner
+     *   is dismissed..
+     * @return {null}
+     */
     var connected = function(timeout = 2000) {
         clearTimeout(showInstallTimerID);
         var iframe = document.getElementById(connectOptions.iframeId);
@@ -852,11 +813,12 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
     };
 
     /**
-     * AW4.ConnectInstaller#dismiss() -> null
+     * Dismisses the banner.
      *
-     * Dismisses the banner
-     *
-     **/
+     * @function
+     * @name AW4.ConnectInstaller#dismiss
+     * @return {null}
+     */
     var dismiss = function() {
         if (showInstallTimerID !== 0) {
             clearTimeout(showInstallTimerID);
@@ -891,14 +853,3 @@ function ConnectInstaller (options: IConnectInstallerOptions) {
 
 ConnectInstaller.EVENT = EVENT;
 ConnectInstaller.supportsInstallingExtensions = false;
-
-export {
-  ConnectInstaller
-}
-
-// Object.assign(ConnectInstaller, {
-//   EVENT,
-//   supportsInstallingExtensions: false
-// })
-
-// export default ConnectInstaller;

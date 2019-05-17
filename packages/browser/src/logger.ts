@@ -5,12 +5,6 @@
  */
 
  import { LS_LOG_KEY } from './shared/constants';
-/**
- * section: API
- * class AW4.Logger
- *
- * The [[AW4.Logger]] class contains logging wrapper functions for the developer.
- */
 
 const LEVEL = {
   INFO : 0,
