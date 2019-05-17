@@ -4,7 +4,6 @@ pipeline {
   agent {
     node{
       label 'ci-bld-mac10v13-0'
-      customWorkspace '/opt/build/apps-trunk'
     }
   }
   options {
