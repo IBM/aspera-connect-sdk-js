@@ -5,5 +5,5 @@ esm/
 build/
 docs/
 out/
-*SDK*
+*ConnectSDK*
 *.zip
