@@ -4,7 +4,7 @@
  * @module Logger
  */
 
- import { LS_LOG_KEY } from './shared/constants';
+import { LS_LOG_KEY } from './shared/constants';
 
 const LEVEL = {
   INFO : 0,

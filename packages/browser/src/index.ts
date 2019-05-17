@@ -27,7 +27,7 @@ export const Utils = {
   launchConnect,
   utoa,
   BROWSER
-}
+};
 
 export const Logger = {
   debug,
@@ -36,7 +36,7 @@ export const Logger = {
   setLevel,
   trace,
   warn
-}
+};
 
 let LocalizeDirlist = {};
 
@@ -47,4 +47,4 @@ if (_window.AW4) {
   }
 }
 
-export { LocalizeDirlist }
+export { LocalizeDirlist };
