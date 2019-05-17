@@ -5,3 +5,5 @@ esm/
 build/
 docs/
 out/
+*SDK*
+*.zip
