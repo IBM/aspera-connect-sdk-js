@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "module": "esm/index.js",
   "scripts": {
-    "build": "run-s  build:dist build:esm build:bundle",
+    "build": "run-s  build:dist build:esm build:bundle build:docs",
     "build:bundle": "webpack",
     "build:bundle:watch": "webpack --watch",
     "build:dist": "tsc -p tsconfig.json",

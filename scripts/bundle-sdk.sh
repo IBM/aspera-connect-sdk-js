@@ -24,3 +24,6 @@ ruby ./scripts/bundle-installers.rb ./dist/v4
 # Bundle non-javascript files
 cp ./files/notices.txt ./dist/v4
 cp -R ./files/plugin ./dist/v4/plugin
+
+# Bundle docs
+cp -R ./packages/browser/docs ./dist/v4/docs

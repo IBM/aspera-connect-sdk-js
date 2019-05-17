@@ -1,15 +1,10 @@
 ## Top-level project for the IBM Aspera Connect SDK
 
 ## Build
-To build all javascript components, run:
+To build all javascript components and bundle SDK, run:
 
 ```shell
 $ npm run build
-```
-
-To bundle and zip the SDK, run:
-```shell
-$ npm run sdk
 ```
 
 To skip bundling the installers, set:
