@@ -3,6 +3,8 @@ variables:
 
 before_script:
   - npm install
+  - npm --prefix packages/browser install
+  - npm install -g tslint tsc
 
 stages:
   - build
@@ -13,10 +15,11 @@ build:
   image: ${BUILD_IMAGE}
   script:
     - export SKIP_INSTALLERS=1
-    - npm run build
+    - npm run build:browser
+    - ls
 
 test:lint:
   stage: test
   image: ${BUILD_IMAGE}
   script:
-    - cd packages/browser && npm run lint
+    - npm --prefix packages/browser run lint
