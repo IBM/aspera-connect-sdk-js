@@ -25,6 +25,7 @@ pipeline {
     }
     stage('Build - SDK') {
       steps {
+        sh "npm run clean"
         sh "npm install"
         sh "npm run build"
       }
