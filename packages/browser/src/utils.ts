@@ -30,14 +30,13 @@ import {
   LS_CONNECT_APP_ID,
   SS_SESSION_LASTKNOWN_ID
 } from './shared/constants';
-import { SESSION_ID, SESSION_KEY } from './shared/sharedInternals';
+import { SESSION_ID, SESSION_KEY, SDK_LOCATION } from './shared/sharedInternals';
 import * as aesjs from 'aes-js';
 const crypt = { aesjs: aesjs };
 
 SESSION_ID.set(generateUuid());
 SESSION_KEY.set(generateRandomStr(32));
 
-let SDK_LOCATION: string = '';
 let nextObjId = 0;
 let initUrlWampParams = '';
 

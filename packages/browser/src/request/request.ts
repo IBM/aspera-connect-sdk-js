@@ -116,7 +116,7 @@ class RequestHandler {
         let requestId = this.nextId++;
         const method = HTTP_METHOD.POST;
         const path = '/connect/update/require';
-        let postData = { min_version: this.minVersion, sdk_location: Utils.SDK_LOCATION };
+        let postData = { min_version: this.minVersion, sdk_location: Utils.SDK_LOCATION.value() };
         let requestInfo = { id: requestId, method: method, path: path, data: null, callbacks: null };
         this.idCallbackHash[requestId] = requestInfo;
         this.requestImplementation.httpRequest(method, path, JSON.stringify(postData), null, requestId, Utils.SESSION_ID);

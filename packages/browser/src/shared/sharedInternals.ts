@@ -114,3 +114,14 @@ export let connectVersions = {
     return connectVersionsInternal;
   }
 };
+
+let sdkLocation = '';
+
+export let SDK_LOCATION = {
+  set: (loc: string) => {
+    sdkLocation = loc;
+  },
+  value: () => {
+    return sdkLocation;
+  }
+};

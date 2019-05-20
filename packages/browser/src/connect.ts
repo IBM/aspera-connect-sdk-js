@@ -14,7 +14,7 @@ import {
   EVENT,
   TRANSFER_STATUS
 } from './shared/constants';
-import { minRequestedVersion, SESSION_ID } from './shared/sharedInternals';
+import { minRequestedVersion, SESSION_ID, SDK_LOCATION } from './shared/sharedInternals';
 
 interface ConnectOptions {
   connectLaunchWaitTimeoutMs?: number;
@@ -125,7 +125,6 @@ export function Connect (options: ConnectOptions) {
   let INITIALIZE_TIMEOUT = options.connectLaunchWaitTimeoutMs || 5000;
   let PLUGIN_ID = options.id || 'aspera-web';
   let PLUGIN_CONTAINER_ID = options.containerId || 'aspera-web-container';
-  let SDK_LOCATION = Utils.getFullURI(options.sdkLocation) || '//d3gcli72yxqn2z.cloudfront.net/connect/v4';
   let APPLICATION_ID: any = '';
   let AUTHORIZATION_KEY = options.authorizationKey || '';
   let POLLING_TIME = options.pollingTime || 2000;
@@ -133,6 +132,9 @@ export function Connect (options: ConnectOptions) {
   let CONNECT_METHOD = options.connectMethod || '';
   let DRAGDROP_ENABLED = options.dragDropEnabled || false;
   let MAX_ACTIVITY_OUTSTANDING = options.maxActivityOutstanding || 2;
+
+  let sdkLocation = Utils.getFullURI(options.sdkLocation) || '//d3gcli72yxqn2z.cloudfront.net/connect/v4';
+  SDK_LOCATION.set(sdkLocation);
 
   // Expose the requested version to the install banner
   if (options.minVersion) {
@@ -203,7 +205,7 @@ export function Connect (options: ConnectOptions) {
     return null;
   }
 
-  function getAllTransfersHelper (iterationToken: string, callbacks: ICallbacks) {
+  function getAllTransfersHelper (iterationToken: number, callbacks: ICallbacks) {
     // This is never supposed to happen
     if (Utils.isNullOrUndefinedOrEmpty(iterationToken)) {
       return null;
@@ -404,7 +406,7 @@ export function Connect (options: ConnectOptions) {
    *   had activity since the last call.
    * @return {null}
    */
-  this.getAllTransfers = function (callbacks: ICallbacks, iterationToken: string = '0') {
+  this.getAllTransfers = function (callbacks: ICallbacks, iterationToken: number = 0) {
     getAllTransfersHelper(iterationToken, callbacks);
     return null;
   };
@@ -1021,7 +1023,7 @@ export function Connect (options: ConnectOptions) {
       pluginId: PLUGIN_ID,
       containerId: PLUGIN_CONTAINER_ID,
       initializeTimeout: INITIALIZE_TIMEOUT,
-      sdkLocation: SDK_LOCATION,
+      sdkLocation: SDK_LOCATION.value(),
       connectMethod: CONNECT_METHOD,
       minVersion: MINIMUM_VERSION
     };
