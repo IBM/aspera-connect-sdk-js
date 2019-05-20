@@ -33,6 +33,9 @@ pipeline {
         success {
           archiveArtifacts('ConnectSDK*.zip')
         }
+        cleanup {
+          deleteDir()
+        }
       }
     }
   }
