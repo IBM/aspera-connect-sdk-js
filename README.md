@@ -1,3 +1,5 @@
+[![Build Status](https://build.aspera.us/buildStatus/icon?job=apps-trunk-build-mac-10.13-64-connect-sdk-dw%2Fmaster)](https://build.aspera.us/job/apps-trunk-build-mac-10.13-64-connect-sdk-dw/job/master/)
+
 ## Top-level project for the IBM Aspera Connect SDK
 
 ## Getting Started
