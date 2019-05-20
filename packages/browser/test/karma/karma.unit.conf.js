@@ -1,5 +1,4 @@
 const path = require('path');
-const webpackConfig = require('../webpack.config')[0];
 
 module.exports = function(config) {
     config.set({
@@ -22,8 +21,27 @@ module.exports = function(config) {
           "text/x-typescript": ["ts"],
         },
         webpack: {
-          module: webpackConfig.module,
-          resolve: webpackConfig.resolve,
+          module:  {
+            rules: [
+              {
+                test: /\.ts$/,
+                loader: 'ts-loader?silent=true',
+                exclude: /node_modules/
+              },
+              {
+                test: /\.ts$/,
+                loader: 'istanbul-instrumenter-loader',
+                options: {
+                  esModules: true
+                },
+                enforce: 'post',
+                exclude: /(node_modules|\.test\.ts)/
+              }
+            ]
+          },
+          resolve: {
+            extensions: ['.js', '.ts']
+          },
           mode: 'production'
         },
         webpackMiddleware: {

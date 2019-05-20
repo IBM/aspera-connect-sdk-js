@@ -1,0 +1,276 @@
+var testInitSession = function() {
+  context('when not given app_id', function() {
+    it('should return new app_id', function() {
+      if (this.useExtensions) {
+        this.asperaWeb = new AW4.Connect( { connectMethod: 'extension' } );
+      } else {
+        this.asperaWeb = new AW4.Connect( { connectMethod: 'http' } );
+      }
+      app_id = this.asperaWeb.initSession();
+      expect(app_id).to.have.property('app_id').and.to.match(/(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/);
+    });
+  });
+
+  context('when given app_id', function() {
+    it('should return app_id', function() {
+      if (this.useExtensions) {
+        this.asperaWeb = new AW4.Connect( { connectMethod: 'extension' } );
+      } else {
+        this.asperaWeb = new AW4.Connect( { connectMethod: 'http' } );
+      }
+      app_id = this.asperaWeb.initSession("dwosk");
+      expect(app_id).to.have.property('app_id').and.to.equal("dwosk");
+    });
+  });
+
+  context('when called twice in same session', function() {
+    beforeEach(function() {
+      if (this.useExtensions) {
+        this.asperaWeb = new AW4.Connect( { connectMethod: 'extension' } );
+      } else {
+        this.asperaWeb = new AW4.Connect( { connectMethod: 'http' } );
+      }
+      this.asperaWeb.initSession();
+    });
+
+    it('should return error with code -1', function() {
+      err = this.asperaWeb.initSession();
+      expect(err.error.code).to.equal(-1);
+    });
+
+    it('should return error with \"Invalid request\"', function() {
+      err = this.asperaWeb.initSession();
+      expect(err.error.internal_message).equal("Invalid request");
+    });
+
+    it('should return error with \"Session was already initialized\"', function() {
+      err = this.asperaWeb.initSession();
+      expect(err.error.user_message).to.equal("Session was already initialized");
+    });
+  });
+
+  context('when Connect initialized with no minVersion', function() {
+    beforeEach(function() {
+      // Reset Connect session
+      if (this.useExtensions) {
+        this.asperaWeb = new AW4.Connect( { connectMethod: 'extension' } );
+      } else {
+        this.asperaWeb = new AW4.Connect( { connectMethod: 'http' } );
+      }
+    });
+
+    context('when user does not have Connect installed', function() {
+      beforeEach(function() {
+        this.clock = sinon.useFakeTimers();
+      });
+      
+      afterEach(function() {
+        this.clock.restore();
+      });
+      
+      it('should set Connect status to FAILED', function(done) {
+        // Simulate extension not installed
+        document.removeEventListener('AsperaConnectCheck', returnVersion);
+        this.server.respondWith('GET', /ready/, [404, { "Content-Type": "application/json" }, '{}']);
+
+        this.asperaWeb.initSession();
+        this.clock.tick(5000);
+        // async + fake timers don't work well together
+        this.clock.restore();
+        // Detect extension timeout is hardcoded to 1s so set timeout here to 1s
+        setTimeout(() => {
+          if (this.useExtensions)
+            expect(this.asperaWeb.getStatus()).to.equal('EXTENSION_INSTALL');
+          else
+            expect(this.asperaWeb.getStatus()).to.equal('FAILED');
+          done();
+        }, 1000);
+      });
+    });
+  });
+
+  context('when Connect initialized with minVersion = 3.8.0', function() {
+    beforeEach(function() {
+      // Reset Connect session
+      if (this.useExtensions) {
+        this.asperaWeb = new AW4.Connect( { minVersion: '3.8.0', connectMethod: 'extension' } );
+      } else {
+        this.asperaWeb = new AW4.Connect( { minVersion: '3.8.0', connectMethod: 'http' } );
+      }
+    });
+
+    context('when user has Connect 3.7.4 installed', function() {
+      it('should set Connect status to OUTDATED', function(done) {
+        extensionResponse(200, '{ "version": "3.7.4.157934" }');
+        this.server.respondWith('GET', /version/, [200, { "Content-Type": "application/json" }, '{ "version": "3.7.4.157934" }']);
+
+        this.asperaWeb.initSession();
+        
+        setTimeout(() => {
+          expect(this.asperaWeb.getStatus()).to.equal('OUTDATED');
+          done();
+        }, 100);
+      });
+
+      xit('should not call /v5/connect/update/require', function() {
+        // expect /v5 prefix because using 3.7.4 Connect
+      });
+    });
+
+    context('when user has Connect 3.8.0 installed', function() {
+      it('should set Connect status to RUNNING', function(done) {
+        this.asperaWeb.initSession();
+        
+        setTimeout(() => {
+          expect(this.asperaWeb.getStatus()).to.equal('RUNNING');
+          done();
+        }, 100);
+      });
+    });
+  });
+
+  context('when Connect initialized with minVersion = 3.9.0', function() {
+    var optional;
+    beforeEach(function() {
+      // Reset Connect session
+      if (this.useExtensions) {
+        this.asperaWeb = new AW4.Connect( { minVersion: '3.9.0', connectMethod: 'extension' } );
+      } else {
+        this.asperaWeb = new AW4.Connect( { minVersion: '3.9.0', connectMethod: 'http' } );
+      }
+    });
+
+    context('when user has Connect 3.8.0 installed', function() {
+      it('should set Connect status to OUTDATED', function(done) {
+        this.asperaWeb.initSession();
+        
+        setTimeout(() => {
+          expect(this.asperaWeb.getStatus()).to.equal('OUTDATED');
+          done();
+        }, 100);
+      });
+
+      it('should call /connect/update/require', function(done) {
+        // http context: expect /v6 because using Connect 3.8+.
+        // NOTE: extension hardcoded to use /v5 as encryption is not required. Only
+        // have access to uri here anyways.
+        this.asperaWeb.initSession();
+
+        setTimeout(() => {
+          if (this.useExtensions) {
+            expect(extensionRequests.last().uri_reference).to.equal('/connect/update/require');
+          } else {
+            expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/update/require');
+          }
+          done();
+        }, 100);
+
+      });
+
+      // ASCN-962
+      it('should encrypt /v6/connect/update/require call', function(done) {
+        // Encryption not needed when using extensions (ASCN-1191)
+        if (this.useExtensions) {
+          return;
+        }
+        this.asperaWeb.initSession();
+        setTimeout(() => {
+          expect(this.server.lastRequest.requestBody).to.not.match(/min_version/);
+          done();
+        }, 100);
+      });
+
+      it('should call /connect/update/require with minVersion', function(done) {
+        this.asperaWeb.initSession();
+        
+        setTimeout(() => {
+          if (this.useExtensions) {
+            expect(extensionRequests.last().body).to.match(/"min_version":"3.9.0"/);
+          } else {
+            expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"min_version":"3.9.0"/);
+          }
+          done();
+        }, 100);
+      });
+
+      context('when Connect initialized with sdkLocation', function() {
+        beforeEach(function() {
+          if (this.useExtensions) {
+            this.asperaWeb = new AW4.Connect({
+              minVersion: '3.9.0',
+              sdkLocation: 'example.com/connect/v4',
+              connectMethod: 'extension'
+            });
+          } else {
+            this.asperaWeb = new AW4.Connect({
+              minVersion: '3.9.0',
+              sdkLocation: 'example.com/connect/v4',
+              connectMethod: 'http'
+            });
+          }
+        });
+
+        it('should call /connect/update/require with sdk_location', function(done) {
+          this.asperaWeb.initSession();
+          
+          setTimeout(() => {
+            if (this.useExtensions) {
+              expect(extensionRequests.last().body).to.match(/sdk_location.*example.com\/connect\/v4/);
+            } else {
+              expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/sdk_location.*example.com\/connect\/v4/);
+            }
+            done();
+          }, 100);
+        });
+      });
+    });
+  });
+
+  context('when Connect initialized with connectLaunchWaitTimeoutMs = 2000', function() {
+    var timeout = 2000;
+    beforeEach(function() {
+      // this.clock.restore();
+      if (this.useExtensions) {
+        this.asperaWeb = new AW4.Connect( { connectLaunchWaitTimeoutMs: timeout, connectMethod: 'extension' } );
+      } else {
+        this.asperaWeb = new AW4.Connect( { connectLaunchWaitTimeoutMs: timeout, connectMethod: 'http' } );
+      }
+    });
+
+    // TODO: Fix async with fake timers
+    xcontext('after 2000ms', function() {
+      it('should set Connect status to FAILED', function(done) {
+        document.removeEventListener('AsperaConnectCheck', returnVersion);
+        this.server.respondWith('GET', /ready/, [404, { "Content-Type": "application/json" }, '{}']);
+
+        this.asperaWeb.initSession();
+        // this.clock = sinon.useFakeTimers();
+        // this.clock.tick(timeout);
+        // this.clock.restore();
+        setTimeout(() => {
+          if (this.useExtensions)
+            expect(this.asperaWeb.getStatus()).to.equal('EXTENSION_INSTALL');
+          else
+            expect(this.asperaWeb.getStatus()).to.equal('FAILED');
+          done();
+        }, 1000);
+      });
+    });
+
+    context('before 2000ms', function() {
+      it('should set Connect status to INITIALIZING (extensions) or RETRYING (http)', function() {
+        document.removeEventListener('AsperaConnectCheck', returnVersion);
+        this.server.respondWith('GET', /ready/, [404, { "Content-Type": "application/json" }, '{}']);
+
+        this.asperaWeb.initSession();
+        this.clock.tick(1000);
+        var status = this.asperaWeb.getStatus();
+        if (this.useExtensions) {
+          expect(status).to.equal('EXTENSION_INSTALL');
+        } else {
+          expect(status).to.equal('RETRYING');
+        }
+      });
+    });
+  });
+};

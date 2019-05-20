@@ -4,7 +4,6 @@ variables:
 before_script:
   - npm install
   - npm --prefix packages/browser install
-  - npm install -g tslint tsc
 
 stages:
   - build
@@ -13,6 +12,15 @@ stages:
 build:
   stage: build
   image: ${BUILD_IMAGE}
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - packages/browser/node_modules/
+  artifacts:
+    paths:
+      - packages/browser/build/
+    expire_in: 30 days
   script:
     - export SKIP_INSTALLERS=1
     - npm run build:browser
@@ -21,5 +29,25 @@ build:
 test:lint:
   stage: test
   image: ${BUILD_IMAGE}
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - packages/browser/node_modules/
   script:
     - npm --prefix packages/browser run lint
+    
+test:karma:
+  stage: test
+  image: ${BUILD_IMAGE}
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - packages/browser/node_modules/
+  dependencies:
+    - build
+  script:
+    - ls packages/browser/
+    - ls packages/browser/build/
+    - npm run test:browser
