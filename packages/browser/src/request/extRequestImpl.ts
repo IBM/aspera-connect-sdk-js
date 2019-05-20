@@ -68,7 +68,7 @@ class ExtRequestImpl {
     if (this.subclassType === 'SafariAppExtRequestImplementation') {
       let versionResponse = (evt: any) => {
         document.removeEventListener('AsperaConnectCheckResponse', versionResponse);
-        Logger.log('Extension detected: ' + JSON.stringify(evt));
+        Logger.debug('Extension detected: ' + JSON.stringify(evt));
         if (timeoutMs !== -1) {
           clearTimeout(timeoutTimer);
         }
@@ -84,7 +84,7 @@ class ExtRequestImpl {
         if (evt.type === 'message' && typeof evt.data === 'object' && 'type' in evt.data
                && evt.data.type === 'AsperaConnectCheckResponse') {
           window.removeEventListener('message', versionResponse);
-          Logger.log('Extension detected: ' + JSON.stringify(evt));
+          Logger.debug('Extension detected: ' + JSON.stringify(evt));
           if (timeoutMs !== -1) {
             clearTimeout(timeoutTimer);
           }
