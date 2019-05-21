@@ -1,6 +1,6 @@
 {
   "name": "@ibm-aspera-sdk/browser",
-  "version": "3.10.0",
+  "version": "1.0.0",
   "description": "Official IBM Aspera Connect SDK for Browsers",
   "private": true,
   "main": "dist/index.js",
