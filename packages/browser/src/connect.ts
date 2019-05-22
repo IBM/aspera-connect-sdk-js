@@ -172,7 +172,7 @@ export function Connect (options: ConnectOptions) {
     return data;
   }
 
-  function connectHttpRequest (method: string, path: string, data: any | null, sessionId: string, callbacks: ICallbacks | null) {
+  function connectHttpRequest (method: string, path: string, data: any | null, callbacks: ICallbacks | null) {
     if (requestHandler == null) {
       console.error('Connect#initSession must be called before invoking Connect API[' + path + '].');
       return null;
@@ -190,7 +190,7 @@ export function Connect (options: ConnectOptions) {
     // prepare data
     let dataStr = JSON.stringify(addStandardConnectSettings(localData));
     // start request
-    requestHandler.start(method, path, dataStr, sessionId, callbacks);
+    requestHandler.start(method, path, dataStr, SESSION_ID.value(), callbacks);
     return null;
   }
 
@@ -211,7 +211,7 @@ export function Connect (options: ConnectOptions) {
       return null;
     }
     let data = { iteration_token: iterationToken };
-    return connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/activity', data, SESSION_ID.value(), callbacks);
+    return connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/activity', data, callbacks);
   }
 
   function notifyTransferListeners (response: any) {
@@ -288,7 +288,7 @@ export function Connect (options: ConnectOptions) {
   function manageConnectStatus (newStatus: number) {
     // Initialize options before calling RUNNING
     if (newStatus === RequestHandler.STATUS.RUNNING && DRAGDROP_ENABLED) {
-      connectHttpRequest(HTTP_METHOD.GET, '/connect/file/initialize-drag-drop', null, SESSION_ID.value(), null);
+      connectHttpRequest(HTTP_METHOD.GET, '/connect/file/initialize-drag-drop', null, null);
     }
     if (newStatus === RequestHandler.STATUS.INITIALIZING) {
       setConnectStatus(STATUS.INITIALIZING);
@@ -386,7 +386,7 @@ export function Connect (options: ConnectOptions) {
     if (Utils.isNullOrUndefinedOrEmpty(authSpec)) {
       return Utils.createError(-1, 'Invalid authSpec parameter');
     }
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/info/authenticate', authSpec, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/info/authenticate', authSpec, callbacks);
     return null;
   };
 
@@ -494,7 +494,7 @@ export function Connect (options: ConnectOptions) {
    * @return {null}
    */
   this.modifyTransfer = function (transferId: string, options: Partial<ITransferSpec>, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/modify/' + transferId, options, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/modify/' + transferId, options, callbacks);
     return null;
   };
 
@@ -527,7 +527,7 @@ export function Connect (options: ConnectOptions) {
     if (!options) {
       return Utils.createError(-1, 'Invalid options parameter');
     }
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/file/read-as-array-buffer/', options, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/file/read-as-array-buffer/', options, callbacks);
     return null;
   };
 
@@ -562,7 +562,7 @@ export function Connect (options: ConnectOptions) {
     if (!options.path || typeof options.offset === 'undefined' || typeof options.chunkSize === 'undefined') {
       return Utils.createError(-1, 'Invalid parameters');
     }
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/file/read-chunk-as-array-buffer/', options, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/file/read-chunk-as-array-buffer/', options, callbacks);
     return null;
   };
 
@@ -651,7 +651,7 @@ export function Connect (options: ConnectOptions) {
    * @return {null}
    */
   this.removeTransfer = function (transferId: string, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/remove/' + transferId, null, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/remove/' + transferId, null, callbacks);
     return null;
   };
 
@@ -679,7 +679,7 @@ export function Connect (options: ConnectOptions) {
     * @return {null}
     */
   this.resumeTransfer = function (transferId: string, options: Partial<ITransferSpec>, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/resume/' + transferId, options, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/resume/' + transferId, options, callbacks);
     return null;
   };
 
@@ -766,7 +766,7 @@ export function Connect (options: ConnectOptions) {
       let dropHelper = function (response: any) {
         listener({ event: evt, files: response });
       };
-      connectHttpRequest(HTTP_METHOD.POST, '/connect/file/dropped-files', data, SESSION_ID.value(), { success: dropHelper });
+      connectHttpRequest(HTTP_METHOD.POST, '/connect/file/dropped-files', data, { success: dropHelper });
     };
     for (let i = 0; i < elements.length; i++) {
       // Independent from our implementation
@@ -801,7 +801,7 @@ export function Connect (options: ConnectOptions) {
     * @return {null}
     */
   this.showAbout = function (callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/about', null, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/about', null, callbacks);
     return null;
   };
 
@@ -822,7 +822,7 @@ export function Connect (options: ConnectOptions) {
    * @return {null}
    */
   this.showDirectory = function (transferId: string, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/finder/' + transferId, null, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/finder/' + transferId, null, callbacks);
     return null;
   };
 
@@ -841,7 +841,7 @@ export function Connect (options: ConnectOptions) {
    * @return {null}
    */
   this.showPreferences = function (callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/preferences', null, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/preferences', null, callbacks);
     return null;
   };
 
@@ -879,7 +879,7 @@ export function Connect (options: ConnectOptions) {
     localOptions.title = options!.title || '';
     localOptions.suggestedName = options!.suggestedName || '';
     localOptions.allowedFileTypes = options!.allowedFileTypes || '';
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-save-file-dialog/', localOptions, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-save-file-dialog/', localOptions, callbacks);
     return null;
   };
 
@@ -922,7 +922,7 @@ export function Connect (options: ConnectOptions) {
     localOptions.suggestedName = options.suggestedName || '';
     localOptions.allowMultipleSelection = Utils.isNullOrUndefinedOrEmpty(options.allowMultipleSelection) || options.allowMultipleSelection;
     localOptions.allowedFileTypes = options.allowedFileTypes || '';
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-open-file-dialog/', localOptions, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-open-file-dialog/', localOptions, callbacks);
     return null;
   };
 
@@ -960,7 +960,7 @@ export function Connect (options: ConnectOptions) {
     }
     localOptions.title = options.title || '';
     localOptions.allowMultipleSelection = Utils.isNullOrUndefinedOrEmpty(options.allowMultipleSelection) || options.allowMultipleSelection;
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-open-folder-dialog/', localOptions, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-open-folder-dialog/', localOptions, callbacks);
     return null;
   };
 
@@ -979,7 +979,7 @@ export function Connect (options: ConnectOptions) {
    * @return {null}
    */
   this.showTransferManager = function (callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/transfer-manager', null, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/transfer-manager', null, callbacks);
     return null;
   };
 
@@ -999,7 +999,7 @@ export function Connect (options: ConnectOptions) {
    * @return {null}
    */
   this.showTransferMonitor = function (transferId: string, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/transfer-monitor/' + transferId, null, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/transfer-monitor/' + transferId, null, callbacks);
     return null;
   };
 
@@ -1142,7 +1142,7 @@ export function Connect (options: ConnectOptions) {
         transferSpec.aspera_connect_settings.back_link = window.location.href;
       }
     }
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/start', transferSpecs, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/start', transferSpecs, callbacks);
     return { request_id : requestId };
   };
 
@@ -1174,7 +1174,7 @@ export function Connect (options: ConnectOptions) {
    * @return {null}
    */
   this.stopTransfer = function (transferId: string, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/stop/' + transferId, null, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/stop/' + transferId, null, callbacks);
     return null;
   };
 
@@ -1200,7 +1200,7 @@ export function Connect (options: ConnectOptions) {
     if (Utils.isNullOrUndefinedOrEmpty(callbacks)) {
       return null;
     }
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/info/version', null, SESSION_ID.value(), callbacks);
+    connectHttpRequest(HTTP_METHOD.GET, '/connect/info/version', null, callbacks);
     return null;
   };
 }
