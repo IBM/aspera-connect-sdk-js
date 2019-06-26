@@ -17,6 +17,11 @@ body {
   margin: 0px auto;
   border-top: 4px solid #3D70B2;
   box-shadow: 0 12px 24px 0 rgba(0, 0, 0, 0.1);
+
+  animation-name: bump;
+  animation-duration: 0.8s;
+  animation-iteration-count: 1;
+  transform-origin: center top;
 }
 
 .connect-status-banner-container {
@@ -299,6 +304,26 @@ body {
   color: #5a6872;
 }
 
+.step-text:lang(ja) {
+  margin-right: 20px;
+}
+
+#step-two-button:lang(ja) {
+  font-size: 16px;
+}
+
+#step-three-inside-button:lang(ja), #step-one-inside-button:lang(ja), #step-two-inside-button:lang(ja) {
+  font-size: 0.7em;
+}
+
+@-moz-document url-prefix() {
+  #step-one-inside-button:lang(fr) {
+    font-size: 0.8em;
+    white-space: normal;
+    line-height: 13px;
+  }  
+}
+
 .pictograms {
   display: none;
   height: 32px;
@@ -370,6 +395,7 @@ body {
   vertical-align: middle;
   text-decoration: none;
   color: #ffffff;
+  cursor: pointer;
 }
 
 .not-filled-button {
@@ -388,21 +414,31 @@ body {
   text-decoration: none;
   color: #3d70b2;
   background-color: white;
+  cursor: pointer;
+}
+
+@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {
+   /* IE10+ specific styles go here */
+  .filled-button {
+    line-height: 30px;
+  }
+
+  .not-filled-button {
+    line-height:28px;
+  }
 }
 
 #install-step-two, #install-step-three {
   margin-top: 32px;
   position:relative;
-   white-space: nowrap; 
+  white-space: nowrap;
   height: 32px;
   vertical-align: middle;
 }
 
 #already-installed {
   margin-top: 40px;
-  margin-left: 206px;
   margin-bottom: 52px;
-  width: 230px;
   height: 15px;
   text-decoration: none;
   font-size: 12px;
@@ -412,13 +448,19 @@ body {
   line-height: normal;
   letter-spacing: normal;
   color: #152935;
+  text-align: center;
 }
 
-#troubleshoot-link {
+#troubleshoot-link, #refresh-link, #safari-troubleshoot-link {
   color: #3d70b2;
   font-weight: 600;
   text-decoration: none;
 }
+
+#safari-troubleshoot-link {
+  font-size: 0.9em;
+}
+
 #unsupported-text {
   width: 90%;
   display: inline-block;
@@ -495,31 +537,68 @@ body {
   }
 }
 
+@keyframes slide {
+  from,
+  53%,
+  to {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  43% {
+    -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    -webkit-transform: translate3d(0, -30px, 0);
+    transform: translate3d(0, -30px, 0);
+  }
+}
+
+@keyframes bump {
+  from,
+  53%,
+  to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+
+  43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, 8px, 0);
+  }
+}
+
 .download-indicator {
   position:fixed;
   margin:0;
   -webkit-animation-name: bounce;
-  -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
-   -webkit-animation-iteration-count: infinite;  /*Safari 4.0 - 8.0  */
+  -webkit-animation-duration: 2s;
+   -webkit-animation-iteration-count: infinite;
   animation-name: bounce;
   animation-duration: 2s;
-  animation-iteration-count: infinite;
+  animation-iteration-count: 2;
   -webkit-transform-origin: center top;
   transform-origin: center top;
+  z-index: 10;
+}
+
+/* IE/Edge specific css for download indicator */
+#download-bottom.download-indicator.download-indicator-ms {
+  left: calc(50% + 17vw);
+  bottom: 95px;
 }
 
 .download-indicator-top {
   position:fixed;
   margin:0;
-  -webkit-animation-name: bounce;
-  -webkit-animation-duration: 2s; /* Safari 4.0 - 8.0 */
-   -webkit-animation-iteration-count: infinite;  /*Safari 4.0 - 8.0  */
-  animation-name: bounce;
+  animation-name: slide;
   animation-duration: 2s;
-  animation-iteration-count: infinite;
+  animation-iteration-count: 3;
   -webkit-transform-origin: center top;
   transform-origin: center top;
   animation-direction: reverse;
+  z-index: 10;
 }
 
 #download-connect-link {
@@ -545,10 +624,11 @@ body {
 #download-bottom {
   display: none;
   position: absolute;
-  left: 61px;
-  bottom: 27px;
+  left: 40px;
+  bottom: 32px;
   width: 140px;
   height: 110px;
+  font-size: 15px;
   /* background-color: #3d3d3d; */
 }
 
@@ -556,9 +636,10 @@ body {
   display: none;
   position: absolute;
   right: 61px;
-  top: 27px;
+  top: 50px;
   width: 140px;
   height: 110px;
+  font-size: 15px;
 }
 
 #download-installer {
@@ -579,13 +660,16 @@ body {
 .installer-text {
   display: none;
   position: relative;
-  margin-left: 16px;
-  margin-top: 16px;
-  width: 104px;
-  height: 72px;
-  font-size: 14px;
+  margin-left: 6px;
+  margin-top: -2px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 10;
   color: white;
+}
+
+#download-upper .installer-text {
+    margin-top: 4px;
 }
 
 #step-three-how {
@@ -605,6 +689,17 @@ body {
   color: #3d70b2;
 }
 
+#safari-mitigate-text {
+  width: 45%;
+}
+
+#safari-mitigate-text:lang(fr) {
+  width: 32%;
+}
+
+#extension-enable-how {
+  border: 1px solid #344766;
+}
 
 .tooltip:hover img{
   display: block;
@@ -615,6 +710,8 @@ body {
 .tooltip img {
   display: none;
   width: 600px;
-  height: 168px;
   position: relative;
+  left: 50%;
+  margin-left: -200px;
+  margin-top: 20px;
 }

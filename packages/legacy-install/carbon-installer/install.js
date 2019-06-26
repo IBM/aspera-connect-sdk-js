@@ -29,6 +29,67 @@ var BROWSER = {
 var EDGE = BROWSER.EDGE_LEGACY || BROWSER.EDGE_WITH_EXTENSION;
 var NO_EXTENSION = BROWSER.SAFARI || BROWSER.IE || BROWSER.EDGE_LEGACY || BROWSER.FIREFOX_LEGACY;
 
+// TODO: Consolidate duplicate class
+AW4.Logger = (function() {
+    var LS_LOG_KEY = 'aspera-log-level';
+    var LEVEL = {
+        INFO : 0,
+        DEBUG : 1,
+        TRACE : 2
+    };
+    AW4.LogLevel = LEVEL.INFO;
+    try {
+        if (typeof(localStorage) == 'undefined')
+            return;
+        AW4.LogLevel = localStorage.getItem(LS_LOG_KEY);
+    } catch(error) { }
+
+    function trace(message) {
+        if(AW4.LogLevel >= LEVEL.TRACE && typeof window.console !== 'undefined') {
+            console.log(message);
+        }
+    }
+
+    function debug(message) {
+        if(AW4.LogLevel >= LEVEL.DEBUG && typeof window.console !== 'undefined') {
+            console.log(message);
+        }
+    }
+
+    function log(message) {
+        if(typeof window.console !== 'undefined') {
+            console.log(message);
+        }
+    }
+
+    function warn(message) {
+        if(typeof window.console !== 'undefined') {
+            console.warn(message);
+        }
+    }
+
+    function error(message) {
+        if(typeof window.console !== 'undefined') {
+            console.error(message);
+        }
+    }
+
+    function setLevel(level) {
+        AW4.LogLevel = level;
+        setLocalStorage(LS_LOG_KEY,level);
+    }
+
+    return {
+        LEVEL: LEVEL,
+        log: log,
+        debug: debug,
+        trace: trace,
+        warn: warn,
+        error: error,
+        setLevel: setLevel
+    };
+})();
+
 var loadCSSFile = function(filename){
   var fileref=document.createElement('link');
   fileref.setAttribute('rel', 'stylesheet');
@@ -93,6 +154,7 @@ var triggerExtensionCheck = function() {
     dummyIframe.style.height = '0px';
     dummyIframe.style.border = '0px';
     document.body.appendChild(dummyIframe);
+    return false;
 }
 
 var retry = function() {
@@ -145,14 +207,6 @@ var setLastDownloadedVersion = function(ver) {
     setLocalStorage(LS_DOWNLOAD_TIME, Date.now());
 };
 
-var isDownloadRecent = function() {
-    var downloadTime = getLocalStorage(LS_DOWNLOAD_TIME);
-    if (!downloadTime)
-        return false;
-    var timeDiff = Date.now() - downloadTime;
-    return timeDiff < 30000;
-};
-
 var LS_CONNECT_DETECTED = 'aspera-last-detected';
 
 function recordConnectInstall() {
@@ -175,11 +229,11 @@ var prepareInstallButton = function(element, isOutdated, href) {
   }
 };
 
-var prepareRetryButton = function(element, href) {
+var prepareRetryButton = function(element) {
   element.textContent = localize('retry-button', language());
   element.setAttribute('lang', language());
   element.onclick = function() {
-    retry();
+    sendParentMessage('mitigate_with_tab');
     return false;
   };
 };
@@ -194,28 +248,41 @@ var prepareContinueButton = function(element, href) {
   element.textContent = localize('continue-button', language());
 };
 
-var prepareRefreshButton = function(element, href) {
-  element.textContent = localize('refresh-button', language());
-  element.setAttribute('lang', language());
+var prepareRefreshLink = function(element, href) {
+  if (element) {
+    element.textContent = localize('refresh-button', language());
+    element.setAttribute('lang', language());
+    element.onclick = function() {
+      sendParentMessage('refresh');
+      return false;
+    };
+  }
 };
 
 var prepareDownloadIndicator = function(element, state) {
   element.style.display = 'inline-block';
-  if (state == 'download') {
-    element.textContent = localize('please-download', language());
-  } else if (state == 'install') {
+  if (state == 'install') {
     element.textContent = localize('run-installer', language());
+  } else {
+    element.textContent = localize('please-download', language());
   }
-   element.setAttribute('lang', language());
+  element.setAttribute('lang', language());
+  sendParentMessage('download_indicator_visible');
+  element.onclick = function() {
+    sendParentMessage('clicked_download_indicator');
+  };
+  scaleDownloadIndicatorText(element);
 };
 
 var prepareActiveButton = function(button, inside_button) {
   button.className = 'big-button-active';
+  button.style.opacity = '1';
   inside_button.className = 'filled-button';
 };
 
 var prepareNotActiveButton = function(button, inside_button) {
   button.className = 'big-button-non-active';
+  button.style.opacity = '0.5';
   inside_button.className = 'not-filled-button';
 };
 // NOTE: This code is included from AW4.ConnectInstaller#getExtensionStoreLink
@@ -227,21 +294,43 @@ var getExtensionStoreLink = function() {
     } else if (BROWSER.CHROME === true) {
         return 'https://chrome.google.com/webstore/detail/ibm-aspera-connect/kpoecbkildamnnchnlgoboipnblgikpn';
     }
-    console.log('This browser does not use the extension store.');
+    AW4.Logger.debug('This browser does not use the extension store.');
     return '';
 };
 
-var prepareDownloadExtensionButton = function(element, href) {
-  if (BROWSER.FIREFOX || BROWSER.CHROME || BROWSER.EDGE_WITH_EXTENSION) {
-    element.textContent = localize('install-extension', language());
-  } else if (BROWSER.IE || BROWSER.SAFARI) {
-    element.textContent = localize('install-ext', language());
-  }
+var prepareDownloadExtensionButton = function(element) {
   element.setAttribute('lang', language());
-  if (!element.getAttribute('href') || element.getAttribute('href') == '') {
-    console.log("Setting Extension store link: " + getExtensionStoreLink());
-    element.setAttribute('href', getExtensionStoreLink());
-    element.setAttribute('target', "_blank");
+  event = '';
+  if (BROWSER.CHROME || BROWSER.EDGE_WITH_EXTENSION) {
+    event = 'clicked_install_extension';
+    element.textContent = localize('install-extension', language());
+  } else if (BROWSER.FIREFOX) {
+    event = 'clicked_install_addon';
+    element.textContent = localize('install-addon', language());
+  } else if (BROWSER.IE || BROWSER.SAFARI) {
+    event = 'clicked_enable_extension';
+    element.textContent = localize('enable-extension', language());
+  }
+
+  if (BROWSER.SAFARI) {
+    element.onclick = function() {
+      sendParentMessage(event);
+      triggerExtensionCheck();
+    }
+  } else if (BROWSER.IE) {
+    element.onclick = function() {
+      sendParentMessage('clicked_enable_extension');
+      sendParentMessage('refresh');
+    }
+  } else {
+    if (!element.getAttribute('href') || element.getAttribute('href') == '') {
+      element.setAttribute('href', getExtensionStoreLink());
+      element.setAttribute('target', "_blank");
+    }
+
+    element.onclick = function() {
+      sendParentMessage(event);
+    }
   }
 };
 
@@ -257,14 +346,29 @@ var fadeOutDownloadIndicator = function(image) {
     image.style.opacity = opacity;
     opacity -=  0.05;
   }, 500);
-}
+};
+
+var resetAnimation = function(el) {
+  if (el) {
+    el.style.animation = 'none';
+    el.offsetHeight; /* trigger reflow */
+    el.style.animation = null;
+  }
+};
+
+var timeoutDownloadIndicator = function(image) {
+  clearInterval(downloadIndicatorTimer);
+  downloadIndicatorTimer = setTimeout(function() {
+      image.style.display = 'none';
+  }, 8000);
+};
 
 var setButtonToDisabled = function(element) {
   element.removeAttribute('href');
   element.removeAttribute('target');
   element.disabled = true;
   element.onclick = function() {return false;}
-}
+};
 
 var hideAllBySelector = function(document, selector) {
   var k = document.getElementsByClassName(selector);
@@ -273,49 +377,95 @@ var hideAllBySelector = function(document, selector) {
   }
 };
 
+// Dynamically scale indicator text based
+var scaleDownloadIndicatorText = function(el) {
+  svgId = el.id.indexOf('bottom') === -1 ? 'download-svg-upper' : 'download-svg-bottom';
+  var svg = document.getElementById(svgId);
+  if (svg && el) {
+    var textBBox = svg.getBBox();
+    // Keep width the same
+    var widthScale = 1;
+    var overflowHeight = el.clientHeight;
+    var heightScale = overflowHeight / (textBBox.height - 6);
+    // Check if text height is greater than svg height, which means there is overflow
+    if (heightScale >= 1) {
+      var scale = 1 / heightScale;
+      // If text is barely too long, then scale a little more so text isn't right up against the edge
+      if (scale >= 0.97) {
+        scale = scale - 0.04;
+      }
+      // Set new font size based on scaled factor
+      el.style.fontSize = scale + 'em';
+    }
+  }
+}
+
+var changeStateToExtensionInstall = function() {
+  if (BROWSER.SAFARI || BROWSER.IE) {
+    document.getElementById('step-two-button').style.opacity = '0.5';
+    document.getElementById('step-three-inside-button').disabled = false;
+    document.getElementById('step-one-checkmark').style.visibility = 'visible';
+    document.getElementById('step-two-checkmark').style.visibility = 'visible';
+    document.getElementById('step-three-checkmark').style.visibility = 'hidden';
+    prepareNotActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
+    prepareNotActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
+    prepareActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
+  } else if (BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX || BROWSER.CHROME) {
+    document.getElementById('step-three-button').style.opacity = '0.5';
+    document.getElementById('step-one-checkmark').style.visibility = 'hidden';
+    document.getElementById('step-two-checkmark').style.visibility = 'hidden';
+    document.getElementById('step-three-checkmark').style.visibility = 'hidden';
+    prepareActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
+    prepareNotActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
+    prepareNotActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
+  }
+};
+
+var clickedInstallEvent = function () {
+  installClicked = true;
+  sendParentMessage('clicked_install_app');
+  if (BROWSER.SAFARI) {
+    document.getElementById('download-upper').style.display = 'inline-block';
+    document.getElementById('indicator-upper-text').style.display = 'inline-block';
+    prepareDownloadIndicator(document.getElementById('indicator-upper-text'), 'install');
+    timeoutDownloadIndicator(document.getElementById('download-upper'));
+  } else {
+    document.getElementById('download-bottom').style.display = 'inline-block';
+    document.getElementById('indicator-bottom-text').style.display = 'inline-block';
+    prepareDownloadIndicator(document.getElementById('indicator-bottom-text'), 'install');
+    timeoutDownloadIndicator(document.getElementById('download-bottom'));
+  }
+  return false;
+}
+
 var changeStateToInstall = function() {
-  // var iframe = window.parent.document.getElementById('aspera-iframe-container');
-  // var innerDoc = (iframe.contentDocument) ? iframe.contentDocument : iframe.contentWindow.document;
   document.getElementById('step-one-checkmark').style.visibility = 'visible';
   document.getElementById('step-two-checkmark').style.visibility = 'hidden';
   document.getElementById('step-three-checkmark').style.visibility = 'hidden';
+  if (BROWSER.SAFARI)
+    document.getElementById("extension-title").textContent = localize('install-on-safari', language());
   if (BROWSER.SAFARI || BROWSER.IE) {
-    document.getElementById('step-two-inside-button').setAttribute('href', '');
     document.getElementById('step-two-button').style.opacity = '1';
-    document.getElementById('step-two-inside-button').onclick = function(){
-      if (BROWSER.SAFARI) {
-        document.getElementById('download-upper').style.display = 'inline-block';
-        document.getElementById('run-upper-text').style.display = 'inline-block';
-        document.getElementById('download-upper-text').style.display = 'none';
-        prepareDownloadIndicator(document.getElementById('run-upper-text'), 'install');
-        fadeOutDownloadIndicator(document.getElementById('download-upper'));
-      } else {
-        document.getElementById('download-bottom').style.display = 'inline-block';
-        document.getElementById('run-bottom-text').style.display = 'inline-block';
-        document.getElementById('download-bottom-text').style.display = 'none';
-        prepareDownloadIndicator(document.getElementById('run-bottom-text'), 'install');
-        fadeOutDownloadIndicator(document.getElementById('download-bottom'));
-      }
-      return false;
-    }
+    document.getElementById('step-two-inside-button').onclick = clickedInstallEvent;
     prepareInstallButton(document.getElementById('step-two-inside-button'), isOutdated, '');
     prepareNotActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
     prepareActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
     prepareNotActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
   } else if (BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX || BROWSER.CHROME) {
     prepareInstallButton(document.getElementById('step-three-inside-button'), isOutdated, '');
+    document.getElementById('step-two-checkmark').style.visibility = 'visible';
     document.getElementById('step-three-inside-button').disabled = false;
+    document.getElementById('step-three-button').style.opacity = '1';
     document.getElementById('step-three-inside-button').onclick = function(){
+      sendParentMessage('clicked_install_app');
       if (BROWSER.FIREFOX) {
-        document.getElementById('download-upper-text').style.display = 'none';
         document.getElementById('download-upper').style.display = 'inline-block';
-        prepareDownloadIndicator(document.getElementById('run-upper-text'), 'install');
-        fadeOutDownloadIndicator(document.getElementById('download-upper'));
+        prepareDownloadIndicator(document.getElementById('indicator-upper-text'), 'install');
+        timeoutDownloadIndicator(document.getElementById('download-upper'));
       } else {
-        document.getElementById('download-bottom-text').style.display = 'none';
         document.getElementById('download-bottom').style.display = 'inline-block';
-        prepareDownloadIndicator(document.getElementById('run-bottom-text'), 'install');
-        fadeOutDownloadIndicator(document.getElementById('download-bottom'));
+        prepareDownloadIndicator(document.getElementById('indicator-bottom-text'), 'install');
+        timeoutDownloadIndicator(document.getElementById('download-bottom'));
       }
       return false;
     }
@@ -338,34 +488,81 @@ var lastState = '';
 var downloadLink = '';
 var isOutdated = false;
 var downloadClicked = false;
+var connectVisible = false;
+var isDownloadRecent = false;
+var installClicked = false;
+var extensionInstallReached = false;
 var handleMessage = function(event) {
   if (typeof event.data != 'string')
     return;
   // update message
   var state = event.data;
-  // var iframe = window.parent.document.getElementById('aspera-iframe-container');
-  // var innerDoc = (iframe.contentDocument) ? iframe.contentDocument : iframe.contentWindow.document;
+  if (lastState == 'unsupported_browser' && state != 'running')
+    return; // Unsupport browser is a terminal state
+
+  // Show the last banner state
+  if (state === 'previous') {
+    if (lastState) {
+      state = lastState;
+    } else { // If there is no lastState for some reason, reset installation experience
+      if (BROWSER.SAFARI || BROWSER.IE) {
+        state = 'download';
+      } else {
+        state = 'extension_install';
+      }
+    }
+  }
+
+  // Remap old states
+  if (state === 'retry')
+    state = 'download';
+
   if (state === 'launching'
     || state === 'update'
-    || state === 'retry'
     || state === 'outdated'
     || state === 'running'
     || state === 'continue'
     || state === 'extension_install'
     || state === 'download'
     || state === 'install'
-    || state === 'unsupported_browser')
+    || state === 'unsupported_browser'
+    || state === 'safari_mitigate')
   {
-    if (state === 'download' && isDownloadRecent())
-      state = 'install';
-    document.getElementsByClassName('connect-status-banner-container')[0].style.display = state == 'launching' || state == 'running' || state == 'unsupported_browser' ? 'inline-block' : 'none';
-    document.getElementsByClassName('three-step-installer')[0].style.display = state == 'launching' || state == 'running' || state == 'unsupported_browser' ? 'none' : 'inline-block';
-    if (state === 'extension_install' || state === 'download' || state === 'install' || state === 'outdated' || state === 'failed' || state === 'update'){
+    // Avoid redundant download prompts
+    if (state === 'download' && isDownloadRecent) {
+      if (BROWSER.SAFARI || BROWSER.IE) {
+        state = 'extension_install';
+      }
+    }
+    document.getElementsByClassName('connect-status-banner-container')[0].style.display = state == 'launching' || state == 'running' || state == 'unsupported_browser' || state === 'safari_mitigate' ? 'inline-block' : 'none';
+    document.getElementsByClassName('three-step-installer')[0].style.display = state == 'launching' || state == 'running' || state == 'unsupported_browser' || state === 'safari_mitigate' ? 'none' : 'inline-block';
+
+    // If we go to running state from install state, then running banner should show the 3 green checkmarks.
+    //   Otherwise, show the smaller running banner like usual.
+    if (state === 'running' && lastState === 'install') {
+     document.getElementsByClassName('connect-status-banner-container')[0].style.display = 'none';
+     document.getElementsByClassName('three-step-installer')[0].style.display = 'inline-block';
+
+     // Display all three green checkmarks before banner is dismissed
+     document.getElementById('step-one-checkmark').style.visibility = 'visible';
+     document.getElementById('step-two-checkmark').style.visibility = 'visible';
+     document.getElementById('step-three-checkmark').style.visibility = 'visible';
+   }
+    if (state === 'extension_install' || state === 'download' || state === 'install' || state === 'outdated' || state === 'failed' || state === 'update' || (state === 'running' && lastState === 'install')){
       sendParentMessage('100%');
       document.height = '452px';
+      if (!connectVisible) {
+        connectVisible = true;
+        sendParentMessage('connect_bar_visible');
+      }
       document.getElementsByClassName('connect-status-banner-container')[0].style.display = 'none';
       document.getElementById("ext-install-welcome").textContent = localize("required", language());
-      document.getElementById("extension-title").textContent = localize("ext-install", language());
+      document.getElementById('troubleshoot-link').onclick = function() {
+        sendParentMessage('clicked_troubleshoot');
+        openTab('https://test-connect.asperasoft.com');
+        return false;
+      }
+      prepareRefreshLink(document.getElementById('refresh-link'));
       if (BROWSER.SAFARI || BROWSER.IE) {
         document.getElementById('step-one-download-box').style.display = 'inline';
         document.getElementById('step-two-openbox').style.display = 'inline';
@@ -378,21 +575,46 @@ var handleMessage = function(event) {
         document.getElementById('step-three-button').style.marginLeft = '35px';
         document.getElementById('step-two-openbox-img').style.marginLeft = '12.5px';
         document.getElementById('step-three-puzzle-img').style.marginLeft = '14px';
-        document.getElementById('step-three-new').style.visibility = 'visible';
+        if (BROWSER.SAFARI) {
+          document.getElementById('step-three-new').style.visibility = 'visible';
+        }
         document.getElementById('step-one-text').style.lineHeight = '32px';
         document.getElementById('step-three-text').style.lineHeight = '1';
         document.getElementById('install-step-three').style.marginTop = '27px';
         document.getElementById('step-three-inside-button').style.cursor = 'pointer';
+        prepareDownloadExtensionButton(document.getElementById('step-three-inside-button'));
         document.getElementById('step-three-new').textContent = localize('new', language());
-        document.getElementById('install-step-three').className += 'install-extension-step';
+        document.getElementById('install-step-three').classList.add('install-extension-step');
         document.getElementById('step-one-inside-button').setAttribute('download', '');
-        if (BROWSER.SAFARI) {
-          document.getElementById('text-how').textContent = localize('how', language());
+        document.getElementById('step-one-inside-button').onclick = function(){
+          downloadClicked = true;
+          sendParentMessage('clicked_download_app');
+          if (BROWSER.SAFARI) {
+            document.getElementById('download-upper').style.display = 'inline-block';
+            prepareDownloadIndicator(document.getElementById('indicator-upper-text'), state);
+            timeoutDownloadIndicator(document.getElementById('download-upper'));
+          } else {
+            document.getElementById('download-bottom').style.display = 'inline-block';
+            prepareDownloadIndicator(document.getElementById('indicator-bottom-text'), state);
+            timeoutDownloadIndicator(document.getElementById('download-bottom'));
+          }
+          sendParentMessage('downloadconnect');
+        }
+        document.getElementById('text-how').textContent = localize('how', language());
+        document.getElementById('extension-enable-how').src = BROWSER.SAFARI === true ? 'tooltip_safari.gif': 'tooltip_ie.gif';
+        document.getElementById('text-how').onclick = function() {
+          sendParentMessage('clicked_how_link');
         }
         if (state === 'outdated' || state == 'update') {
           document.getElementById('step-two-inside-button').textContent = localize('upgrade-connect', language());
         } else {
-          document.getElementById('step-two-inside-button').textContent = localize('install-connect', language());
+          if (!isOutdated) {
+            document.getElementById('step-two-inside-button').textContent = localize('install-connect', language());
+          }
+
+          if (state === 'extension_install') {
+            document.getElementById('step-two-inside-button').onclick = clickedInstallEvent;
+          }
         }
         document.getElementById('step-three-inside-button').textContent = localize('enable-extension', language());
       } else if (BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX || BROWSER.CHROME) {
@@ -413,88 +635,96 @@ var handleMessage = function(event) {
         document.getElementById('step-three-inside-button').style.cursor = 'pointer';
         document.getElementById('step-one-new').textContent = localize('new', language());
         document.getElementById('install-step-one').classList.add('install-extension-step');
-        document.getElementById('step-one-inside-button').textContent = localize('install-extension', language());
+        if (BROWSER.FIREFOX) {
+          document.getElementById('step-one-inside-button').textContent = localize('install-addon', language());
+        } else {
+          document.getElementById('step-one-inside-button').textContent = localize('install-extension', language());
+        }
         document.getElementById('step-two-inside-button').textContent = localize('download-app', language());
         document.getElementById('step-two-inside-button').setAttribute('download', '');
-        prepareDownloadExtensionButton(document.getElementById('step-one-inside-button'), getExtensionStoreLink());
+        prepareDownloadExtensionButton(document.getElementById('step-one-inside-button'));
+        document.getElementById('step-two-inside-button').onclick = function(){
+          downloadClicked = true;
+          sendParentMessage('clicked_download_app');
+          if (BROWSER.FIREFOX) {
+            document.getElementById('download-upper').style.display = 'inline-block';
+            prepareDownloadIndicator(document.getElementById('indicator-upper-text'), state);
+            timeoutDownloadIndicator(document.getElementById('download-upper'));
+          } else {
+            document.getElementById('download-bottom').style.display = 'inline-block';
+            prepareDownloadIndicator(document.getElementById('indicator-bottom-text'), state);
+            timeoutDownloadIndicator(document.getElementById('download-bottom'));
+          }
+          // If we are still in step one, then we do not want to change to the install state
+          if (state === 'extension_install') {
+            return;
+          }
+          sendParentMessage('downloadconnect');
+        }
         if (state === 'outdated' || state == 'update') {
           document.getElementById('step-three-inside-button').textContent = localize('upgrade-connect', language());
         } else {
-          document.getElementById('step-three-inside-button').textContent = localize('install-connect', language());
+          // Check if outdated otherwise after download app is clicked, the button text will be incorrect
+          if (!isOutdated) {
+            document.getElementById('step-three-inside-button').textContent = localize('install-connect', language());
+          }
         }
       }
       if (state == 'outdated' || state == 'update' || state == 'failed') {
+        if (state === 'outdated' || state === 'update') {
+          isOutdated = true;
+          var refreshLinkEl = document.getElementById('refresh-link');
+          var orSeparatorEl = document.getElementById('or');
+          if (refreshLinkEl) {
+            refreshLinkEl.parentNode.removeChild(refreshLinkEl);  
+          }
+          if (orSeparatorEl) {
+            orSeparatorEl.parentNode.removeChild(orSeparatorEl);  
+          }
+        }
+        state = 'download';
+        /*
         if (BROWSER.SAFARI || BROWSER.IE)
           state = 'download'
-        else if (BROWSER.FIREFOX || BROWSER.CHROME || BROWSER.EDGE_WITH_EXTENSION)
+        else if (BROWSER.FIREFOX || BROWSER.CHROME || BROWSER.EDGE_WITH_EXTENSION) {
           if (!isExtensionInstalled(1000))
             state = 'extension_install'
           else
             state = 'download'
+        } */
       }
       if (state === 'extension_install') {
-        if (BROWSER.SAFARI || BROWSER.IE) {
-          document.getElementById('step-two-button').style.opacity = '0.5';
-          document.getElementById('step-three-inside-button').disabled = false;
-          document.getElementById('step-one-checkmark').style.visibility = 'visible';
-          document.getElementById('step-two-checkmark').style.visibility = 'visible';
-          document.getElementById('step-three-checkmark').style.visibility = 'hidden';
-          prepareNotActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
-          prepareNotActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
-          prepareActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
-          // document.getElementById('step-three-inside-button').onclick = function(){triggerExtensionCheck();}
-        } else if (BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX || BROWSER.CHROME) {
-          document.getElementById('step-three-button').style.opacity = '0.5';
-          document.getElementById('step-one-checkmark').style.visibility = 'hidden';
-          document.getElementById('step-two-checkmark').style.visibility = 'hidden';
-          document.getElementById('step-three-checkmark').style.visibility = 'hidden';
-          prepareActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
-          prepareNotActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
-          prepareNotActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
+        extensionInstallReached = true;
+        //  wait 10 sec before showing install state if previous state was download and we're waiting for download to be completed.
+        if (installClicked && (BROWSER.SAFARI || BROWSER.IE)) {
+          setTimeout(function () {
+            if (BROWSER.SAFARI) {
+              document.getElementById('download-upper').style.display = 'none';
+            } else {
+              document.getElementById('download-bottom').style.display = 'none';
+            }
+            changeStateToExtensionInstall();
+          }, 4000);
+        } else {
+          changeStateToExtensionInstall();
         }
       } else if (state === 'download') {
-        if (BROWSER.SAFARI || BROWSER.IE) {
-          document.getElementById('step-two-button').style.opacity = '1';
-        } else if (BROWSER.FIREFOX || BROWSER.CHROME || BROWSER.EDGE_WITH_EXTENSION) {
-          document.getElementById('step-three-button').style.opacity = '1';
-        }
-        document.getElementById('run-bottom-text').style.display = 'none';
+        if (isOutdated) {
           if (BROWSER.SAFARI || BROWSER.IE) {
-            document.getElementById('step-one-inside-button').setAttribute('href', '');
-            document.getElementById('step-one-inside-button').onclick = function(){
-              downloadClicked = true;
-              if (BROWSER.SAFARI) {
-                document.getElementById('download-upper').style.display = 'inline-block';
-                prepareDownloadIndicator(document.getElementById('download-upper-text'), state);
-                fadeOutDownloadIndicator(document.getElementById('download-upper'));
-              } else {
-                document.getElementById('download-bottom').style.display = 'inline-block';
-                prepareDownloadIndicator(document.getElementById('download-bottom-text'), state);
-                fadeOutDownloadIndicator(document.getElementById('download-bottom'));
-              }
-              sendParentMessage('downloadconnect');
-            }
+            document.getElementById('step-two-button').style.opacity = '1';
+          } else if (BROWSER.FIREFOX || BROWSER.CHROME || BROWSER.EDGE_WITH_EXTENSION) {
+            document.getElementById('step-three-button').style.opacity = '1';
+          }
+        }
+          if (BROWSER.SAFARI || BROWSER.IE) {
             document.getElementById('step-one-checkmark').style.visibility = 'hidden';
             document.getElementById('step-two-checkmark').style.visibility = 'hidden';
             document.getElementById('step-three-checkmark').style.visibility = 'hidden';
             prepareActiveButton(document.getElementById('step-one-button'), document.getElementById('step-one-inside-button'));
             prepareNotActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
             prepareNotActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
+            document.getElementById('step-two-inside-button').removeAttribute('href');
           } else if (BROWSER.FIREFOX || BROWSER.EDGE_WITH_EXTENSION || BROWSER.CHROME) {
-            document.getElementById('run-bottom-text').style.display = 'none';
-            document.getElementById('step-two-inside-button').onclick = function(){
-              downloadClicked = true;
-              if (BROWSER.FIREFOX) {
-                prepareDownloadIndicator(document.getElementById('download-upper-text'), state);
-                document.getElementById('download-upper').style.display = 'inline-block';
-                fadeOutDownloadIndicator(document.getElementById('download-upper'));
-              } else {
-                prepareDownloadIndicator(document.getElementById('download-bottom-text'), state);
-                document.getElementById('download-bottom').style.display = 'inline-block';
-                fadeOutDownloadIndicator(document.getElementById('download-bottom'));
-              }
-              sendParentMessage('downloadconnect');
-            }
             document.getElementById('step-one-checkmark').style.visibility = 'visible';
             document.getElementById('step-two-checkmark').style.visibility = 'hidden';
             document.getElementById('step-three-checkmark').style.visibility = 'hidden';
@@ -502,14 +732,20 @@ var handleMessage = function(event) {
             prepareActiveButton(document.getElementById('step-two-button'), document.getElementById('step-two-inside-button'));
             prepareNotActiveButton(document.getElementById('step-three-button'), document.getElementById('step-three-inside-button'));
           }
-        } else if (state == 'install') { //state install
-        //wait 10 sec before showing install state if previous state was download and we're waiting for download to be completed.
+        } else if (state == 'install') {
+          // IF user clicks download again in the extension install state on IE/Safari - don't trigger switch to install state
+          if (BROWSER.SAFARI || BROWSER.IE) {
+            if (extensionInstallReached) {
+              return;
+            }
+          }
+          // Wait 10 sec before showing install state if previous state was download and we're waiting for download to be completed.
           if (downloadClicked) {
             setTimeout(function(){changeStateToInstall();}, 10000);
           } else {
             changeStateToInstall();
           }
-        } 
+        }
       } else {
       sendParentMessage('80px');
       document.height = '80px';
@@ -518,6 +754,7 @@ var handleMessage = function(event) {
       document.getElementById('running-container').style.display = state == 'running' ? 'inline-block' : 'none';
       document.getElementsByClassName('three-step-installer')[0].style.display = state == 'extension_install' || state == 'download' || state == 'install' || state == 'outdated' || state == 'failed' || state == 'update' ? 'inline-block' : 'none';
       document.getElementById('unsupported-container').style.display = state == 'unsupported_browser' ? 'inline-block' : 'none';
+      document.getElementById('safari-mitigate-container').style.display = state == 'safari_mitigate' ? 'inline-block' : 'none';
       if (state == 'launching') {
         document.getElementById('launching-container-text').textContent = localize('launching', language());
       } else if (state == 'running') {
@@ -528,19 +765,44 @@ var handleMessage = function(event) {
         document.getElementById('unsupported-text').innerHTML = unsupported_with_link;
       } else if (state == 'running') {
         recordConnectInstall();
+      } else if (state === 'safari_mitigate') {
+        document.getElementById('safari-mitigate-text').setAttribute('lang', language());
+        document.getElementById('safari-mitigate-text').textContent = localize('retry', language());
+        prepareRetryButton(document.getElementById('safari-retry-link'));
+        document.getElementById('safari-troubleshoot-link').onclick = function() {
+          sendParentMessage('clicked_troubleshoot');
+          openTab('https://test-connect.asperasoft.com');
+          return false;
+        }
       }
     }
+    resetAnimation(document.getElementsByClassName('connect-status-banner')[0]);
   } else if (state.indexOf('downloadlink') === 0) {
     var href = state.substring(state.indexOf('=') + 1);
     downloadLink = href;
     if (BROWSER.CHROME || BROWSER.FIREFOX || BROWSER.EDGE_WITH_EXTENSION) {
-      prepareDownloadExtensionButton(document.getElementById('step-one-inside-button'), href);
+      prepareDownloadExtensionButton(document.getElementById('step-one-inside-button'));
       prepareDownloadButton(document.getElementById('step-two-inside-button'), href);
       prepareInstallButton(document.getElementById('step-three-inside-button'), isOutdated, href);
     } else if (BROWSER.IE || BROWSER.SAFARI) {
       prepareDownloadButton(document.getElementById('step-one-inside-button'), href);
       prepareInstallButton(document.getElementById('step-two-inside-button'), isOutdated, href);
-      prepareDownloadExtensionButton(document.getElementById('step-three-inside-button'), href);
+    }
+  } else if (state.indexOf('downloadVersion') === 0) {
+    var title = localize("ext-install", language());
+    var ver = state.substring(state.indexOf('=') + 1);
+    ver = ver.replace(/\.\d+$/, ''); // Drop build number from version
+    title = title.replace(/{.*}/, ver);
+    document.getElementById("extension-title").textContent = title;
+  } else if (state.indexOf('downloadTimestamp') === 0) {
+    // Detect if last download timestamp was within 5 minutes
+    var lastDownloadTimestamp = state.substring(state.indexOf('=') + 1);
+    if ((Date.now() - lastDownloadTimestamp) < 300000) {
+      isDownloadRecent = true;
+      if (BROWSER.IE) {
+        // On refresh after going through install sequence, make sure we display the IE tooltip
+        document.getElementById('step-three-how').style.display = 'inline-block';
+      }
     }
   } else if (state.indexOf('insertstylesheet') === 0) {
     //Add custom css files
@@ -548,6 +810,18 @@ var handleMessage = function(event) {
     loadCSSFile(cssHref);
   }
    lastState = state;
+};
+
+var closeClicked = function() {
+  connectVisible = false;
+  sendParentMessage('removeiframe');
+  sendParentMessage('connect_bar_removed');
+  return false;
+};
+
+var previousVersionException = function() {
+  sendParentMessage('continue');
+  return false;
 };
 
 var handleOnLoad = function(event) {
@@ -564,14 +838,32 @@ var handleOnLoad = function(event) {
       "</a>";
     // var iframe = window.parent.document.getElementById('aspera-iframe-container');
     // var innerDoc = (iframe.contentDocument) ? iframe.contentDocument : iframe.contentWindow.document;
+    document.getElementById('close-button').onclick = closeClicked;
+    document.getElementById('three-step-container').setAttribute('lang', language());
+    if (BROWSER.SAFARI) {
+      // TODO: If Connect was previously installed, show the restart as a suggestion
+      document.getElementById('restart-browser').textContent = localize('try-restarting', language());
+    }
     if (BROWSER.SAFARI || BROWSER.IE) {
       document.getElementById('step-three-new').textContent = localize('new', language());
       document.getElementById('step-one-inside-button').textContent = localize('download-app', language());
       document.getElementById('step-two-inside-button').textContent = localize('install-connect', language());
       document.getElementById('step-three-inside-button').textContent = localize('enable-extension', language());
+      document.getElementById('download-bottom').classList.add('download-indicator-ms');
+      if (BROWSER.IE) {
+        // Hide the tooltip initially on IE
+        document.getElementById('step-three-how').style.display = 'none';
+      }
     } else if (BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX || BROWSER.CHROME) {
+      if (BROWSER.EDGE_WITH_EXTENSION) {
+        document.getElementById('download-bottom').classList.add('download-indicator-ms');
+      }
       document.getElementById('step-one-new').textContent = localize('new', language());
-      document.getElementById('step-one-inside-button').textContent = localize('install-extension', language());
+      if (BROWSER.FIREFOX) {
+        document.getElementById('step-one-inside-button').textContent = localize('install-addon', language());
+      } else {
+        document.getElementById('step-one-inside-button').textContent = localize('install-extension', language());
+      }
       document.getElementById('step-two-inside-button').textContent = localize('download-app', language());
       document.getElementById('step-three-inside-button').textContent = localize('install-connect', language());
     }
@@ -579,10 +871,13 @@ var handleOnLoad = function(event) {
       document.getElementById('step-two-text').textContent = localize('step-2', language());
       document.getElementById('step-three-text').textContent = localize('step-3', language());
       document.getElementById('already-installed-text').textContent = localize('already-installed', language());
+      document.getElementById('previous-version-link').textContent = localize('previous-version', language());
+      document.getElementById('previous-version-link').onclick = previousVersionException;
       document.getElementById('troubleshoot-link').textContent = localize('troubleshoot', language());
+      document.getElementById('safari-troubleshoot-link').textContent = localize('troubleshoot', language());
       document.getElementById('ext-install-welcome').textContent = localize('required', language());
       document.getElementById("extension-title").textContent = localize("ext-install", language());
-      document.getElementById('download-bottom-text').textContent = localize('download-bottom', language());
+      document.getElementById('indicator-bottom-text').textContent = localize('please-download', language());
       document.getElementById('launching-container-text').textContent = localize('launching', language());
       document.getElementById('running-container-text').textContent = localize('running', language());
       var unsupported = localize('not-supported', language());

@@ -11,7 +11,8 @@ AW4.localize["en-US"] = {
         "already-installed"     : "Already installed?",
         "troubleshoot"          : "Troubleshoot",
         "refresh-button"        : "Refresh",
-        "ext-install"           : "To enable Aspera uploads and downloads, you need to install or upgrade IBM Aspera Connect {3.9.1}.",
+        "ext-install"           : "To enable Aspera uploads and downloads, you need to install or upgrade to IBM Aspera Connect {3.9.1}.",
+        "try-restarting"        : "Or, try restarting the browser.",
         "please-download"       : "Please wait. Downloading the Connect app installer...",
         "run-installer"         : "Please run the Connect app installer",
         "step-1"                : "Step 1",
@@ -46,6 +47,7 @@ AW4.localize["en-US"] = {
         "close"                 : "Close",
         "sorry"                 : "Sorry, we could not install Connect at this time.",
         "open-logs"             : "Open logs",
+        "previous-version"      : "Try returning to previous version.",
 
         "firefox-description"    : "This add-on enables the use of IBM Aspera Connect with Firefox. This add-on requires the IBM Aspera Connect application, version 3.9.0 or newer.",
         "chrome-description"    : "This extension enables the use of IBM Aspera Connect with Chrome. This extension requires the IBM Aspera Connect application, version 3.9.0 or newer.",

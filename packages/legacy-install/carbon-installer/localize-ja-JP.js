@@ -11,17 +11,27 @@ AW4.localize["ja-JP"] = {
         "already-installed"     : "インストール済みですか?",
         "troubleshoot"          : "トラブルシューティング",
         "refresh-button"        : "更新",
-        "ext-install"           : "アップロードとダウンロードには IBM Aspera Connect が必要です。",
-        "run-installer"         : "Connect のインストーラーを実行してください。",
+        "ext-install"           : "Aspera のアップロードとダウンロードを有効にするには、IBM Aspera Connect {3.9.1} にインストールするか、このバージョンにアップグレードする必要があります。",
+        "please-download"       : "お待ちください。Connect アプリケーション・インストーラーをダウンロードしています...",
+        "run-installer"         : "Connect アプリケーション・インストーラーを実行してください。",
+        "step-1"                : "ステップ 1",
+        "step-2"                : "ステップ 2",
+        "step-3"                : "ステップ 3",
+        "how"                   : "方法",
+        "new"                   : "新規",
         "install-addon"         : "アドオンのインストール",
-        "welcome"               : "ようこそ",
+        "install-extension"     : "拡張機能のインストール",
+        "enable-extension"      : "拡張機能の有効化",
+        "required"              : "必須ステップ",
         "install-ext"           : "拡張機能のインストール",
         "download-connect"      : "Connect のダウンロード",
+        "download-app"          : "アプリケーションのダウンロード",
         "install-connect"       : "Connect のインストール",
+        "upgrade-connect"       : "Connect のアップグレード",
         "not-supported"         : "このブラウザーは、IBM Aspera Connect でサポートされていません。 サポートされるブラウザーのリストについては、<a>ここをクリック</a>してください。",
         "update-required"       : "このサイトには新しいバージョンの IBM Aspera Connect が必要です。",
         "download-fail"         : "ダウンロード・エラーになりましたか?",
-        "install-finished"      : "インストールは完了していますか?",
+        "install-finished"       : "インストールは完了していますか?",
 
         "setup-title"           : "IBM Aspera Connect のセットアップ",
         "double-click"          : "ダブルクリックしてインストール",
@@ -37,8 +47,7 @@ AW4.localize["ja-JP"] = {
         "sorry"                 : "申し訳ありません。今回は Connect をインストールできませんでした。",
         "open-logs"             : "ログを開く",
 
-        "firefox-description"   : "このアドオンによって IBM Aspera Connect を Firefox で使用できるようになります。アドオンには、IBM Aspera Connect アプリケーションのバージョン 3.9.0 以降が必要です。",
-        "chrome-description"    : "この拡張機能によって IBM Aspera Connect を Chrome で使用できるようになります。拡張機能には、IBM Aspera Connect アプリケーションのバージョン 3.9.0 以降が必要です。",
-        "edge-description"      : "この拡張機能によって IBM Aspera Connect を Edge で使用できるようになります。拡張機能には、IBM Aspera Connect アプリケーションのバージョン 3.9.0 以降が必要です。"
+        "firefox-description"    : "このアドオンによって IBM Aspera Connect を Firefox で使用できるようになります。 アドオンには、IBM Aspera Connect アプリケーションのバージョン 3.9.0 以降が必要です。",
+        "chrome-description"    : "この拡張機能によって IBM Aspera Connect を Chrome で使用できるようになります。 拡張機能には、IBM Aspera Connect アプリケーションのバージョン 3.9.0 以降が必要です。",
+        "edge-description"      : "この拡張機能によって IBM Aspera Connect を Edge で使用できるようになります。 拡張機能には、IBM Aspera Connect アプリケーションのバージョン 3.9.0 以降が必要です。"
 };
-
