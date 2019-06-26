@@ -8,6 +8,8 @@ class NativeMessageExtRequestImplementation extends ExtRequestImpl {
   installErrors: number = 0;
   connectDetectionTimeout: any;
   connectDetectionRetry: any;
+  timeoutTimer: any;
+  retryTimer: any;
 
   constructor () { super(); }
 
@@ -23,6 +25,7 @@ class NativeMessageExtRequestImplementation extends ExtRequestImpl {
       return;
     }
 
+    this.minVersion = options.minVersion;
     if (options.requestStatusCallback) {
       this.requestStatusCallback = options.requestStatusCallback;
     }
@@ -31,24 +34,29 @@ class NativeMessageExtRequestImplementation extends ExtRequestImpl {
     window.addEventListener(this.eventName, (evt) => this.extensionResponse(evt));
     // Retry detecting extension until user installs it
     this.detectExtension(-1, { success: () => {
-      if (_hasConnectBeenInstalled()) {
-            // If Connect has been installed before, reach fail state if we cannot detect Connect
-        this.detectConnect(options.initializeTimeout, {
-          success: options.callback,
-          timedout: () => {
+      this.detectConnect(options.initializeTimeout, {
+        success: options.callback,
+        timedout: function () {
+          if (this.connectStatus !== ExtRequestImpl.STATUS.OUTDATED) {
             this.changeConnectStatus(ExtRequestImpl.STATUS.FAILED);
           }
-        });
-      } else {
-            // Otherwise continue looking for Connect until it's installed
-        this.detectConnect(-1, { success: options.callback });
-      }
+          // Continue looking for Connect in case it gets installed
+          this.detectConnect(-1, {
+            success: options.callback,
+            timedout: function () { }
+          });
+        }
+      });
     }
     }
   );
 
     let disconnect = (evt: any) => {
       Logger.log('Native host disconnected. Detail: ' + evt.detail);
+      // Disconnect is expected if Connect is outdated
+	    if (this.connectStatus === ExtRequestImpl.STATUS.OUTDATED) {
+      return;
+    }
       if (evt.detail) {
         let installIssueDetected = false;
         [
@@ -131,7 +139,7 @@ class NativeMessageExtRequestImplementation extends ExtRequestImpl {
     }
   }
 
-  detectConnect (timeoutMs: number, callbacks: IDetectCallback) {
+  detectConnect = (timeoutMs: number, callbacks: IDetectCallback) => {
       // Stop any existing detection loops
     if (this.connectDetectionRetry) {
       clearInterval(this.connectDetectionRetry);
@@ -155,27 +163,71 @@ class NativeMessageExtRequestImplementation extends ExtRequestImpl {
     let check = () => {
       Logger.debug('Detecting Connect installation via extension. Attempt ' + attemptNumber);
       attemptNumber++;
-      this.httpRequest('GET', '/connect/info/version', null, () => {
-        Logger.debug('Detected Connect installation via extension.');
-        if (timeoutMs !== -1) {
+      this.httpRequest('GET', '/connect/info/version', null, function (status: any) {
+	      if (status === 503) {
+	        Logger.debug('Detected old version of Connect via extension.');
+	        this.changeConnectStatus(ExtRequestImpl.STATUS.OUTDATED);
+	      } else {
+	        Logger.debug('Detected Connect installation via extension.');
+	        if (timeoutMs !== -1) {
           clearTimeout(this.connectDetectionTimeout);
         }
-        _recordConnectInstall();
-        clearInterval(this.connectDetectionRetry);
-        if (callbacks.success) {
+	        _recordConnectInstall();
+	        clearInterval(this.connectDetectionRetry);
+	        if (callbacks.success) {
           callbacks.success();
         }
+	      }
       }, 0);
     };
     this.connectDetectionRetry = setInterval(check, 1000);
     check();
   }
-}
 
-let _hasConnectBeenInstalled = function _hasConnectBeenInstalled () {
-  let detected = window.localStorage.getItem(ExtRequestImpl.LS_CONNECT_DETECTED);
-  return detected && detected !== '';
-};
+  detectExtension = (timeoutMs: number, callbacks: IDetectCallback) => {
+    if (timeoutMs !== -1) {
+      this.timeoutTimer = setTimeout(() => {
+        clearInterval(this.retryTimer);
+        if (callbacks.timedout) {
+          callbacks.timedout();
+        }
+      }, timeoutMs);
+    }
+
+    let attemptNumber = 1;
+    let check = () => {
+      Logger.debug('Detecting Connect extension. Attempt ' + attemptNumber);
+      attemptNumber++;
+      document.dispatchEvent(new CustomEvent('AsperaConnectCheck', {}));
+    };
+    let interval = timeoutMs === -1 ? 1000 : 200;
+    this.retryTimer = setInterval(() => check, interval);
+
+    let versionResponse = (evt: any) => {
+      if (evt.type === 'message' && typeof evt.data === 'object' && 'type' in evt.data
+            && evt.data.type === 'AsperaConnectCheckResponse') {
+        window.removeEventListener('message', versionResponse);
+        Logger.log('Extension detected: ' + JSON.stringify(evt));
+        if (timeoutMs !== -1) {
+          clearTimeout(this.timeoutTimer);
+        }
+        clearInterval(this.retryTimer);
+        if (callbacks.success) {
+          callbacks.success();
+        }
+      }
+    };
+    window.addEventListener('message', (evt) => versionResponse(evt));
+    check();
+  }
+
+  cancel = () => {
+    clearTimeout(this.timeoutTimer);
+    clearInterval(this.retryTimer);
+    clearTimeout(this.connectDetectionTimeout);
+    clearInterval(this.connectDetectionRetry);
+  }
+}
 
 let _recordConnectInstall = function _recordConnectInstall () {
   window.localStorage.setItem(ExtRequestImpl.LS_CONNECT_DETECTED, Date.now().toString());

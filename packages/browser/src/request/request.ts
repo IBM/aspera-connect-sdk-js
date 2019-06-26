@@ -71,6 +71,11 @@ class RequestHandler {
   }
 
   changeConnectStatus = (newConnectStatus: number) => {
+    // Avoid duplicate event notifications
+	  if (this.connectStatus === STATUS.RUNNING && newConnectStatus === STATUS.RUNNING) {
+	    return;
+	  }
+
     Logger.debug('[' + this.objectId + '] Request handler status changing from[' + STATUS.toString(this.connectStatus)
           + '] to[' + STATUS.toString(newConnectStatus) + ']');
     this.connectStatus = newConnectStatus;
@@ -110,16 +115,50 @@ class RequestHandler {
         this.minVersion = MIN_SECURE_VERSION;
       }
       if (Utils.versionLessThan(connectVersion.value(), this.minVersion)) {
-        this.changeConnectStatus(STATUS.OUTDATED);
+	       // Check if already in the outdated state. Don't want to notify
+	       //  event listeners of same status and calling require multiple times.
+	       if (this.connectStatus !== STATUS.OUTDATED) {
+	         this.changeConnectStatus(STATUS.OUTDATED);
 
-              // Trigger update interface in Connect
-        let requestId = this.nextId++;
-        const method = HTTP_METHOD.POST;
-        const path = '/connect/update/require';
-        let postData = { min_version: this.minVersion, sdk_location: Utils.SDK_LOCATION.value() };
-        let requestInfo = { id: requestId, method: method, path: path, data: null, callbacks: null };
-        this.idCallbackHash[requestId] = requestInfo;
-        this.requestImplementation.httpRequest(method, path, JSON.stringify(postData), null, requestId, Utils.SESSION_ID);
+	         // Trigger update interface in Connect
+	         let requestId = this.nextId++;
+	         let method = HTTP_METHOD.POST;
+	         let path = '/connect/update/require';
+	         let postData = { min_version: this.minVersion, sdk_location: Utils.SDK_LOCATION };
+	         let requestInfo = { id: requestId, method: method, path: path, data: null, callbacks: null };
+	         this.idCallbackHash[requestId] = requestInfo;
+	         this.requestImplementation.httpRequest(method, path, JSON.stringify(postData), null, requestId, Utils.SESSION_ID);
+	       }
+
+	       // Since Connect is outdated, go into a version detection loop
+        let attemptNumber = 1;
+	       let check = function () {
+	         Logger.debug('Checking for Connect upgrade. Attempt ' + attemptNumber);
+	         attemptNumber++;
+	         if (this.connectStatus !== STATUS.RUNNING) {
+	           this.requestImplementation.httpRequest(HTTP_METHOD.GET, '/connect/info/version', null, function (status: any, response: any) {
+	             // This callback is triggered only if /version returns something (i.e. Connect is installed)
+	             let waitUpgradeResponse = Utils.parseJson(response);
+	             // TODO: Remove duplication here
+	             let hasError = typeof waitUpgradeResponse.error !== 'undefined';
+	             if (hasError) {
+	                 Logger.error('Failed to parse version response: ' + response);
+	                 return;
+	             }
+	             if (!Utils.versionLessThan(waitUpgradeResponse.version, this.minVersion)) {
+	               Logger.debug('Updated Connect found.');
+	               clearInterval(connectVersionRetry);
+	               // Go back to running state
+	               this.checkVersion();
+	             }
+	           }, 0);
+	         } else {
+	           // If Connect is running, we shouldn't be calling this anymore
+	           clearInterval(connectVersionRetry);
+	         }
+	       };
+         // Triggers version check until version response satisfies min version requirement
+	       let connectVersionRetry = setInterval(check, 1000);
         return;
       }
     }
@@ -227,6 +266,7 @@ class RequestHandler {
       containerId: options.containerId,
       initializeTimeout: options.initializeTimeout,
       sdkLocation: options.sdkLocation,
+      minVersion: options.minVersion,
       callback: this.checkVersion,
       requestStatusCallback: this.changeConnectStatus
     };
@@ -269,7 +309,7 @@ class RequestHandler {
       extReqImpl = new NativeMessageExtRequestImplementation();
     }
 
-    if (options.connectMethod === 'http' || !extReqImpl.isSupportedByBrowser()) {
+    if (options.connectMethod === 'http' || !extReqImpl.isSupportedByBrowser() || Utils.checkVersionException()) {
       setHttpRequestImpl();
     } else {
       let min39 = this.minVersion !== '' && !Utils.versionLessThan(this.minVersion, '3.9');
@@ -293,6 +333,13 @@ class RequestHandler {
           }
         }
       });
+      // Listen for user requested fallback
+	    window.addEventListener('message', (evt) => {
+	        if (this.connectStatus !== STATUS.RUNNING && evt.data === 'continue') {
+          extReqImpl.cancel();
+	          setHttpRequestImpl();
+	        }
+	    }, false);
     }
   }
 

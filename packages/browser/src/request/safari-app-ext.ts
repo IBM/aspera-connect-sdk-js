@@ -1,4 +1,4 @@
-import ExtRequestImpl, { IReqInitOptions } from './extRequestImpl';
+import ExtRequestImpl, { IReqInitOptions, IDetectCallback } from './extRequestImpl';
 import * as Utils from '../utils';
 import * as Logger from '../logger';
 import BROWSER from '../shared/browser';
@@ -9,6 +9,8 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
   eventName = 'AsperaConnectCheckResponse';
   pollingRequestErrors = 0;
   extensionDetected = false;
+  timeoutTimer: any;
+  retryTimer: any;
 
   constructor () {
     super();
@@ -26,6 +28,7 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
       return;
     }
 
+    this.minVersion = options.minVersion;
     if (options.requestStatusCallback) {
       this.requestStatusCallback = options.requestStatusCallback;
     }
@@ -46,7 +49,7 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
     return null;
   }
 
-  httpResponse (evt: any) {
+  httpResponse = (evt: any) => {
     Logger.trace('Safari extension impl received response: ' + JSON.stringify(evt));
     if (evt.detail) {
       let id = evt.detail.request_id;
@@ -72,6 +75,77 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
     }
   }
 
+  checkEvent = () => {
+    document.dispatchEvent(new CustomEvent('AsperaConnectCheck', {}));
+  }
+
+  detectExtension = (timeoutMs: number, callbacks: IDetectCallback) => {
+    if (timeoutMs !== -1) {
+      this.timeoutTimer = setTimeout(function () {
+        clearInterval(this.retryTimer);
+        if (callbacks.timedout) {
+          callbacks.timedout();
+        }
+      }, timeoutMs);
+    }
+
+    // Event based extension detector
+    // NOTE: Safari bugs sometime leads to breakdown in getting responses
+    let versionResponse = (evt: any) => {
+      document.removeEventListener('AsperaConnectCheckResponse', versionResponse);
+        // TODO: Check if extension version is ok
+      Logger.log('Extension detected: ' + JSON.stringify(evt));
+      if (timeoutMs !== -1) {
+        clearTimeout(this.timeoutTimer);
+      }
+      clearInterval(this.retryTimer);
+      this.extensionDetected = true;
+      if (callbacks.success) {
+        callbacks.success();
+      }
+    };
+
+    document.addEventListener('AsperaConnectCheckResponse', (evt) => versionResponse(evt));
+
+    let attemptNumber = 1;
+    let interval = timeoutMs === -1 ? 500 : 200;
+    let extensionDetector = () => {
+      Logger.debug('Detecting Connect extension. Attempt ' + attemptNumber);
+      attemptNumber++;
+        // Event based
+      this.checkEvent();
+        // DOM based extension detector
+      let connectDetected = document.getElementById('aspera-connect-detector');
+      if (connectDetected) {
+        let extensionEnable = connectDetected.getAttribute('extension-enable');
+        if (extensionEnable === 'true') {
+          if (timeoutMs !== -1) {
+            clearTimeout(this.timeoutTimer);
+          }
+          clearInterval(this.retryTimer);
+                // Additional check to see if connect check is responding
+          this.checkEvent();
+                // wait for connect check response for 1 second
+          setTimeout(function () {
+            if (!this.extensionDetected) {
+              window.postMessage('show_safari_mitigate', '*');
+            }
+          }, 1000);
+        }
+      }
+        // create detector
+      if (!connectDetected) {
+        Logger.debug('Creating detector in sdk...');
+        let div = document.createElement('div');
+        div.id = 'aspera-connect-detector';
+        div.setAttribute('extension-enable', 'false');
+        document.body.appendChild(div);
+      }
+    };
+    this.retryTimer = setInterval(extensionDetector, interval);
+    extensionDetector();
+  }
+
   triggerExtensionCheck () {
     let dummyIframe = document.createElement('IFRAME') as HTMLIFrameElement;
     dummyIframe.src = 'fasp://initialize?checkextensions';
@@ -82,6 +156,11 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
     dummyIframe.style.border = '0px';
     document.body.appendChild(dummyIframe);
   }
+
+  cancel = () => {
+	  clearTimeout(this.timeoutTimer);
+	  clearInterval(this.retryTimer);
+	 }
 }
 
 export default SafariAppExtRequestImplementation;

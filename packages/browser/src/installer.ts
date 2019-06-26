@@ -1,4 +1,9 @@
-import { INSTALL_EVENT as EVENT, MIN_SECURE_VERSION } from './shared/constants';
+import {
+  INSTALL_EVENT as EVENT,
+  MIN_SECURE_VERSION,
+  ACTIVITY_EVENT,
+  EVENT_TYPE
+} from './shared/constants';
 import * as Utils from './utils';
 import * as Logger from './logger';
 import { connectVersion, connectVersions, minRequestedVersion } from './shared/sharedInternals';
@@ -11,6 +16,7 @@ interface IConnectInstallerOptions {
   iframeId?: string;
   iframeClass?: string;
   style?: string;
+  oneClick?: boolean;
 }
 
 /**
@@ -49,6 +55,8 @@ interface IConnectInstallerOptions {
  * @param {"blue"|"carbon"} [style="carbon"] Style of the Connect bar design.
  * @param {String} [stylesheetLocation] URL to a stylesheet. Needs to be served
  *   in the same level of security as the web page (HTTP/HTTPS).
+ * @param {Boolean} [oneClick=true] Default installer type to offer users when
+ *   visiting the web page.
  *
  *   Format:
  *   `//domain/path/to/css/file.css`
@@ -76,6 +84,7 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
   let showInstallTimerID = 0;
   let iframeLoadedFlag = false;
   // let iframeLoadedTimerID = 0;
+  let connectInstallerListeners: any = [];
 
   // @ts-ignore :disable:no-unused-variable
   let retryCount = 0;
@@ -92,6 +101,7 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
   }
 
   connectOptions.iframeId = options.iframeId || 'aspera-iframe-container';
+  connectOptions.oneClick = options.oneClick === false ? false : true;
   connectOptions.sdkLocation = (Utils.isNullOrUndefinedOrEmpty(options.sdkLocation)) ? DEFAULT_SDK_LOCATION : Utils.getFullURI(options.sdkLocation) ;
   connectOptions.stylesheetLocation = Utils.getFullURI(options.stylesheetLocation);
   if (typeof(options.style) !== 'undefined') {
@@ -265,6 +275,12 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
     }
   };
 
+  let notifyActivityListeners = function (status: any) {
+	  for (let i = 0; i < connectInstallerListeners.length; i++) {
+	     connectInstallerListeners[i](status);
+	  }
+  };
+
   let addStyleString = function (str: string) {
     let node = document.createElement('style');
     node.setAttribute('type', 'text/css');
@@ -290,6 +306,16 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
     listeners.push(listener);
     return null;
   };
+
+  let addActivityListener = function (type: 'connect_bar_event', listener: any) {
+	  if (typeof listener !== 'function') {
+	    return null;
+	  }
+	  if (type === EVENT_TYPE.CONNECT_BAR_EVENT) {
+    connectInstallerListeners.push(listener);
+  }
+	  return null;
+	 };
 
     /**
      * Queries the Connect SDK for the current system's information, returning the full spec of all the
@@ -533,6 +559,21 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
     return refreshWindow;
   };
 
+  // Get top window href and open in new tab
+  let openNewTab = function () {
+    let url = window.top.location.href;
+	  window.open(url, '_blank');
+  };
+
+  let isActivityEvent = function (e: any) {
+    for (let key in ACTIVITY_EVENT) {
+      if (ACTIVITY_EVENT[key] === e) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   /*
    * AW4.ConnectInstaller#show(eventType) -> null
    * - eventType (String): the event type
@@ -562,6 +603,24 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
     // IE will complain that in strict mode functions cannot be nested inside a statement, so we have to define it here
     function handleMessage (event: any) {
       // iFrame installation: Handling of messages by the parent window.
+      if (isActivityEvent(event.data)) {
+        Logger.debug(`Connect bar activity: ${event.data}`);
+        notifyActivityListeners(event.data);
+
+        if (event.data === ACTIVITY_EVENT.CLICKED_DOWNLOAD_APP) {
+	        // Track if the user downloaded the app
+	        Utils.setLocalStorage('aspera-connect-app-download', Date.now().toString());
+	      } else if (event.data === ACTIVITY_EVENT.CLICKED_INSTALL_APP) {
+        if (Utils.BROWSER.SAFARI || Utils.BROWSER.IE) {
+	          // Transition to extension_installs state if user clicks install app
+	          //   on Safari or IE.
+	          showExtensionInstall();
+	        }
+      } else if (event.data === ACTIVITY_EVENT.CLICKED_RETRY) {
+        openNewTab();
+      }
+      }
+
       if (event.data === EVENT.DOWNLOAD_CONNECT) {
         notifyListeners(event.data);
         showInstall();
@@ -586,7 +645,13 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
         showLaunching();
       } else if (event.data === EVENT.RETRY) {
         notifyListeners(event.data);
-        showLaunching();
+        if (Utils.BROWSER.SAFARI || Utils.BROWSER.IE) {
+	        let refreshWindow = getRefreshWindow();
+          // tslint:disable-next-line
+	        refreshWindow.location.reload(true);
+	      } else {
+	        showLaunching();
+	      }
       } else if (event.data === '100%') {
         iframe.setAttribute('style', 'height:100%;width:100%;max-width: 100%;margin: 0 auto;background-color:rgba(223, 227, 230, 0.75);');
       } else if (typeof event.data === 'string' && event.data.endsWith(EVENT.RESIZE)) {
@@ -601,24 +666,39 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
     function iframeLoaded () {
       iframeLoadedFlag = true;
       notifyListeners(EVENT.IFRAME_LOADED);
+
       let iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
-      // Set dialog type
-      iframe.contentWindow!.postMessage(eventType, '*');
+
+      if (Utils.BROWSER.SAFARI || Utils.BROWSER.IE) {
+	      let downloadTimestamp = Utils.getLocalStorage('aspera-connect-app-download');
+	      if (!Utils.isNullOrUndefinedOrEmpty(downloadTimestamp)) {
+	        iframe.contentWindow!.postMessage('downloadTimestamp=' + downloadTimestamp, '*');
+	      }
+	    }
+
       // populate the iframe with the information pulled from connectversions.js
       let populateIframe = function (referencesJSON: any) {
         for (let i = 0; i < referencesJSON.links.length; i++) {
           let link = referencesJSON.links[i];
-          if (link.rel === 'enclosure') {
+          // Defaults to setting one click installer unless ConnectInstaller was
+          //   passed oneClick = false.
+          let rel = connectOptions.oneClick ? 'enclosure-one-click' : 'enclosure';
+          if (link.rel === rel) {
             if (typeof iframe !== 'undefined' && iframe !== null) {
               iframe.contentWindow!.postMessage('downloadlink=' + link.hrefAbsolute, '*');
+              iframe.contentWindow!.postMessage('downloadVersion=' + referencesJSON.version, '*');
             }
           }
         }
+
+        // Set dialog type
+        iframe.contentWindow!.postMessage(eventType, '*');
       };
+
       installationJSON(populateIframe);
-            // load an stylesheet if provided
+      // load an stylesheet if provided
       if (connectOptions.stylesheetLocation) {
-                // Inserting a stylesheet into the DOM for more manageable styles.
+        // Inserting a stylesheet into the DOM for more manageable styles.
         if (typeof iframe !== 'undefined' && iframe !== null) {
           iframe.contentWindow!.postMessage('insertstylesheet=' + connectOptions.stylesheetLocation, '*');
         }
@@ -628,7 +708,7 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
     if (!iframe) {
             // Set iframe styling
       if (connectOptions.style === 'carbon') {
-        addStyleString('.' + connectOptions.iframeId + '{width: 100%;max-width: 600px;height: 80px;margin: 0 auto;position: fixed;top: 0;right: 0;left: 0;z-index: 20;box-shadow: 0 12px 24px 0 rgba(0, 0, 0, 0.1)}');
+        addStyleString('.' + connectOptions.iframeId + '{width: 100%;max-width: 600px;height: 80px;margin: 0 auto;position: fixed;top: 0;right: 0;left: 0;z-index: 9999;box-shadow: 0 12px 24px 0 rgba(0, 0, 0, 0.1)}');
       } else if (connectOptions.style === 'blue') {
         addStyleString('.' + connectOptions.iframeId + '{position: absolute;width: 100%;height: 80px;margin: 0px;padding: 0px;border: none;outline: none;overflow: hidden;top: 0px;left: 0px;z-index: 999999999}');
       }
@@ -679,6 +759,8 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
   window.addEventListener('message', function (event) {
     if (event.data === 'show_extension_install') {
       showExtensionInstall();
+    } else if (event.data === 'show_safari_mitigate') {
+      show('safari_mitigate');
     }
   }, false);
 
@@ -781,11 +863,24 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
   let showExtensionInstall = function () {
     show('extension_install');
 
-        // Create a DOM element to help the extension return to the right page
-    let extHelper = document.createElement('div');
-    extHelper.className = 'aspera-connect-ext-locator'; // TODO: Document
-    extHelper.style.display = 'none';
-    document.body.appendChild(extHelper);
+    if (!Utils.BROWSER.IE) {
+      // Create a DOM element to help the extension return to the right page
+      let extHelper = document.createElement('div');
+      extHelper.className = 'aspera-connect-ext-locator'; // TODO: Document
+      extHelper.style.display = 'none';
+      document.body.appendChild(extHelper);
+    }
+  };
+
+  /**
+   * Displays the last page that was shown.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#showPrevious
+   * @return {null}
+   */
+  let showPrevious = function () {
+    show('previous');
   };
 
     /**
@@ -816,7 +911,7 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
     if (typeof iframe !== 'undefined' && iframe !== null) {
       show('running');
       setTimeout(dismiss, timeout);
-      Utils.setLocalStorage('aspera-last-detected', String(Date.now()));
+      Utils.setLocalStorage('aspera-last-detected', String(Date.now().toString()));
     }
     return null;
   };
@@ -843,10 +938,12 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
   return {
         // FUNCTIONS
     addEventListener: addEventListener,
+    addActivityListener: addActivityListener,
     installationJSON: installationJSON,
     showLaunching: showLaunching,
     showDownload: showDownload,
     showInstall: showInstall,
+    showPrevious: showPrevious,
     showUpdate: showUpdate,
     showRetry: showRetry,
     connected: connected,
@@ -861,4 +958,6 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
 }
 
 ConnectInstaller.EVENT = EVENT;
+ConnectInstaller.ACTIVITY_EVENT = ACTIVITY_EVENT;
+ConnectInstaller.EVENT_TYPE = EVENT_TYPE;
 ConnectInstaller.supportsInstallingExtensions = false;

@@ -116,6 +116,7 @@ class XMLhttpRequestImplementation {
   }
 
   enterWaitReady = () => {
+    Logger.debug('[' + this.objectId + '] Enter wait ready');
     let waitReady = () => {
       if (this.connectStatus !== STATUS.WAITING) {
         this.stopWaitReady();
@@ -299,6 +300,12 @@ class XMLhttpRequestImplementation {
           this.pollingRequestErrors++;
           return;
         }
+        // If Connect is running don't need to iterate over ports
+	      if (this.connectStatus === STATUS.RUNNING && fullpath.indexOf(this.connectPort.toString()) === -1
+	          && fullpath.indexOf('/connect/info/ping') > 0) {
+	        return;
+	      }
+
         this.reconnect();
       }
       let respToProcess = request.responseText;

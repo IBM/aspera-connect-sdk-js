@@ -24,6 +24,13 @@
                     "rel": "enclosure"
                 },
                 {
+                    "title": "Windows Vista Auto Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_ONE_CLICK_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click"
+                },
+                {
                     "title": "Windows Installer",
                     "type": "application/octet-stream",
                     "href": "bin/#WIN_INSTALLER#",
@@ -73,6 +80,13 @@
                     "href": "bin/#WIN_INSTALLER#",
                     "hreflang": "en",
                     "rel": "enclosure"
+                },
+                {
+                    "title": "Windows Vista Auto Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_ONE_CLICK_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click"
                 },
                 {
                     "title": "Windows Installer",
@@ -126,6 +140,13 @@
                     "rel": "enclosure"
                 },
                 {
+                    "title": "Windows Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_ONE_CLICK_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click"
+                },
+                {
                     "title": "Aspera Connect HTML Documentation for Windows",
                     "type": "text/html",
                     "href": #WIN_DOCS_HTML_ENTRIES#,
@@ -168,6 +189,13 @@
                     "href": "bin/#WIN_INSTALLER#",
                     "hreflang": "en",
                     "rel": "enclosure"
+                },
+                {
+                    "title": "Windows Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_ONE_CLICK_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click"
                 },
                 {
                     "title": "Aspera Connect HTML Documentation for Windows",
@@ -213,6 +241,13 @@
                     "href": "bin/#MAC_INSTALLER#",
                     "hreflang": "en",
                     "rel": "enclosure"
+                },
+                {
+                    "title": "Mac Intel Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#MAC_ONE_CLICK_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click"
                 },
                 {
                     "title": "Aspera Connect for Mac HTML Documentation",

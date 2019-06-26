@@ -102,7 +102,12 @@ class NPAPIrequestImplementation {
               this.npapiPlugin = null;
               changeConnectStatus(STATUS.FAILED);
             } else {
-              changeConnectStatus(STATUS.RUNNING);
+              /*
+ 		           * 05-15-19 ASCN-634: Any event listeners assigned during RUNNING
+ 		           * event will be called twice.
+ 		           */
+              // changeConnectStatus(STATUS.RUNNING);
+              // check version callback which will set status to running
               onLoadCallback();
               return;
             }

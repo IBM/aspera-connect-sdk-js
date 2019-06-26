@@ -10,6 +10,7 @@ export interface IReqInitOptions {
   sdkLocation: string;
   callback: any;
   requestStatusCallback: any;
+  minVersion: string;
 }
 
 export interface IDetectCallback {
@@ -23,6 +24,7 @@ class ExtRequestImpl {
   requestStatusCallback: any = {};
   outstandingRequests: any = {};
   connectStatus: number = 0;
+  minVersion: string = '';
   readonly subclassType: string = this.constructor.name.toString();
 
   // Cannot directly instantiate this class
@@ -32,7 +34,10 @@ class ExtRequestImpl {
     return atou(inputString);
   }
 
-  changeConnectStatus (newConnectStatus: number) {
+  changeConnectStatus = (newConnectStatus: number) => {
+    if (this.connectStatus === newConnectStatus) {
+      return;
+    }
     this.connectStatus = newConnectStatus;
     if (this.requestStatusCallback) {
       this.requestStatusCallback(newConnectStatus);
@@ -43,67 +48,10 @@ class ExtRequestImpl {
     return isNullOrUndefinedOrEmpty(x);
   }
 
-  detectExtension = (timeoutMs: number, callbacks: IDetectCallback) => {
-    let timeoutTimer: number;
-    let retryTimer: number;
-
-    if (timeoutMs !== -1) {
-      timeoutTimer = setTimeout(function () {
-        clearInterval(retryTimer);
-        if (callbacks.timedout) {
-          callbacks.timedout();
-        }
-      }, timeoutMs);
-    }
-
-    let attemptNumber = 1;
-    let check = function () {
-      Logger.debug('Detecting Connect extension. Attempt ' + attemptNumber);
-      attemptNumber++;
-      document.dispatchEvent(new CustomEvent('AsperaConnectCheck', {}));
-    };
-    let interval = timeoutMs === -1 ? 1000 : 200;
-    retryTimer = setInterval(check, interval);
-
-    if (this.subclassType === 'SafariAppExtRequestImplementation') {
-      let versionResponse = (evt: any) => {
-        document.removeEventListener('AsperaConnectCheckResponse', versionResponse);
-        Logger.debug('Extension detected: ' + JSON.stringify(evt));
-        if (timeoutMs !== -1) {
-          clearTimeout(timeoutTimer);
-        }
-        clearInterval(retryTimer);
-        if (callbacks.success) {
-          callbacks.success();
-        }
-      };
-
-      document.addEventListener('AsperaConnectCheckResponse', versionResponse);
-    } else {
-      let versionResponse = (evt: any) => {
-        if (evt.type === 'message' && typeof evt.data === 'object' && 'type' in evt.data
-               && evt.data.type === 'AsperaConnectCheckResponse') {
-          window.removeEventListener('message', versionResponse);
-          Logger.debug('Extension detected: ' + JSON.stringify(evt));
-          if (timeoutMs !== -1) {
-            clearTimeout(timeoutTimer);
-          }
-          clearInterval(retryTimer);
-          if (callbacks.success) {
-            callbacks.success();
-          }
-        }
-      };
-
-      window.addEventListener('message', versionResponse);
-    }
-
-    check();
-  }
-
   httpRequest = (method: string, path: string, data: string | null, callback: any, requestId: string | number) => {
     let req = {
       'request_id': requestId,
+      'min_version': this.minVersion,
       'method': method,
       'uri_reference': path,
       'body': data

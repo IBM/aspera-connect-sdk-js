@@ -253,7 +253,7 @@ export function launchConnect (userCallback?: (t: boolean) => any) {
       document.body.onblur = null;
       callback(isRegistered);
     }, 500);
-  } else if (BROWSER.EDGE_LEGACY) {
+  } else if (BROWSER.EDGE_LEGACY || BROWSER.EDGE_WITH_EXTENSION) {
     document.location.href = launchUri;
   } else if (BROWSER.FIREFOX_LEGACY || BROWSER.FIREFOX || BROWSER.SAFARI_NO_NPAPI) {
     let dummyIframe = document.createElement('IFRAME') as HTMLIFrameElement;
