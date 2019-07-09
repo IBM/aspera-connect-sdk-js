@@ -34,3 +34,15 @@ $ export REV_NUMBER=3.9.1.171801
 # Optionally - to only skip one click installers
 $ export SKIP_ONE_CLICK=1
 ```
+
+## Release
+Automated versioning and CHANGELOG generation is available via:
+
+```shell
+$ npm run release
+```
+Explicitly set a release version using:
+
+```shell
+$ npm run release -- --release-as 3.10.0
+```
