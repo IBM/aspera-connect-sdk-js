@@ -1,22 +1,23 @@
 variables:
   BUILD_IMAGE: gitlab-registry.aspera.us/devops/docker-aspera-builder:v0.4.0-rc.17
 
-before_script:
-  - npm install
-  - npm --prefix packages/browser install
-
 stages:
   - build
   - test
+  
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - packages/browser/node_modules/
+    - packages/carbon-installer/node_modules/
+    
+before_script:
+  - npm install
 
 build:
   stage: build
   image: ${BUILD_IMAGE}
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - node_modules/
-      - packages/browser/node_modules/
   artifacts:
     paths:
       - packages/browser/build/
@@ -25,26 +26,22 @@ build:
     - export SKIP_INSTALLERS=1
     - npm run build:browser
     - ls
+    
+test:carbon:
+  stage: test
+  image: ${BUILD_IMAGE}
+  script:
+    - npm --prefix packages/carbon-installer test -- --watchAll=false
 
 test:lint:
   stage: test
   image: ${BUILD_IMAGE}
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - node_modules/
-      - packages/browser/node_modules/
   script:
     - npm --prefix packages/browser run lint
     
 test:karma:
   stage: test
   image: ${BUILD_IMAGE}
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - node_modules/
-      - packages/browser/node_modules/
   dependencies:
     - build
   script:
