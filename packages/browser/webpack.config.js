@@ -13,9 +13,8 @@ const terserInstance = new TerserPlugin({
   sourceMap: true
 })
 
-let bannerText = `  Revision: ${version}
-  Revision date: ${new Date().toISOString().replace('T', ' ').substr(0, 19)}
-  Git commit hash: ${commitHash}
+let bannerText = `  Revision: ${version}-${commitHash}
+  Date: ${new Date().toISOString().replace('T', ' ').substr(0, 19)}
   
   http://www.asperasoft.com
   Copyright IBM Corp. 2008, ${new Date().getFullYear()}`
