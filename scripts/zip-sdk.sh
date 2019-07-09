@@ -1,7 +1,12 @@
 #!/bin/bash
-set -eux
+set -ex
 
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ -z $GIT_BRANCH ]]; then
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
+else
+  BRANCH=$GIT_BRANCH
+fi
+
 HASH=$(git log --format=oneline --pretty=format:"%h" -1 .)
 REVISION=$(node -p -e "require('./package.json').version")
 
