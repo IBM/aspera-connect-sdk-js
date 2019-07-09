@@ -3,9 +3,10 @@
   "description": "Top level project for the IBM Aspera Connect SDK",
   "private": true,
   "scripts": {
-    "build": "run-s build:browser build:bundle build:zip",
+    "build": "run-s build:browser build:carbon build:bundle build:zip",
     "build:browser": "npm --prefix packages/browser run build",
     "build:bundle": "./scripts/bundle-sdk.sh",
+    "build:carbon": "npm --prefix packages/carbon-installer run build",
     "build:zip": "./scripts/zip-sdk.sh",
     "clean": "rimraf *.zip *ConnectSDK* dist packages/browser/docs packages/browser/esm packages/browser/build packages/browser/dist",
     "preinstall": "node ./scripts/preinstall.js",

@@ -14,6 +14,10 @@ cp ./packages/browser/build/asperaweb* ./dist/v4
 # For backwards compatibility
 touch ./dist/v4/connectinstaller-4.js ./dist/v4/connectinstaller-4.min.js
 
+# Bundle react carbon bar
+mkdir -p dist/v4/install/carbon-installer
+cp -R ./packages/carbon-installer/build/* ./dist/v4/install/carbon-installer
+
 # Build and bundle legacy Connect banners
 ruby ./scripts/bundle-banners.rb ./dist/v4
 
