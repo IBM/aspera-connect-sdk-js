@@ -6,6 +6,10 @@ const version = require('./package.json').version;
 const commitHash = require('child_process')
   .execSync('git log --format=oneline --pretty=format:"%h" -1 .', { encoding: 'utf-8' })
   .trim();
+  
+const branch = require('child_process')
+  .execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' })
+  .trim();
 
 const terserInstance = new TerserPlugin({
   cache: true,
@@ -13,7 +17,7 @@ const terserInstance = new TerserPlugin({
   sourceMap: true
 })
 
-let bannerText = `  Revision: ${version}-${commitHash}
+let bannerText = `  Revision: ${version}-${branch !== 'master' ? (branch + '-') : ''}${commitHash}
   Date: ${new Date().toISOString().replace('T', ' ').substr(0, 19)}
   
   http://www.asperasoft.com
