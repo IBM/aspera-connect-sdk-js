@@ -1,0 +1,18 @@
+.checkmark {
+  margin-left: 110.3px;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  background-image: url('../../../assets/checkmark.svg');
+  display: inline-block;
+}
+
+.visible {
+  composes: checkmark;
+  visibility: visible;
+}
+
+.hidden {
+  composes: checkmark;
+  visibility: hidden;
+}

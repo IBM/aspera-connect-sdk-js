@@ -1,0 +1,78 @@
+@import '../shared/Animation.module';
+
+%animation {
+  position:fixed;
+  margin:0;
+  transform-origin: center top;
+  z-index: 10;
+  -webkit-transform-origin: center top;
+  animation-duration: 2s;
+}
+
+%indicator {
+  display: inline-block;
+  position: absolute;
+  font-size: 15px;
+  height: 110px;
+  width: 140px;
+}
+
+.bottom {
+  -webkit-animation-name: bounce;
+  -webkit-animation-duration: 2s;
+   -webkit-animation-iteration-count: infinite;
+  animation-name: bounce;
+  animation-duration: 2s;
+  animation-iteration-count: 2;
+  left: 40px;
+  bottom: 32px;
+  @extend %animation;
+  @extend %indicator;
+}
+
+.ie {
+  &.bottom {
+    left: calc(50% + 17vw);
+    bottom: 95px;
+  }
+}
+
+.upper {
+  animation-name: slide;
+  animation-iteration-count: 3;
+  -webkit-transform-origin: center top;
+  animation-direction: reverse;
+  right: 61px;
+  top: 50px;
+  @extend %animation;
+  @extend %indicator;
+}
+
+.text {
+  display: inline-block;
+  position: relative;
+  margin-left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  color: white;
+}
+
+.upperText {
+  &.text {
+    margin-top: 4px;
+  }
+}
+
+.bottomText {
+  &.text {
+    margin-top: -2px;  
+  }
+}
+
+.svg {
+  position: absolute;
+  z-index: -1;
+  width: 140px;
+  height: 110px;
+}

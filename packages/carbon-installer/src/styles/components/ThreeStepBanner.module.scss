@@ -1,0 +1,149 @@
+@import './shared/Animation.module';
+
+.banner {
+  background-color: #ffffff;
+  height:100%;
+  overflow: hidden;
+  position: relative;
+  width: 600px;
+  margin: 0px auto;
+  display: inline-block;
+}
+
+.howText {
+  display: inline-block;
+  overflow: visible;
+  position: relative;
+  cursor: pointer;
+  margin-left: 10px;
+  width: 37px;
+  height: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #3d70b2;
+}
+
+.newText {
+  vertical-align: middle;
+  float: left;
+  clear: left;
+  margin-top: -5px;
+  margin-left: 0px;
+  margin-bottom: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1; 
+  letter-spacing: normal;
+  color: #5596e6;  
+}
+
+.required {
+  display: block;
+  position: relative;
+  line-height: 32px;
+  margin-top: 34px;
+  margin-left: 48px;
+  width: 504px;
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.33;
+  letter-spacing: normal;
+  color: #152935;
+}
+
+.step {
+  height: 32px;
+  position: relative;
+  margin-left: 13px;
+  width: 41px;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 32px;
+  letter-spacing: normal;
+  text-align: center;
+  vertical-align: middle;
+  color: #5a6872;
+  display: inline-block;
+}
+
+.step:lang(ja) {
+  margin-right: 20px;
+}
+
+.stepContainer {
+  position:relative;
+  white-space: nowrap;
+  vertical-align: middle;
+  margin-top: 32px;
+}
+
+.stepOne {
+  composes: stepContainer;
+  margin-top: 19px;
+  padding-top: 5px;
+}
+
+.stepText {
+  vertical-align: middle;
+  float: left;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: normal;
+  text-align: center;
+  vertical-align: middle;
+  color: #5a6872;
+  display: inline-block;
+}
+
+.stepNewText {
+  composes: stepText;
+  line-height: 1;
+}
+
+.title {
+  display: block;
+  position: relative;
+  width: 450px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.5;
+  letter-spacing: normal;
+  color: #152935;
+  margin-top: 9px;
+  margin-left: 48px;
+}
+
+.tooltip {
+  img {
+    display: none;
+    width: 600px;
+    position: relative;
+    left: 50%;
+    margin-left: -200px;
+    margin-top: 20px;
+    border: 1px solid #344766;
+  }
+  
+  &:hover {
+    img {
+      display: block;
+      position: fixed;
+      text-decoration: none;
+    }
+  }
+}
