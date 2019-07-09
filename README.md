@@ -5,7 +5,7 @@
 ## Getting Started
 Clone the repo:
 ```shell
-$ git clone git@gitlab.aspera.us:dwosk/ibm-aspera-connect-sdk.git
+$ git clone git@gitlab.aspera.us:apps/connect-sdk.git
 
 ```
 Install all dependencies:
