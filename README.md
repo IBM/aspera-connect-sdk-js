@@ -48,7 +48,7 @@ $ npm run release
 To simply bump the version, run:
 
 ```shell
-$ npm run bump:version -- --release-as 3.10.0
+$ npm run bump -- --release-as 3.10.0
 ```
 
 Read the output for instructions on what to do next.

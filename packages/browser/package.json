@@ -1,13 +1,13 @@
 {
   "name": "@ibm-aspera-sdk/browser",
-  "version": "1.0.0",
+  "version": "3.10.0",
   "description": "Official IBM Aspera Connect SDK for Browsers",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "esm/index.js",
   "scripts": {
-    "build": "run-s  build:dist build:esm build:bundle build:docs",
+    "build": "run-s build:dist build:esm build:bundle build:docs",
     "build:bundle": "webpack",
     "build:bundle:watch": "webpack --watch",
     "build:dist": "tsc -p tsconfig.json",
