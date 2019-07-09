@@ -1,4 +1,7 @@
 #!/bin/bash
 set -eux
 
-cd dist && zip -r ../ConnectSDK-all.zip .
+REVISION=$(node -p -e "require('./package.json').version")
+HASH=$(git log --format=oneline --pretty=format:"%h" -1 .)
+
+cd dist && zip -r ../ConnectSDK-$REVISION-$HASH.zip .
