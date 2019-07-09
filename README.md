@@ -36,13 +36,19 @@ $ export SKIP_ONE_CLICK=1
 ```
 
 ## Release
-Automated versioning and CHANGELOG generation is available via:
+Automated versioning and CHANGELOG generation is available via the `standard-version`
+package.
+
+When you are ready to create a git tag and generate a CHANGELOG, run:
 
 ```shell
 $ npm run release
 ```
-Explicitly set a release version using:
+
+To simply bump the version, run:
 
 ```shell
-$ npm run release -- --release-as 3.10.0
+$ npm run bump:version -- --release-as 3.10.0
 ```
+
+Read the output for instructions on what to do next.
