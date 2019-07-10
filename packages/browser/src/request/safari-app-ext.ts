@@ -33,7 +33,7 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
       this.requestStatusCallback = options.requestStatusCallback;
     }
 
-    document.addEventListener('AsperaConnectResponse', (evt) => this.httpResponse(evt));
+    document.addEventListener('AsperaConnectResponse', this.httpResponse);
 
     this.detectExtension(-1, {
       success: options.callback || function () {}
@@ -81,7 +81,7 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
 
   detectExtension = (timeoutMs: number, callbacks: IDetectCallback) => {
     if (timeoutMs !== -1) {
-      this.timeoutTimer = setTimeout(function () {
+      this.timeoutTimer = setTimeout(() => {
         clearInterval(this.retryTimer);
         if (callbacks.timedout) {
           callbacks.timedout();
@@ -105,7 +105,7 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
       }
     };
 
-    document.addEventListener('AsperaConnectCheckResponse', (evt) => versionResponse(evt));
+    document.addEventListener('AsperaConnectCheckResponse', versionResponse);
 
     let attemptNumber = 1;
     let interval = timeoutMs === -1 ? 500 : 200;
@@ -126,7 +126,7 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
                 // Additional check to see if connect check is responding
           this.checkEvent();
                 // wait for connect check response for 1 second
-          setTimeout(function () {
+          setTimeout(() => {
             if (!this.extensionDetected) {
               window.postMessage('show_safari_mitigate', '*');
             }
@@ -157,7 +157,7 @@ class SafariAppExtRequestImplementation extends ExtRequestImpl {
     document.body.appendChild(dummyIframe);
   }
 
-  cancel = () => {
+  stop = () => {
 	  clearTimeout(this.timeoutTimer);
 	  clearInterval(this.retryTimer);
 	 }

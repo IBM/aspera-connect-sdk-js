@@ -36,7 +36,7 @@ class NativeMessageExtRequestImplementation extends ExtRequestImpl {
     this.detectExtension(-1, { success: () => {
       this.detectConnect(options.initializeTimeout, {
         success: options.callback,
-        timedout: function () {
+        timedout: () => {
           if (this.connectStatus !== ExtRequestImpl.STATUS.OUTDATED) {
             this.changeConnectStatus(ExtRequestImpl.STATUS.FAILED);
           }
@@ -163,7 +163,7 @@ class NativeMessageExtRequestImplementation extends ExtRequestImpl {
     let check = () => {
       Logger.debug('Detecting Connect installation via extension. Attempt ' + attemptNumber);
       attemptNumber++;
-      this.httpRequest('GET', '/connect/info/version', null, function (status: any) {
+      this.httpRequest('GET', '/connect/info/version', null, (status: any) => {
 	      if (status === 503) {
 	        Logger.debug('Detected old version of Connect via extension.');
 	        this.changeConnectStatus(ExtRequestImpl.STATUS.OUTDATED);
@@ -217,11 +217,11 @@ class NativeMessageExtRequestImplementation extends ExtRequestImpl {
         }
       }
     };
-    window.addEventListener('message', (evt) => versionResponse(evt));
+    window.addEventListener('message', versionResponse);
     check();
   }
 
-  cancel = () => {
+  stop = () => {
     clearTimeout(this.timeoutTimer);
     clearInterval(this.retryTimer);
     clearTimeout(this.connectDetectionTimeout);

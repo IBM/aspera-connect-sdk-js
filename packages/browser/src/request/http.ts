@@ -53,7 +53,7 @@ class XMLhttpRequestImplementation {
   nextId = 0;
   idCallbackHash: any = {};
   scanRetryTimeValues: number[] = [0, 1];
-  objectId = Utils.nextObjectId;
+  objectId = Utils.nextObjectId();
   minVersion = '';
   waitReadyTimer: any;
   pollingRequestErrors = 0;
@@ -76,7 +76,7 @@ class XMLhttpRequestImplementation {
   }
 
   changeConnectStatus = (newConnectStatus: number) => {
-    Logger.debug('[' + this.objectId() + '] Http request handler status changing from[' + STATUS.toString(this.connectStatus)
+    Logger.debug('[' + this.objectId + '] Http request handler status changing from[' + STATUS.toString(this.connectStatus)
           + '] to[' + STATUS.toString(newConnectStatus) + ']');
     this.connectStatus = newConnectStatus;
 
