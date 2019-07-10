@@ -124,7 +124,7 @@ class RequestHandler {
 	         let requestId = this.nextId++;
 	         let method = HTTP_METHOD.POST;
 	         let path = '/connect/update/require';
-	         let postData = { min_version: this.minVersion, sdk_location: Utils.SDK_LOCATION };
+	         let postData = { min_version: this.minVersion, sdk_location: Utils.SDK_LOCATION.value() };
 	         let requestInfo = { id: requestId, method: method, path: path, data: null, callbacks: null };
 	         this.idCallbackHash[requestId] = requestInfo;
 	         this.requestImplementation.httpRequest(method, path, JSON.stringify(postData), null, requestId, Utils.SESSION_ID);
@@ -132,11 +132,11 @@ class RequestHandler {
 
 	       // Since Connect is outdated, go into a version detection loop
         let attemptNumber = 1;
-	       let check = function () {
+	       let check = () => {
 	         Logger.debug('Checking for Connect upgrade. Attempt ' + attemptNumber);
 	         attemptNumber++;
-	         if (this.connectStatus !== STATUS.RUNNING) {
-	           this.requestImplementation.httpRequest(HTTP_METHOD.GET, '/connect/info/version', null, function (status: any, response: any) {
+	         if (this.connectStatus !== STATUS.RUNNING && this.connectStatus !== STATUS.STOPPED) {
+	           this.requestImplementation.httpRequest(HTTP_METHOD.GET, '/connect/info/version', null, (status: any, response: any) => {
 	             // This callback is triggered only if /version returns something (i.e. Connect is installed)
 	             let waitUpgradeResponse = Utils.parseJson(response);
 	             // TODO: Remove duplication here
@@ -316,7 +316,7 @@ class RequestHandler {
       let supportsInstall = ConnectInstaller.supportsInstallingExtensions === true;
           // Look for extension for up to 1s. Otherwise fallback to http takes too long.
       extReqImpl.detectExtension(1000, {
-        success: function () {
+        success: () => {
           setRequestImpl(extReqImpl);
         },
         timedout: () => {
@@ -335,10 +335,10 @@ class RequestHandler {
       });
       // Listen for user requested fallback
 	    window.addEventListener('message', (evt) => {
-	        if (this.connectStatus !== STATUS.RUNNING && evt.data === 'continue') {
-          extReqImpl.cancel();
-	          setHttpRequestImpl();
-	        }
+      if (this.connectStatus !== STATUS.RUNNING && evt.data === 'continue') {
+        extReqImpl.stop();
+	      setHttpRequestImpl();
+	    }
 	    }, false);
     }
   }

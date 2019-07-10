@@ -642,16 +642,16 @@ export function ConnectInstaller (options: IConnectInstallerOptions) {
       } else if (event.data === EVENT.CONTINUE) {
         Utils.addVersionException();
         notifyListeners(event.data);
-        showLaunching();
+        if ((Utils.BROWSER.SAFARI && !Utils.BROWSER.SAFARI_NO_NPAPI) || Utils.BROWSER.IE) {
+          let refreshWindow = getRefreshWindow();
+          // tslint:disable-next-line
+          refreshWindow.location.reload(true);
+        } else {
+          showLaunching();
+        }
       } else if (event.data === EVENT.RETRY) {
         notifyListeners(event.data);
-        if (Utils.BROWSER.SAFARI || Utils.BROWSER.IE) {
-	        let refreshWindow = getRefreshWindow();
-          // tslint:disable-next-line
-	        refreshWindow.location.reload(true);
-	      } else {
-	        showLaunching();
-	      }
+        showLaunching();
       } else if (event.data === '100%') {
         iframe.setAttribute('style', 'height:100%;width:100%;max-width: 100%;margin: 0 auto;background-color:rgba(223, 227, 230, 0.75);');
       } else if (typeof event.data === 'string' && event.data.endsWith(EVENT.RESIZE)) {

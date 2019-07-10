@@ -128,12 +128,9 @@ var testInitSessionExtensions = function() {
         
         setTimeout(() => {
           expect(this.asperaWeb.getStatus()).to.equal('OUTDATED');
+          this.asperaWeb.stop();
           done();
         }, 100);
-      });
-
-      xit('should not call /v5/connect/update/require', function() {
-        // expect /v5 prefix because using 3.7.4 Connect
       });
     });
 
@@ -166,6 +163,7 @@ var testInitSessionExtensions = function() {
         
         setTimeout(() => {
           expect(this.asperaWeb.getStatus()).to.equal('OUTDATED');
+          this.asperaWeb.stop();
           done();
         }, 100);
       });
@@ -182,6 +180,7 @@ var testInitSessionExtensions = function() {
           } else {
             expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/update/require');
           }
+          this.asperaWeb.stop();
           done();
         }, 100);
 
@@ -196,6 +195,7 @@ var testInitSessionExtensions = function() {
           } else {
             expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"min_version":"3.9.0"/);
           }
+          this.asperaWeb.stop();
           done();
         }, 100);
       });
@@ -226,6 +226,7 @@ var testInitSessionExtensions = function() {
             } else {
               expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/sdk_location.*example.com\/connect\/v4/);
             }
+            this.asperaWeb.stop();
             done();
           }, 100);
         });

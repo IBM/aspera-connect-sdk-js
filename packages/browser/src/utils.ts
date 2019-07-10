@@ -138,10 +138,10 @@ export function checkVersionException (): boolean {
   if (typeof(localStorage) === 'undefined') {
     return false;
   }
-  let prevContinuedSeconds = Number(localStorage.getItem(LS_CONTINUED_KEY));
+  let prevContinuedSeconds = localStorage.getItem(LS_CONTINUED_KEY);
   if (prevContinuedSeconds !== undefined && prevContinuedSeconds !== null) {
     let currentTimeSeconds = Math.round(new Date().getTime() / 1000);
-    if ((currentTimeSeconds - prevContinuedSeconds) < 60 * 24) {
+    if ((currentTimeSeconds - Number(prevContinuedSeconds)) < 60 * 24) {
       Logger.debug('User opted out of update');
       return true;
     }

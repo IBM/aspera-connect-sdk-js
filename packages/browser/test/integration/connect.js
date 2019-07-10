@@ -111,13 +111,13 @@ describe('AW4', function() {
     });
 
     // TODO: Fix decrypting requests
-    xcontext('using http', function() {
+    context('using http', function() {
       beforeEach(function() {
         this.asperaWeb = new AW4.Connect({connectMethod: 'http'});
         this.asperaWeb.initSession();
       });
 
-      describe('#initSession', function() {
+      xdescribe('#initSession', function() {
         beforeEach(function() {
           this.clock.restore();
           // Reset Connect session
@@ -138,7 +138,7 @@ describe('AW4', function() {
         testAuthenticate();
       });
 
-      describe('#getAllTransfers', function() {
+      xdescribe('#getAllTransfers', function() {
         testGetAllTransfers();
       });
 
@@ -158,27 +158,27 @@ describe('AW4', function() {
         testStart();
       });
 
-      describe('#readAsArrayBuffer', function() {
+      xdescribe('#readAsArrayBuffer', function() {
         testReadAsArrayBuffer();
       });
 
-      describe('#readChunkAsArrayBuffer', function() {
+      xdescribe('#readChunkAsArrayBuffer', function() {
         testReadChunkAsArrayBuffer();
       });
 
-      describe('#startTransfer', function() {
+      xdescribe('#startTransfer', function() {
         testStartTransfer();
       });
 
-      describe('#modifyTransfer', function() {
+      xdescribe('#modifyTransfer', function() {
         testModifyTransfer();
       });
 
-      describe('#resumeTransfer', function() {
+      xdescribe('#resumeTransfer', function() {
         testResumeTransfer();
       });
 
-      describe('#addEventListener', function() {
+      xdescribe('#addEventListener', function() {
         testAddEventListener();
       });
 
@@ -198,15 +198,15 @@ describe('AW4', function() {
         testShowPreferences();
       });
 
-      describe('#showSaveFileDialog', function() {
+      xdescribe('#showSaveFileDialog', function() {
         testShowSaveFileDialog();
       });
 
-      describe('#showSelectFileDialog', function() {
+      xdescribe('#showSelectFileDialog', function() {
         testShowSelectFileDialog();
       });
 
-      describe('#showSelectFolderDialog', function() {
+      xdescribe('#showSelectFolderDialog', function() {
         testShowSelectFolderDialog();
       });
 
