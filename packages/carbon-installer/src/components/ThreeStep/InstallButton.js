@@ -1,10 +1,10 @@
 import React from 'react';
-import Constants from '../../constants';
+import { dict } from '../../language';
 import Utils from '../../utils';
 import styles from '../../styles/components/shared/Button.module.scss';
 
 export const InstallButton = ({ isActive = false, isOutdated = false, onClick, setState }) => {
-  let text = isOutdated ? Constants.bannerStrings.upgradeConnect : Constants.bannerStrings.installConnect;
+  let text = isOutdated ? dict.get('upgradeConnect') : dict.get('installConnect');
   let indicatorCallback = onClick;
   
   return (

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { dict } from '../language'
 import Utils from '../utils';
 import ThreeStepBanner from './ThreeStepBanner';
 import StatusBanner from './StatusBanner';
@@ -129,7 +130,7 @@ class App extends Component {
 
   render() {
     return (
-      <div lang={Utils.locale()}>
+      <div lang={dict.getCurrentLanguageCode()}>
         <div className={styles.statusBanner}>
           <div className={styles.close}>
             <a href="#" onClick={() => {Utils.sendCloseEvent()}}>x</a>

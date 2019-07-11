@@ -1,15 +1,15 @@
 import React from 'react';
-import Constants from '../../constants';
+import { dict } from '../../language';
 import Utils from '../../utils';
 import styles from '../../styles/components/shared/Button.module.scss';
 
 let buttonText = () => {
-  let text = Constants.bannerStrings.installExtension;
+  let text = dict.get('installExtension');
 
   if (Utils.BROWSER.IE || Utils.BROWSER.SAFARI) {
-    text = Constants.bannerStrings.enableExtension;
+    text = dict.get('enableExtension');
   } else if (Utils.BROWSER.FIREFOX) {
-    text = Constants.bannerStrings.installAddon;
+    text = dict.get('installAddon');
   }
 
   return text;

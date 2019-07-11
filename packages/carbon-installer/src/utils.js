@@ -31,10 +31,6 @@ const EVENT = {
     SAFARI_MITIGATE: 'mitigate_with_tab'
 };
 
-var parseSearchString = function(key) {
-    return unescape(window.location.search.replace(new RegExp('^(?:.*[&\\?]' + escape(key).replace(/[\.\+\*]/g, '\\$&') + '(?:\\=([^&]*))?)?.*$', 'i'), '$1'));
-};
-
 const Utils = {
   BROWSER: {
       OPERA: /opera|opr/i.test(ua) && !/edge/i.test(ua),
@@ -46,15 +42,6 @@ const Utils = {
       EDGE_LEGACY: /edge/i.test(ua) && !check_edge(ua, 14),
       SAFARI: /safari/i.test(ua) && !/chrome|crios|crmo/i.test(ua) && !/edge/i.test(ua),
       SAFARI_NO_NPAPI: /safari/i.test(ua) && !/chrome|crios|crmo/i.test(ua) && !/edge/i.test(ua) && check_safari(ua, 10)
-  },
-  
-  currentBrowser () {
-    return Object.keys(this.BROWSER).find(key => this.BROWSER[key] === true).toString();
-  },
-  
-  locale () {
-    return parseSearchString('awlang') || navigator.language ||
-    navigator.userLanguage.replace(/(.*-)(.*)/, function(a, b, c) {return b + c.toUpperCase()}) || 'en-US';
   },
   
   openTab (url) {

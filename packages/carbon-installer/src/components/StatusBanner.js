@@ -1,20 +1,20 @@
 import React from 'react';
-import Constants from '../constants';
+import { dict } from '../language';
 import Utils from '../utils';
 import styles from '../styles/components/StatusBanner.module.scss';
 
 let renderSafariMitigate = () => {
   return (
     <div className={styles.message}>
-      <span className={`${styles.text} ${styles.mitigateText}`}>{Constants.bannerStrings.retry}</span>
-      <a className={styles.retry} href="#" onClick={() => {Utils.sendSafariMitigate()}}>{Constants.bannerStrings.retryButton}</a>
-      <a className={styles.troubleshootLink} href="#" onClick={() => {Utils.troubleshoot()}}>{Constants.bannerStrings.troubleshoot}</a>
+      <span className={`${styles.text} ${styles.mitigateText}`}>{dict.get('retry')}</span>
+      <a className={styles.retry} href="#" onClick={() => {Utils.sendSafariMitigate()}}>{dict.get('retryButton')}</a>
+      <a className={styles.troubleshootLink} href="#" onClick={() => {Utils.troubleshoot()}}>{dict.get('troubleshoot')}</a>
     </div>
   )
 }
 
 let renderUnsupported = () => {
-  let text = Constants.bannerStrings.notSupported;
+  let text = dict.get('notSupported');
   text = text.replace(/<a>/, `<a  href="https://test-connect.asperasoft.com" target="_blank">`);
   text = { __html: text };
 
@@ -33,7 +33,7 @@ const StatusBanner = props => {
     return (renderUnsupported())
   }
 
-  let text = props.currentState === 'running' ? Constants.bannerStrings.running : Constants.bannerStrings.launching;
+  let text = props.currentState === 'running' ? dict.get('running') : dict.get('running');
 
   return (
     <div className={styles.message}>

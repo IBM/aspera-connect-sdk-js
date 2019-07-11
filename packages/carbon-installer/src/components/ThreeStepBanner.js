@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import Constants from '../constants';
+import { dict } from '../language';
 import { 
   Checkmark,
   DownloadButton,
@@ -123,7 +123,7 @@ class ThreeStepBanner extends Component {
   render() {
     let howTo;
 
-    let title = (Utils.BROWSER.SAFARI && this.props.currentState === 'install') ? Constants.bannerStrings.installOnSafari : Constants.bannerStrings.bannerTitle;
+    let title = (Utils.BROWSER.SAFARI && this.props.currentState === 'install') ? dict.get('installOnSafari') : dict.get('bannerTitle');
     if (this.props.majorVersion) {
       title = title.replace(/{.*}/, this.props.majorVersion);
     }
@@ -137,33 +137,33 @@ class ThreeStepBanner extends Component {
 
       if (Utils.BROWSER.SAFARI || (Utils.BROWSER.IE && this.props.currentState === 'extension_install')) {
         howTo = <a className={`${styles.howText} ${styles.tooltip}`}>
-                  <span>{Constants.bannerStrings.how}</span>
+                  <span>{dict.get('how')}</span>
                   <span><img src={image} alt="How?" /></span>
                 </a>
       }
 
     }
 
-    let newText = <span className={styles.newText}>{Constants.bannerStrings.new}</span>;
+    let newText = <span className={styles.newText}>{dict.get('new')}</span>;
 
     Utils.sendResizeEvent();
 
     return (
       <div id='three-step' className={styles.banner}>
-        <div className={styles.required}>{Constants.bannerStrings.required}</div>
+        <div className={styles.required}>{dict.get('required')}</div>
         <div className={styles.title}>{title}</div>
         <div id='step-one' className={styles.stepOne}>
           <Checkmark currentState={this.props.currentState} step='one'/>
           <div className={styles.step}>
             {Utils.EXTENSION ? (newText) : null}
-            <span className={Utils.EXTENSION ? styles.stepNewText : styles.stepText}>{Constants.bannerStrings.stepOne}</span>
+            <span className={Utils.EXTENSION ? styles.stepNewText : styles.stepText}>{dict.get('stepOne')}</span>
           </div>
           <Pictogram step='one'/>
           {stepOneButton}
         </div>
         <div id='step-two' className={styles.stepContainer}>
           <Checkmark currentState={this.props.currentState} step='two'/>
-          <span className={styles.step}>{Constants.bannerStrings.stepTwo}</span>
+          <span className={styles.step}>{dict.get('stepTwo')}</span>
           <Pictogram step='two'/>
           {stepTwoButton}
         </div>
@@ -171,7 +171,7 @@ class ThreeStepBanner extends Component {
           <Checkmark currentState={this.props.currentState} step='three'/>
           <div className={styles.step}>
             {Utils.BROWSER.SAFARI ? (newText) : null}
-            <span className={Utils.BROWSER.SAFARI ? styles.stepNewText : styles.stepText}>{Constants.bannerStrings.stepThree}</span>
+            <span className={Utils.BROWSER.SAFARI ? styles.stepNewText : styles.stepText}>{dict.get('stepThree')}</span>
           </div>
           <Pictogram step='three'/>
           {stepThreeButton}

@@ -1,5 +1,5 @@
 import React from 'react';
-import Constants from '../../constants';
+import { dict } from '../../language';
 import Utils from '../../utils';
 import styles from '../../styles/components/ThreeStep/Footer.module.scss';
 
@@ -9,23 +9,23 @@ export const Footer = props => {
   let separator;
 
   if (Utils.BROWSER.SAFARI) {
-    restart = <div>{Constants.bannerStrings.tryRestarting}</div>;
+    restart = <div>{dict.get('tryRestarting')}</div>;
   }
 
   if (!props.isOutdated) {
-    refresh = <a className={styles.link} href="" onClick={() => { Utils.refresh() }}>{Constants.bannerStrings.refreshButton}</a>
+    refresh = <a className={styles.link} href="" onClick={() => { Utils.refresh() }}>{dict.get('refreshButton')}</a>
     separator = <span className={styles.spacing}>/</span>
   }
 
   return (
     <div className={styles.footer}>
-      <span style={{marginRight: "3px"}}>{Constants.bannerStrings.alreadyInstalled}</span>
+      <span style={{marginRight: "3px"}}>{dict.get('alreadyInstalled')}</span>
       {refresh}
       {separator}
-      <a className={styles.link} href="#" onClick={() => { Utils.troubleshoot() }}>{Constants.bannerStrings.troubleshoot}</a>
+      <a className={styles.link} href="#" onClick={() => { Utils.troubleshoot() }}>{dict.get('troubleshoot')}</a>
       {restart}
       <div>
-          <a href="#" onClick={() => { Utils.previousVersionException() }}>{Constants.bannerStrings.previousVersion}</a>
+          <a href="#" onClick={() => { Utils.previousVersionException() }}>{dict.get('previousVersion')}</a>
       </div>
     </div>
   )
