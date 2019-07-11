@@ -5,6 +5,7 @@
 
 require 'fileutils'
 require 'pathname'
+require 'date'
 $scriptdir = Pathname(__FILE__).realpath.dirname
 $version = '3.10.0.123456'
 
@@ -174,6 +175,7 @@ def bundle_installers(output_dir)
 
   conver = "#{$scriptdir}/../files/connect_references.json"
   contents = File.read(conver)
+  contents = contents.gsub(/#TIMESTAMP#/, DateTime.now.to_s)
   contents = contents.gsub(/#MAC_INSTALLER#/, mac_pkg_name)
   contents = contents.gsub(/#MAC_ONE_CLICK_INSTALLER#/, mac_oneclick_name)
   contents = contents.gsub(/#MAC_CONNECT_VERSION#/, mac_connect_version)

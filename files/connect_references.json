@@ -1,7 +1,7 @@
 {
     "title": "Aspera Connect - Latest Version",
     "id": "https://asperasoft.com/download/sw/connect/auto/connectversions.js",
-    "updated": "2012-10-30T10:16:00+07:00",
+    "updated": "#TIMESTAMP#",
     "entries": [
         {
             "title": "Aspera Connect for Windows",
@@ -14,7 +14,7 @@
             },
             "version": "#WIN_CONNECT_VERSION#",
             "id": "urn:uuid:589F9EE5-0489-4F73-9982-A612FAC70C4E",
-            "updated": "2012-10-30T10:16:00+07:00",
+            "updated": "#TIMESTAMP#",
             "links": [
                 {
                     "title": "Windows Vista Auto Installer",
@@ -72,7 +72,7 @@
             },
             "version": "#WIN_CONNECT_VERSION#",
             "id": "urn:uuid:A3820D20-083E-11E2-892E-0800200C9A66",
-            "updated": "2012-10-30T10:16:00+07:00",
+            "updated": "#TIMESTAMP#",
             "links": [
                 {
                     "title": "Windows Vista Auto Installer",
@@ -130,7 +130,7 @@
             },
             "version": "#WIN_CONNECT_VERSION#",
             "id": "urn:uuid:589F9EE5-0489-4F73-9982-A612FAC70C4E",
-            "updated": "2012-10-30T10:16:00+07:00",
+            "updated": "#TIMESTAMP#",
             "links": [
                 {
                     "title": "Windows Installer",
@@ -181,7 +181,7 @@
             },
             "version": "#WIN_CONNECT_VERSION#",
             "id": "urn:uuid:55425020-083E-11E2-892E-0800200C9A66",
-            "updated": "2012-10-30T10:16:00+07:00",
+            "updated": "#TIMESTAMP#",
             "links": [
                 {
                     "title": "Windows Installer",
@@ -233,7 +233,7 @@
             },
             "version": "#MAC_CONNECT_VERSION#",
             "id": "urn:uuid:D8629AD2-6898-4811-A46F-2AF386531BFF",
-            "updated": "2012-10-30T10:16:00+07:00",
+            "updated": "#TIMESTAMP#",
             "links": [
                 {
                     "title": "Mac Intel Installer",
@@ -277,7 +277,7 @@
             },
             "version": "#LINUX64_CONNECT_VERSION#",
             "id": "urn:uuid:97F94DF0-22B1-11E2-81C1-0800200C9A66",
-            "updated": "2012-10-30T10:16:00+07:00",
+            "updated": "#TIMESTAMP#",
             "links": [
                 {
                     "title": "Linux 64-bit Installer",
