@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import Constants from '../../constants';
+import { dict } from '../../language';
 import Utils from '../../utils';
 import styles from '../../styles/components/ThreeStep/Indicator.module.scss';
 
@@ -9,8 +9,8 @@ const PATH = {
 };
 
 const TEXT = {
-  'download': Constants.bannerStrings.pleaseDownload,
-  'install': Constants.bannerStrings.runInstaller
+  'download': dict.get('pleaseDownload'),
+  'install': dict.get('runInstaller')
 };
 
 let svgRef = React.createRef();

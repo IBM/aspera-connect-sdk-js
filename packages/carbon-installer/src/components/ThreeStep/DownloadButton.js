@@ -1,5 +1,5 @@
 import React from 'react';
-import Constants from '../../constants';
+import { dict } from '../../language';
 import Utils from '../../utils';
 import styles from '../../styles/components/shared/Button.module.scss';
 
@@ -15,7 +15,7 @@ export const DownloadButton = ({ href, isActive = false, onClick, setState }) =>
         if (isActive && setState) {
           setState('install', 10000);
         }
-      }}>{Constants.bannerStrings.downloadApp}</a>
+      }}>{dict.get('downloadApp')}</a>
     </div>
   );
 }

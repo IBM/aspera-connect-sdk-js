@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Enzyme, { shallow, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import App from '../components/App';
-import ThreeStepBanner from '../components/ThreeStepBanner';
-import StatusBanner from '../components/StatusBanner';
+import App from '../../components/App';
+import ThreeStepBanner from '../../components/ThreeStepBanner';
+import StatusBanner from '../../components/StatusBanner';
 
 Enzyme.configure({ adapter: new Adapter() });
 
