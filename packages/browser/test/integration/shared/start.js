@@ -15,12 +15,15 @@ var testStart = function() {
   
   it('should allow calls to Connect', function() {
     this.asperaWeb.initSession();
-    this.asperaWeb.stop();
-    this.asperaWeb.start();
-    this.asperaWeb.getAllTransfers(callback);
-    this.asperaWeb.version(callback);
-    // Initially called during initSession
-    expect(callback.success.callCount).to.not.equal(1);
+    
+    setTimeout(() => { 
+      this.asperaWeb.stop();
+      this.asperaWeb.start();
+      this.asperaWeb.getAllTransfers(callback);
+      this.asperaWeb.version(callback);
+      // Initially called during initSession
+      expect(callback.success.callCount).to.not.equal(1);
+    });
   });
 };
 
@@ -45,13 +48,16 @@ var testStartExtensions = function() {
     setTimeout(() => {
       this.asperaWeb.stop();
       this.asperaWeb.start();
-      this.asperaWeb.getAllTransfers(callback);
     }, 50);
+    
+    setTimeout(() => {
+      this.asperaWeb.getAllTransfers(callback);
+    }, 100);
     
     setTimeout(() => {
       // Initially called during initSession
       expect(callback.success.callCount).to.equal(1);
       done();
-    }, 100);
+    }, 150);
   });
 };

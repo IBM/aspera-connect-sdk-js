@@ -31,6 +31,20 @@
                     "rel": "enclosure-one-click"
                 },
                 {
+                    "title": "Windows Vista Auto Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_FIPS_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-fips"
+                },
+                {
+                    "title": "Windows Vista Auto Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_FIPS_ONE_CLICK_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click-fips"
+                },
+                {
                     "title": "Windows Installer",
                     "type": "application/octet-stream",
                     "href": "bin/#WIN_INSTALLER#",
@@ -48,7 +62,7 @@
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -89,6 +103,20 @@
                     "rel": "enclosure-one-click"
                 },
                 {
+                    "title": "Windows Vista Auto Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_FIPS_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-fips"
+                },
+                {
+                    "title": "Windows Vista Auto Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_FIPS_ONE_CLICK_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click-fips"
+                },
+                {
                     "title": "Windows Installer",
                     "type": "application/octet-stream",
                     "href": "bin/#WIN_INSTALLER#",
@@ -106,7 +134,7 @@
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -147,6 +175,20 @@
                     "rel": "enclosure-one-click"
                 },
                 {
+                    "title": "Windows Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_FIPS_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-fips"
+                },
+                {
+                    "title": "Windows Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_FIPS_ONE_CLICK_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click-fips"
+                },
+                {
                     "title": "Aspera Connect HTML Documentation for Windows",
                     "type": "text/html",
                     "href": #WIN_DOCS_HTML_ENTRIES#,
@@ -157,7 +199,7 @@
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -198,6 +240,20 @@
                     "rel": "enclosure-one-click"
                 },
                 {
+                    "title": "Windows Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_FIPS_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-fips"
+                },
+                {
+                    "title": "Windows Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#WIN_FIPS_ONE_CLICK_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click-fips"
+                },
+                {
                     "title": "Aspera Connect HTML Documentation for Windows",
                     "type": "text/html",
                     "href": #WIN_DOCS_HTML_ENTRIES#,
@@ -208,7 +264,7 @@
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -260,7 +316,7 @@
                 {
                     "title": "Aspera Connect for Mac Release Notes",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
                     "hreflang": "en",
                     "rel": "release-notes"
                 }
@@ -297,7 +353,7 @@
                 {
                     "title": "Aspera Connect for Linux Release Notes",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
                     "hreflang": "en",
                     "rel": "release-notes"
                 }

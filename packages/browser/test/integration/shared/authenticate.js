@@ -22,12 +22,16 @@ var testAuthenticate = function() {
       expect(callback.success.callCount).to.equal(1);
     });
     
-    it('should call error callback if request fails', function() {
+    it('should call error callback if request fails', function(done) {
       extensionResponse(404, 'Internal Server Error');
       this.server.respondWith('POST', /authenticate/, [500, { "Content-Type": "application/json" }, '{}']);
       
       this.asperaWeb.authenticate(authSpec, callback);
-      expect(callback.error.callCount).to.equal(1);
+      
+      setTimeout(() => {
+        expect(callback.error.callCount).to.equal(1);
+        done();
+      }, 50);
     });
   });
 

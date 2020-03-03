@@ -22,11 +22,14 @@ var testShowAbout = function() {
     expect(callback.success.callCount).to.equal(1);
   });
   
-  it('should call error callback when request fails', function() {
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/about/, [500, { 'Content-Type': 'application/json' }, '{}']);
     this.asperaWeb.showAbout(callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 
@@ -94,12 +97,15 @@ var testShowDirectory = function() {
     expect(callback.success.callCount).to.equal(1);
   });
    
-  it('should call error callback when request fails', function() {
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/finder\/123456/, [500, { 'Content-Type': 'application/json' }, '{}']);
     
     this.asperaWeb.showDirectory('123456', callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 
@@ -168,12 +174,15 @@ var testShowPreferences = function() {
     expect(callback.success.callCount).to.equal(1);
   });
   
-  it('should call error callback when request fails', function() {
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/preferences/, [500, { 'Content-Type': 'application/json' }, '{}']);
     
     this.asperaWeb.showPreferences(callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 
@@ -649,12 +658,15 @@ var testShowTransferManager = function() {
     expect(callback.success.callCount).to.equal(1);
   });
   
-  it('should call error callback when request fails', function() {
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/transfer-manager/, [500, { "Content-Type": "application/json" }, '{}']);
     
     this.asperaWeb.showTransferManager(callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 
@@ -723,12 +735,15 @@ var testShowTransferMonitor = function() {
     expect(callback.success.callCount).to.equal(1);
   });
   
-  it('should call error callback when request fails', function() {
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/transfer-monitor\/123456/, [500, { "Content-Type": "application/json" }, '{}']);
     
     this.asperaWeb.showTransferMonitor('123456', callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 

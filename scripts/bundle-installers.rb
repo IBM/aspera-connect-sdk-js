@@ -31,6 +31,8 @@ def bundle_installers(output_dir)
   mac_installer_revision = ''
   windows_msi_name = ''
   windows_oneclick_name = ''
+  windows_fips_msi_name = ''
+  windows_fips_oneclick_name = ''
   windows_connect_version = ''
   windows_installer_revision = ''
   linux64_sh_name = ''
@@ -53,6 +55,16 @@ def bundle_installers(output_dir)
       raise "Expected 1 IBMAsperaConnect-ML-*.msi. To skip installers, export SKIP_INSTALLERS=1"
     end
 
+    windows_fips_msi_name = nil
+    entries = Dir.glob("#{installer_src}/IBMAsperaConnect-FIPS-ML-#{override_version}*.msi").sort
+    if entries.length >= 1
+      windows_fips_msi = entries.last
+      FileUtils.cp_r windows_fips_msi, bin_dir
+      windows_fips_msi_name = File.basename(windows_fips_msi)
+    else
+      raise "Expected 1 IBMAsperaConnect-FIPS-ML-*.msi. To skip installers, export SKIP_INSTALLERS=1"
+    end
+
     unless ENV["SKIP_ONE_CLICK"]
       windows_oneclick_name = nil
       entries = Dir.glob("#{installer_src}/*AsperaConnectSetup-ML-#{override_version}*.exe").sort
@@ -63,7 +75,17 @@ def bundle_installers(output_dir)
       else
         raise "Expected 1 AsperaConnectSetup-ML-*.exe. To skip installers, export SKIP_INSTALLERS=1"
       end
-      
+
+      windows_fips_oneclick_name = nil
+      entries = Dir.glob("#{installer_src}/*AsperaConnectSetup-FIPS-ML-#{override_version}*.exe").sort
+      if entries.length >= 1
+        windows_fips_oneclick = entries.last
+        FileUtils.cp_r windows_fips_oneclick, bin_dir
+        windows_fips_oneclick_name = File.basename(windows_fips_oneclick)
+      else
+        raise "Expected 1 AsperaConnectSetup-FIPS-ML-*.exe. To skip installers, export SKIP_INSTALLERS=1"
+      end
+
       mac_oneclick_name = nil
       entries = Dir.glob("#{installer_src}/IBMAsperaConnectInstallerOneClick-#{override_version}*.dmg").sort
       if entries.length >= 1
@@ -184,6 +206,8 @@ def bundle_installers(output_dir)
   contents = contents.gsub(/#MAC_DOCS_HTML_ENTRIES#/, html_entries["osx"])
   contents = contents.gsub(/#WIN_INSTALLER#/, windows_msi_name)
   contents = contents.gsub(/#WIN_ONE_CLICK_INSTALLER#/, windows_oneclick_name)
+  contents = contents.gsub(/#WIN_FIPS_INSTALLER#/, windows_fips_msi_name)
+  contents = contents.gsub(/#WIN_FIPS_ONE_CLICK_INSTALLER#/, windows_fips_oneclick_name)
   contents = contents.gsub(/#WIN_CONNECT_VERSION#/, windows_connect_version)
   contents = contents.gsub(/#WIN_INSTALLER_REVISION#/, windows_installer_revision)
   contents = contents.gsub(/#WIN_DOCS_PDF_ENTRIES#/, json_entries["win"])

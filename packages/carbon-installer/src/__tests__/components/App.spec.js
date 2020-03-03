@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Enzyme, { shallow, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import App from '../../components/App';
-import ThreeStepBanner from '../../components/ThreeStepBanner';
+import ThreeStepBanner from '../../components/TwoStepBanner';
 import StatusBanner from '../../components/StatusBanner';
 
 Enzyme.configure({ adapter: new Adapter() });
@@ -45,6 +45,7 @@ it('renders three step banner', () => {
   expect(wrapper.find(ThreeStepBanner)).toHaveLength(1);
 });
 
+// download message is re-mapped to install
 it('handles \'download\' message', () => {
   const map = {};
   window.addEventListener = jest.fn((event, cb) => {
@@ -53,7 +54,7 @@ it('handles \'download\' message', () => {
   const wrapper = shallow(<App />);
   const instance = wrapper.instance();
   map.message({data: 'download'});
-  expect(instance.state.banner).toEqual('download');
+  expect(instance.state.banner).toEqual('install');
 });
 
 it('handles \'install\' message', () => {

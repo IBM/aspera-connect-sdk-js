@@ -6,7 +6,7 @@ const version = require('./package.json').version;
 const commitHash = require('child_process')
   .execSync('git log --format=oneline --pretty=format:"%h" -1 .', { encoding: 'utf-8' })
   .trim();
-  
+
 const branch = require('child_process')
   .execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' })
   .trim();
@@ -19,7 +19,7 @@ const terserInstance = new TerserPlugin({
 
 let bannerText = `  Revision: ${version}-${branch !== 'master' ? (branch + '-') : ''}${commitHash}
   Date: ${new Date().toISOString().replace('T', ' ').substr(0, 19)}
-  
+
   http://www.asperasoft.com
   Copyright IBM Corp. 2008, ${new Date().getFullYear()}`
 
@@ -33,12 +33,16 @@ const bundleConfig = {
   mode: 'development',
   entry: path.join(__dirname, 'src', 'index'),
   resolve: {
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+    alias: {
+      lib: path.resolve(__dirname, 'src/')
+    },
     extensions: ['.js', '.ts']
   },
   output: {
     library: ['AW4'],
     libraryTarget: "window",
-    // umdNamedDefine: true,
+    umdNamedDefine: true,
     globalObject: 'typeof self !== \'undefined\' ? self : this',
     path: path.join(__dirname, 'build'),
   },

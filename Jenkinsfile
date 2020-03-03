@@ -11,14 +11,14 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '30'))
   }
   environment {
-    PLATFORM = 'mac-10.13-64'
     PATH = "$WORKSPACE/atc/mac-10.13-64/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
   }
   stages {
     stage('Copy Installers') {
       steps {
-        copyArtifacts filter: 'BUILD/mac-10.13-64-release/bin/IBMAsperaConnect*.dmg', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.9-build-mac-10.13-64', target: 'imports/dist/sdk'
+        copyArtifacts filter: 'BUILD/mac-10.11-64-release/bin/IBMAsperaConnect*.dmg', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.9-build-mac-10.11-64', target: 'imports/dist/sdk'
         copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.9-build-win-v140-32', target: 'imports/dist/sdk'
+        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect-FIPS*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup-FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.9-fips-build-win-v140-32', target: 'imports/dist/sdk'
         copyArtifacts filter: 'installer/BUILD/linux-g2.12-64-release/ibm-aspera-connect*.tar.gz', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.9-build-linux-64', target: 'imports/dist/sdk'
         sh 'env | sort'
       }
@@ -31,7 +31,7 @@ pipeline {
       }
       post {
         success {
-          archiveArtifacts('ConnectSDK*.zip')
+          archiveArtifacts('ConnectSDK*.zip, carbon-banner*.zip')
         }
         cleanup {
           deleteDir()

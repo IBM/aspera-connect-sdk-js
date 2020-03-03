@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "lib/*": ["./*"]
+    },
     "declaration": true,
     "declarationMap": true,
     "downlevelIteration": true,
@@ -15,7 +19,7 @@
     "noImplicitReturns": false,
     "noImplicitThis": false,
     "noUnusedLocals": true,
-    "noUnusedParameters": false,
+    "noUnusedParameters": true,
     "pretty": true,
     "sourceMap": true,
     "strict": true,
