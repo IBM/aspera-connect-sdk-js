@@ -22,48 +22,68 @@
  */
 
 import * as Logger from './logger';
-import BROWSER from './shared/browser';
-import {
-  FASP_API,
-  CURRENT_API,
-  LS_CONTINUED_KEY,
-  LS_CONNECT_APP_ID,
-  SS_SESSION_LASTKNOWN_ID
-} from './shared/constants';
-import { SESSION_ID, SESSION_KEY, SDK_LOCATION } from './shared/sharedInternals';
-import * as aesjs from 'aes-js';
-const crypt = { aesjs: aesjs };
+import BROWSER from './helpers/browser';
+import { LS_CONNECT_DETECTED, LS_CONTINUED_KEY } from './constants';
+import { ConnectGlobals } from './helpers/globals';
+import * as types from './core/types';
 
-SESSION_ID.set(generateUuid());
-SESSION_KEY.set(generateRandomStr(32));
-
+ConnectGlobals.sessionId = generateUuid();
+ConnectGlobals.sessionKey = generateRandomStr(32);
 let nextObjId = 0;
-let initUrlWampParams = '';
 
+/**
+ * Returns fasp initialize protocol
+ */
 export function getInitUrl () {
-  return CURRENT_API + '://initialize/?key=' + SESSION_KEY.value() + '&id=' + SESSION_ID.value() + initUrlWampParams;
+  return 'fasp://initialize';
+}
+
+export function getXMLHttpRequest () {
+  if (typeof XMLHttpRequest === 'undefined') {
+  // @ts-ignore
+    XMLHttpRequest = function () {
+      try {
+        return new ActiveXObject('Msxml2.XMLHTTP.6.0');
+      } catch (e) {}
+      try {
+        return new ActiveXObject('Msxml2.XMLHTTP.3.0');
+      } catch (e) {}
+      try {
+        return new ActiveXObject('Microsoft.XMLHTTP');
+      } catch (e) {}
+      // This browser does not support XMLHttpRequest
+      return;
+    };
+  }
+
+  return new XMLHttpRequest();
 }
 
 ////////////////////////////////////////////////////////////////////////////
 // Compatibility functions
 ////////////////////////////////////////////////////////////////////////////
 
-export function createError (errorCode: any, message: any) {
+/**
+ * Returns standardized error object
+ */
+export function createError (errorCode: any, message: any): types.ConnectError {
   let internalMessage = '';
   if (errorCode === -1) {
     internalMessage = 'Invalid request';
   }
+
   return { error: { code: errorCode, internal_message: internalMessage, user_message: message } };
 }
 
 /**
  * - str
  */
-export function parseJson (str: any) {
+export function parseJson <T> (str: any): T | types.ConnectError {
   let obj;
   if (typeof str === 'string' && (str.length === 0 || str.replace(/\s/g, '') === '{}')) {
-    return {};
+     // return {};
   }
+
   try {
     obj = JSON.parse(str);
   } catch (e) {
@@ -75,11 +95,22 @@ export function parseJson (str: any) {
 ////////////////////////////////////////////////////////////////////////////
 // Helper Functions
 ////////////////////////////////////////////////////////////////////////////
+export function copyObject (obj: any) {
+  let localObj: any = {};
+  if (!isNullOrUndefinedOrEmpty(obj)) {
+    for (let property in obj) {
+      if (obj.hasOwnProperty(property)) {
+        localObj[property] = obj[property];
+      }
+    }
+  }
 
+  return localObj;
+}
 /**
- * x - letiable we want to check
+ * Checks if variable is null or undefined or empty.
  */
-export function isNullOrUndefinedOrEmpty (x: any) {
+export function isNullOrUndefinedOrEmpty (x: any): x is undefined | null | '' {
   return x === '' || x === null || typeof x === 'undefined';
 }
 
@@ -113,8 +144,10 @@ export function versionLessThan (a: string, b: string) {
         versionArray.push(versionPart);
       }
     }
+
     return versionArray;
   };
+
   let aArr = versionToArray(a);
   let bArr = versionToArray(b);
   let i;
@@ -134,6 +167,9 @@ export function versionLessThan (a: string, b: string) {
   return false;
 }
 
+/**
+ * Checks if user has previously chosen to continue with current version.
+ */
 export function checkVersionException (): boolean {
   if (typeof(localStorage) === 'undefined') {
     return false;
@@ -142,7 +178,7 @@ export function checkVersionException (): boolean {
   if (prevContinuedSeconds !== undefined && prevContinuedSeconds !== null) {
     let currentTimeSeconds = Math.round(new Date().getTime() / 1000);
     if ((currentTimeSeconds - Number(prevContinuedSeconds)) < 60 * 24) {
-      Logger.debug('User opted out of update');
+      Logger.log('User opted out of update');
       return true;
     }
   }
@@ -154,6 +190,25 @@ export function addVersionException (): void {
     return;
   }
   localStorage.setItem(LS_CONTINUED_KEY, String(Math.round(new Date().getTime() / 1000)));
+}
+
+/**
+ * Helper function to generate deferred promise
+ */
+export function generatePromiseData <T> (): { promise: Promise<T>, resolver: any, rejecter: any } {
+  let resolver;
+  let rejecter;
+
+  const promise = new Promise<T>((resolve, reject) => {
+    resolver = resolve;
+    rejecter = reject;
+  });
+
+  return {
+    promise,
+    resolver,
+    rejecter
+  };
 }
 
 export function generateUuid (): string {
@@ -180,40 +235,6 @@ export function generateRandomStr (size: number): string {
   }
 
   return text;
-}
-
-export function encrypt (data: any) {
-  let dataBytes = crypt.aesjs.utils.utf8.toBytes(data);
-  let key = crypt.aesjs.utils.utf8.toBytes(SESSION_KEY.value());
-  let iv = crypt.aesjs.utils.utf8.toBytes(generateRandomStr(16));
-  // The counter is optional, and if omitted will begin at 1
-  let aesOfb = new crypt.aesjs.ModeOfOperation.ofb(key, iv);
-  let encryptedBytesString = aesOfb.encrypt(dataBytes);
-
-  // To print or store the binary data, you may convert it to hex
-  let encryptedHex = crypt.aesjs.utils.hex.fromBytes(iv) + '.' + crypt.aesjs.utils.hex.fromBytes(encryptedBytesString);
-  return encryptedHex;
-}
-
-export function decrypt (data: any) {
-  let arr = data.split('.');
-  if (arr.length !== 2) {
-    return data;
-  }
-
-  let iv = crypt.aesjs.utils.hex.toBytes(arr[0]);
-  // When ready to decrypt the hex string, convert it back to bytes
-  let encryptedBytes = crypt.aesjs.utils.hex.toBytes(arr[1]);
-  let key = crypt.aesjs.utils.utf8.toBytes(SESSION_KEY.value());
-
-  // The counter mode of operation maintains internal state, so to
-  // decrypt a new instance must be instantiated.
-  let aesOfb = new crypt.aesjs.ModeOfOperation.ofb(key, iv);
-  let decryptedBytes = aesOfb.decrypt(encryptedBytes);
-
-  // Convert our bytes back into text
-  // let decryptedText = crypt.aesjs.utils.utf8.fromBytes(decryptedBytes);
-  return decryptedBytes;
 }
 
 /**
@@ -250,6 +271,7 @@ export function launchConnect (userCallback?: (t: boolean) => any) {
     document.location.href = launchUri;
     // Note: timeout could lety as per the browser version, have a higher value
     setTimeout(function () {
+      // tslint:disable-next-line
       document.body.onblur = null;
       callback(isRegistered);
     }, 500);
@@ -267,7 +289,7 @@ export function launchConnect (userCallback?: (t: boolean) => any) {
     document.body.appendChild(dummyIframe);
   }
   // ELSE is handled by the NPAPI plugin
-  return null;
+  return;
 }
 
 /**
@@ -286,10 +308,11 @@ export function launchConnect (userCallback?: (t: boolean) => any) {
  * let relativeURL = 'foo.txt'
  * AW4.Utils.getFullURI(relativeURL) // returns "https://example.com/my/page/foo.txt"
  */
-export function getFullURI (relativeURL: string | undefined): string | null {
+export function getFullURI (relativeURL: string | undefined): string | void {
   if (typeof relativeURL !== 'string') {
-    return null;
+    return;
   }
+
   let url = relativeURL;
   let a = document.createElement('a');
   a.href = url;
@@ -297,6 +320,7 @@ export function getFullURI (relativeURL: string | undefined): string | null {
   if (fullURL.indexOf('/', fullURL.length - 1) !== -1) {
     fullURL = fullURL.slice(0,-1);
   }
+
   return fullURL;
 }
 
@@ -346,9 +370,8 @@ export function atou (inputString: string) {
 
 export function nextObjectId () {
   // Return an incrementing id even if file was reloaded
-  // if (typeof(AW4.nextObjId) == 'undefined')
-  //     AW4.nextObjId = 0;
-  return nextObjId++;
+  nextObjId++;
+  return nextObjId;
 }
 
 export function getLocalStorage (key: string) {
@@ -359,9 +382,13 @@ export function getLocalStorage (key: string) {
 	  return localStorage.getItem(key);
   } catch (error) {
     // Accessing local storage can be blocked by third party cookie settings
-	  console.log('Error accessing localStorage: ' + JSON.stringify(error));
+	  Logger.error('Error accessing localStorage: ', JSON.stringify(error));
 	  return '';
   }
+}
+
+export function recordConnectDetected () {
+  window.localStorage.setItem(LS_CONNECT_DETECTED, Date.now().toString());
 }
 
 export function setLocalStorage (key: string, value: string) {
@@ -372,18 +399,33 @@ export function setLocalStorage (key: string, value: string) {
 	  return localStorage.setItem(key, value);
   } catch (error) {
 	  // Accessing local storage can be blocked by third party cookie settings
-	  console.log('Error accessing localStorage: ' + JSON.stringify(error));
+	  Logger.error('Error accessing localStorage: ', JSON.stringify(error));
 	  return;
   }
 }
 
+export function entropyOk (id: string) {
+  let entropy = 0;
+  let len = id.length;
+  let charFreq = Object.create({});
+  id.split('').forEach(function (s) {
+    if (charFreq[s]) {
+      charFreq[s] += 1;
+    } else {
+      charFreq[s] = 1;
+    }
+  });
+  for (let s in charFreq) {
+    let percent = charFreq[s] / len;
+    entropy -= percent * (Math.log(percent) / Math.log(2));
+  }
+  return entropy > 3.80;
+}
+
+export function isError (x: any): x is types.ConnectError {
+  return (x && x.error !== undefined);
+}
+
 export {
-  BROWSER,
-  CURRENT_API,
-  FASP_API,
-  LS_CONNECT_APP_ID,
-  SDK_LOCATION,
-  SESSION_ID,
-  SESSION_KEY,
-  SS_SESSION_LASTKNOWN_ID
+  BROWSER
 };

@@ -240,7 +240,7 @@ var testReadChunkAsArrayBufferExtensions = function() {
   
   it('should return error if invalid options', function() {
     err = this.asperaWeb.readChunkAsArrayBuffer( { 'path' : '/fake/path.txt' }, callback);
-    expect(err.error.user_message).to.equal('Invalid parameters');
+    expect(err.error.user_message).to.equal('Invalid or missing options parameters');
   });
 };
 

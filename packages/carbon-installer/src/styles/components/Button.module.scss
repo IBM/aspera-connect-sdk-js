@@ -1,0 +1,59 @@
+$white: #ffffff;
+$blue: #3d70b2;
+
+%btn {
+  margin-left: 39px;
+  background-color: $white;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.active {
+  border: solid 1px $blue;
+  width: 180px;
+  height: 30px;
+  @extend %btn;
+}
+
+.notActive {
+  opacity: 0.5;
+  border: solid 2px $blue;
+  width: 178px;
+  height: 28px;
+  @extend %btn;
+}
+
+%link-shared {
+  height: 26px;
+  margin: 2px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 26px;
+  letter-spacing: normal;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+%link-shared:lang(ja) {
+  font-size: 0.7em;
+}
+
+.active a {
+  background-color: $blue;
+  color: $white;
+  width: 176px;
+  @extend %link-shared;
+}
+
+.notActive a {
+  background-color: $white;
+  color: $blue;
+  width: 173px;
+  @extend %link-shared;
+}

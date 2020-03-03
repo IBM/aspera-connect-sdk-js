@@ -26,12 +26,15 @@ var testRemoveTransfer = function() {
     expect(callback.success.callCount).to.equal(1);
   });
   
-  it('should call error callback if request fails', function() {
+  it('should call error callback if request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('POST', /v6\/connect\/transfers\/remove\/123456/, [500, { "Content-Type": "application/json" }, '{}']);
     
     this.asperaWeb.removeTransfer("123456", callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 

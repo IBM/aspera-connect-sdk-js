@@ -1,5 +1,6 @@
 import 'core-js/features/object/assign';
 import 'core-js/features/array/find';
+import 'core-js/features/promise';
 
 import {
   atou,
@@ -9,8 +10,9 @@ import {
   BROWSER
 } from './utils';
 
-export { Connect } from './connect';
+export { default as Connect } from './connect';
 export { ConnectInstaller } from './installer';
+export { __VERSION__ } from './version';
 
 import {
   debug,
@@ -38,13 +40,12 @@ export const Logger = {
   warn
 };
 
+// Necessary in order to support Connect Server AW4 integration.
+// For this to work, webpack must use the 'window' libraryTarget.
 let LocalizeDirlist = {};
-
 const _window = window as any;
-if (_window.AW4) {
-  if (_window.AW4.LocalizeDirlist) {
-    LocalizeDirlist = _window.AW4.LocalizeDirlist;
-  }
+if (_window.AW4 && _window.AW4.LocalizeDirlist) {
+  LocalizeDirlist = _window.AW4.LocalizeDirlist;
 }
 
 export { LocalizeDirlist };

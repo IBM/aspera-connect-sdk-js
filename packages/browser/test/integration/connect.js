@@ -112,9 +112,14 @@ describe('AW4', function() {
 
     // TODO: Fix decrypting requests
     context('using http', function() {
-      beforeEach(function() {
+      beforeEach(function(done) {
+        this.clock.restore();
         this.asperaWeb = new AW4.Connect({connectMethod: 'http'});
         this.asperaWeb.initSession();
+        
+        setTimeout(() => {
+          done();
+        }, 100);
       });
 
       xdescribe('#initSession', function() {
@@ -128,9 +133,9 @@ describe('AW4', function() {
       });
 
       describe('#version', function() {
-        beforeEach(function() {
-          this.clock.restore();
-        });
+        // beforeEach(function() {
+        //   this.clock.restore();
+        // });
         testVersion('https://local.connectme.us:43003/v5/connect/info/version');
       });
 

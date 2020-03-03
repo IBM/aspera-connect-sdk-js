@@ -7,78 +7,25 @@
 
 import * as Utils from './utils';
 import * as Logger from './logger';
-import RequestHandler from './request/request';
-import {
-  HTTP_METHOD,
-  STATUS,
-  EVENT,
-  TRANSFER_STATUS
-} from './shared/constants';
-import { minRequestedVersion, SESSION_ID, SDK_LOCATION } from './shared/sharedInternals';
+import RequestHandler from './request/handler';
+import { HTTP_METHOD, STATUS, EVENT, TRANSFER_STATUS, LS_CONNECT_APP_ID } from './constants';
+import ApiService from './core/api';
+import Request from './core/request';
+import { validateAuthSpec, validateBufferOptions, validateTransferId, validateOptions } from './core/validators';
+import { ConnectGlobals } from './helpers/globals';
+import * as types from './core/types';
 
-interface ConnectOptions {
-  connectLaunchWaitTimeoutMs?: number;
-  id?: string;
-  containerId?: string;
-  sdkLocation?: string;
-  pollingTime?: number;
-  minVersion?: string;
-  dragDropEnabled?: boolean;
-  authorizationKey?: string;
-  connectMethod?: string;
-  maxActivityOutstanding?: number;
-}
-
-interface IAsperaConnectSettings {
-  app_id?: string;
-  back_link?: string;
-  request_id?: string;
-}
-
-interface ITransferSpec {
-  direction: 'send' | 'receive';
-  paths: any[];
-  remote_host: string;
-  authentication?: 'password' | 'token';
-  cipher?: 'none' | 'aes-128';
-  content_protection?: boolean;
-  content_protection_passphrase?: string;
-  cookie?: string;
-  create_dir?: boolean;
-  destination_root?: string;
-  dgram_size?: number;
-  fasp_port?: number;
-  http_fallback?: boolean;
-  http_fallback_port?: number;
-  lock_min_rate?: boolean;
-  lock_rate_policy?: boolean;
-  lock_target_rate?: boolean;
-  min_rate_kbps?: number;
-  rate_policy?: 'fixed' | 'high' | 'fair' | 'low';
-  remote_password?: string;
-  remote_user?: string;
-  resume?: 'none' | 'attributes' | 'sparse_checksum' | 'full_checksum';
-  source_root?: string;
-  ssh_port?: number;
-  target_rate_cap_kbps?: number;
-  target_rate_kbps?: number;
-  token?: string;
-}
-
-interface ITransferSpecs {
-  transfer_specs: [{
-    transfer_spec: ITransferSpec,
-    aspera_connect_settings: IAsperaConnectSettings
-  }];
-}
-
-interface IEvtListener {
-  (evt: string, data: any): void;
-}
-
-interface ICallbacks {
-  success (response: any): any;
-  error? (response: any): any;
+/**
+ * Workaround for not using class notation for Connect - we say that
+ * Connect is the same as any which is the same as something that when called
+ * with the new operator gives an instance of ConnectClient.
+ */
+interface ConnectConstructor {
+  new (options?: types.ConfigurationOptions): types.ConnectClient;
+  EVENT: types.ConnectEvent;
+  STATUS: types.ConnectStatus;
+  TRANSFER_STATUS: types.TransferStatus;
+  HTTP_METHOD: types.HttpMethod;
 }
 
 /**
@@ -117,7 +64,12 @@ interface ICallbacks {
  * }
  * let asperaWeb = new AW4.Connect(options) // returns instance of AW4.Connect
  */
-export function Connect (options: ConnectOptions) {
+
+const ConnectClient = function ConnectClient (this: types.ConnectClient, options?: types.ConfigurationOptions) {
+  if (!new.target) {
+    throw new Error('Connect() must be called with new');
+  }
+
   if (Utils.isNullOrUndefinedOrEmpty(options)) {
     options = {};
   }
@@ -125,21 +77,18 @@ export function Connect (options: ConnectOptions) {
   let INITIALIZE_TIMEOUT = options.connectLaunchWaitTimeoutMs || 5000;
   let PLUGIN_ID = options.id || 'aspera-web';
   let PLUGIN_CONTAINER_ID = options.containerId || 'aspera-web-container';
-  let APPLICATION_ID: any = '';
+  let APPLICATION_ID = '';
   let AUTHORIZATION_KEY = options.authorizationKey || '';
   let POLLING_TIME = options.pollingTime || 2000;
   let MINIMUM_VERSION = options.minVersion || '';
   let CONNECT_METHOD = options.connectMethod || '';
   let DRAGDROP_ENABLED = options.dragDropEnabled || false;
   let MAX_ACTIVITY_OUTSTANDING = options.maxActivityOutstanding || 2;
-
-  let sdkLocation = Utils.getFullURI(options.sdkLocation) || '//d3gcli72yxqn2z.cloudfront.net/connect/v4';
-  SDK_LOCATION.set(sdkLocation);
-
+  let SDK_LOCATION = Utils.getFullURI(options.sdkLocation) || '//d3gcli72yxqn2z.cloudfront.net/connect/v4';
+  let EXTENSION_REQUEST_TIMEOUT = options.extensionRequestTimeout;
   // Expose the requested version to the install banner
-  if (options.minVersion) {
-    // AW4.MIN_REQUESTED_VERSION = options.minVersion;
-    minRequestedVersion.set(options.minVersion);
+  if (MINIMUM_VERSION) {
+    ConnectGlobals.minVersion = MINIMUM_VERSION;
   }
 
   if (typeof(Storage) !== 'undefined') {
@@ -149,71 +98,81 @@ export function Connect (options: ConnectOptions) {
     }
   }
 
-  // TODO: Is this needed?
-  // options.addStandardSettings = addStandardConnectSettings;
-
-  let transferListeners: IEvtListener[] = [];
+  let transferListeners: types.EventListener[] = [];
   let transferEventIntervalId = 0;
-  let transferEventIterationToken: any = 0;
-  let requestHandler: any = null;
-  let statusListeners: IEvtListener[] = [];
-  let connectStatus = STATUS.INITIALIZING;
+  let transferEventIterationToken = 0;
+  let statusListeners: types.EventListener[] = [];
+  let connectStatus: types.ConnectStatusStrings = STATUS.INITIALIZING;
   let objectId = Utils.nextObjectId();
   let outstandingActivityReqs = 0; // Keep track of polling requests to avoid overfilling the queue
+  let apiReady = false;
+  let initFinished = false;
+  let requestHandler = new RequestHandler({
+    id: PLUGIN_ID,
+    containerId: PLUGIN_CONTAINER_ID,
+    connectLaunchWaitTimeoutMs: INITIALIZE_TIMEOUT,
+    sdkLocation: SDK_LOCATION,
+    connectMethod: CONNECT_METHOD,
+    minVersion: MINIMUM_VERSION,
+    extensionRequestTimeout: EXTENSION_REQUEST_TIMEOUT,
+    objectId: objectId,
+    statusListener: manageConnectStatus
+  });
+  let api = new ApiService(requestHandler);
 
-  function addStandardConnectSettings (data: any) {
+  function addStandardSettings (body: types.TransferObject) {
     if (AUTHORIZATION_KEY.length !== 0) {
-      data.authorization_key = AUTHORIZATION_KEY;
+      body.authorization_key = AUTHORIZATION_KEY;
     }
-    if (Utils.isNullOrUndefinedOrEmpty(data.aspera_connect_settings)) {
-      data.aspera_connect_settings = {};
+
+    if (Utils.isNullOrUndefinedOrEmpty(body.aspera_connect_settings)) {
+      body.aspera_connect_settings = {};
     }
-    data.aspera_connect_settings.app_id = APPLICATION_ID;
-    return data;
+
+    (body.aspera_connect_settings as types.ConnectSettings).app_id = APPLICATION_ID;
+    return body;
   }
 
-  function connectHttpRequest (method: string, path: string, data: any | null, callbacks: ICallbacks | null) {
-    if (requestHandler == null) {
-      console.error('Connect#initSession must be called before invoking Connect API[' + path + '].');
-      return null;
-    }
-    // Use our own local variable to avoid mutating user's object
-    let localData: any = {};
-    if (!Utils.isNullOrUndefinedOrEmpty(data)) {
-      // 5-10 times faster than JSON.parse(JSON.stringify(data))
-      for (let property in data) {
-        if (data.hasOwnProperty(property)) {
-          localData[property] = data[property];
-        }
-      }
-    }
-    // prepare data
-    let dataStr = JSON.stringify(addStandardConnectSettings(localData));
-    // start request
-    requestHandler.start(method, path, dataStr, SESSION_ID.value(), callbacks);
-    return null;
+  function connectReady () {
+    Logger.log('Connect API is ready.');
+    apiReady = true;
+    initDragDrop();
   }
 
-  function driveHttpRequest (method: string, path: string, data: string | null, sessionId: string, callbacks: ICallbacks) {
-    if (requestHandler == null) {
-      return null;
-    }
-    // prepare data
-    let dataStr = JSON.stringify(data);
-    // start request
-    requestHandler.start(method, path, dataStr, sessionId, callbacks);
-    return null;
-  }
-
-  function getAllTransfersHelper (iterationToken: number, callbacks: ICallbacks) {
-    // This is never supposed to happen
-    if (Utils.isNullOrUndefinedOrEmpty(iterationToken)) {
-      return null;
-    }
+  function getAllTransfersHelper (iterationToken: number, callbacks?: types.Callbacks<types.AllTransfersInfo>): Promise<types.AllTransfersInfo> | void {
     let data = { iteration_token: iterationToken };
-    return connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/activity', data, callbacks);
+    const request =
+      new Request()
+        .setName('activity')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(data);
+
+    if (callbacks) {
+      send<types.AllTransfersInfo>(request, callbacks);
+    } else {
+      return send<types.AllTransfersInfo>(request);
+    }
   }
 
+  /**
+   * Initializes drag and drop if Connect is running and dragDropEnabled = true.
+   */
+  function initDragDrop () {
+    if (connectStatus === STATUS.RUNNING && DRAGDROP_ENABLED) {
+      const request =
+        new Request()
+          .setName('initDragDrop')
+          .setMethod(HTTP_METHOD.GET);
+
+      send<any>(request).catch(
+        () => {}
+      );
+    }
+  }
+
+  /**
+   * Triggers user's transfer listeners
+   */
   function notifyTransferListeners (response: any) {
     // First update the iterate token for future requests
     transferEventIterationToken = response.iteration_token;
@@ -223,7 +182,7 @@ export function Connect (options: ConnectOptions) {
     }
   }
 
-  function pollTranfersHelperFunction () {
+  function pollTransfersHelperFunction () {
     // TODO: Need to make sure that all request implementations error on timeout
     if (outstandingActivityReqs >= MAX_ACTIVITY_OUTSTANDING) {
       Logger.debug('Skipping activity request. Reached maximum number of outstanding polling requests.');
@@ -241,7 +200,10 @@ export function Connect (options: ConnectOptions) {
     });
   }
 
-  function removeEventListenerHelper (listener: IEvtListener, listenerArray: IEvtListener[]) {
+  /**
+   * Removes user's event listeners
+   */
+  function removeEventListenerHelper (listener: types.EventListener, listenerArray: types.EventListener[]) {
     let listenerFound = false;
     let index = listenerArray.indexOf(listener);
     while (index > -1) {
@@ -252,67 +214,98 @@ export function Connect (options: ConnectOptions) {
     return listenerFound;
   }
 
-  function isAppIdEntropyOk (appId: string) {
-    let entropy = 0;
-    let len = appId.length;
-    let charFreq = Object.create(null);
-    appId.split('').forEach(function (s) {
-      if (charFreq[s]) {
-        charFreq[s] += 1;
-      } else {
-        charFreq[s] = 1;
-      }
-    });
-    for (let s in charFreq) {
-      let percent = charFreq[s] / len;
-      entropy -= percent * (Math.log(percent) / Math.log(2));
-    }
-    return entropy > 3.80;
-  }
-
   ////////////////////////////////////////////////////////////////////////////
   // Manage Connect Status and high level logic
   ////////////////////////////////////////////////////////////////////////////
 
+  /**
+   * Triggers user's status listeners
+   */
   function notifyStatusListeners (notifyStatus: any) {
     for (let i = 0; i < statusListeners.length; i++) {
       statusListeners[i](EVENT.STATUS, notifyStatus);
     }
   }
 
-  function setConnectStatus (newStatus: string) {
+  /**
+   * Sets the global Connect status
+   */
+  function setConnectStatus (newStatus: types.ConnectStatusStrings) {
+    /** Avoid handling redundant status updates */
+    if (connectStatus === newStatus) {
+      return;
+    }
+
+    /**
+     * Handle case where Connect goes to running outside of normal init sequence.
+     * For example, during upgrade.
+     */
+    if (initFinished && newStatus === STATUS.RUNNING) {
+      connectReady();
+    }
+
     Logger.debug('[' + objectId + '] Connect status changing from[' + connectStatus + '] to[' + newStatus + ']');
     connectStatus = newStatus;
   }
 
-  function manageConnectStatus (newStatus: number) {
-    // Initialize options before calling RUNNING
-    if (newStatus === RequestHandler.STATUS.RUNNING && DRAGDROP_ENABLED) {
-      connectHttpRequest(HTTP_METHOD.GET, '/connect/file/initialize-drag-drop', null, null);
-    }
-    if (newStatus === RequestHandler.STATUS.INITIALIZING) {
+  function manageConnectStatus (newStatus: string) {
+    if (newStatus === STATUS.INITIALIZING) {
       setConnectStatus(STATUS.INITIALIZING);
-    } else if (newStatus === RequestHandler.STATUS.RETRYING) {
+    } else if (newStatus === STATUS.RETRYING) {
       setConnectStatus(STATUS.RETRYING);
-    } else if (newStatus === RequestHandler.STATUS.FAILED) {
+    } else if (newStatus === STATUS.FAILED) {
       setConnectStatus(STATUS.FAILED);
-    } else if (newStatus === RequestHandler.STATUS.EXTENSION_INSTALL) {
+    } else if (newStatus === STATUS.EXTENSION_INSTALL) {
       setConnectStatus(STATUS.EXTENSION_INSTALL);
-    } else if (newStatus === RequestHandler.STATUS.WAITING) {
+    } else if (newStatus === STATUS.WAITING) {
       // No change
-    } else if (newStatus === RequestHandler.STATUS.OUTDATED) {
+    } else if (newStatus === STATUS.OUTDATED) {
       if (connectStatus !== STATUS.OUTDATED) {
         setConnectStatus(STATUS.OUTDATED);
       }
+    } else if (newStatus === STATUS.DEGRADED) {
+      /** Should not get here. */
+      return;
     } else {
       setConnectStatus(STATUS.RUNNING);
     }
+
     notifyStatusListeners(connectStatus);
   }
 
-  this.connectHttpRequest = connectHttpRequest;
-  this.driveHttpRequest = driveHttpRequest;
-  this.isNullOrUndefinedOrEmpty = Utils.isNullOrUndefinedOrEmpty;
+  function send<T> (request: InstanceType<typeof Request>, callbacks: types.Callbacks<T>): void;
+  function send<T> (request: InstanceType<typeof Request>): Promise<T>;
+  function send<T> (request: InstanceType<typeof Request>, callbacks?: types.Callbacks<T>): Promise<T> | void {
+    if (!apiReady) {
+      throw new Error('Connect API is not available.');
+    } else if (!api) {
+      throw new Error('Must call #initSession before using the Connect API.');
+    }
+
+    /** Add default settings for all POST requests */
+    if (request.method === HTTP_METHOD.POST) {
+      request.addSettings(addStandardSettings);
+    }
+
+    if (callbacks) {
+      request.send<T>(api).then(
+        (response) => {
+          if (typeof callbacks.success === 'function') {
+            callbacks.success(response);
+          }
+        }
+      ).catch(
+        (error: types.ConnectError) => {
+          if (typeof callbacks.error === 'function') {
+            Logger.debug('Calling error callback.');
+            callbacks.error(error);
+          }
+        }
+      );
+    } else {
+      return request.send<T>(api);
+    }
+  }
 
   /**
    * @function
@@ -339,7 +332,7 @@ export function Connect (options: ConnectOptions) {
    * }
    * asperaWeb.addEventListener(AW4.Connect.EVENT.TRANSFER, transferListener)
    */
-  this.addEventListener = function (type: string, listener: IEvtListener) {
+  this.addEventListener = function (type: types.EventString, listener: types.EventListener): void | types.ConnectError {
     // Check the parameters
     if (typeof type !== typeof EVENT.ALL) {
       return Utils.createError(-1, 'Invalid EVENT parameter');
@@ -349,7 +342,7 @@ export function Connect (options: ConnectOptions) {
     // Add the listener
     if (type === EVENT.TRANSFER || type === EVENT.ALL) {
       if (transferEventIntervalId === 0) {
-        transferEventIntervalId = setInterval(pollTranfersHelperFunction, POLLING_TIME);
+        transferEventIntervalId = setInterval(pollTransfersHelperFunction, POLLING_TIME);
       }
       // Already set a function for polling the status, just add to the queue
       transferListeners.push(listener);
@@ -357,7 +350,6 @@ export function Connect (options: ConnectOptions) {
     if (type === EVENT.STATUS || type === EVENT.ALL) {
       statusListeners.push(listener);
     }
-    return null;
   };
 
   /**
@@ -382,13 +374,23 @@ export function Connect (options: ConnectOptions) {
    * `{}`
    * @return {null|Error}
    */
-  this.authenticate = function (authSpec: Partial<ITransferSpec>, callbacks: ICallbacks) {
-    if (Utils.isNullOrUndefinedOrEmpty(authSpec)) {
-      return Utils.createError(-1, 'Invalid authSpec parameter');
+  function authenticate (authSpec: Partial<types.TransferSpec>, callbacks: types.Callbacks<{}>): void;
+  function authenticate (authSpec: Partial<types.TransferSpec>): Promise<{}>;
+  function authenticate (authSpec: Partial<types.TransferSpec>, callbacks?: {}): void | Promise<{}> {
+    const request =
+       new Request()
+         .setName('authenticate')
+         .setMethod(HTTP_METHOD.POST)
+         .setBody(authSpec)
+         .setValidator(validateAuthSpec);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
     }
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/info/authenticate', authSpec, callbacks);
-    return null;
-  };
+  }
+  this.authenticate = authenticate;
 
   /**
    * Get statistics for all transfers.
@@ -406,10 +408,11 @@ export function Connect (options: ConnectOptions) {
    *   had activity since the last call.
    * @return {null}
    */
-  this.getAllTransfers = function (callbacks: ICallbacks, iterationToken: number = 0) {
-    getAllTransfersHelper(iterationToken, callbacks);
-    return null;
-  };
+  function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number): void;
+  function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number = 0): void | Promise<types.AllTransfersInfo> {
+    return getAllTransfersHelper(iterationToken, callbacks);
+  }
+  this.getAllTransfers = getAllTransfers;
 
   /**
    * Get current status of Connect.
@@ -418,9 +421,44 @@ export function Connect (options: ConnectOptions) {
    * @name AW4.Connect#getStatus
    * @return {STATUS}
    */
-  this.getStatus = function () {
+  this.getStatus = function (): types.ConnectStatusStrings {
     return connectStatus;
   };
+
+  /**
+   * Get statistics for a single transfer.
+   *
+   * @function
+   * @name AW4.Connect#getTransfer
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *  results.
+   *
+   *  Object returned to success callback:
+   *  See `{@link TransferInfo}`
+   *  ```
+   *  {
+   *   "transfer_info": TransferInfo
+   *  }
+   * @param {String} transferId The ID (`uuid`) of the transfer to retreive.
+   * @return {null}
+   */
+  function getTransfer (transferId: string, callbacks: types.Callbacks<{ transfer_info: types.TransferInfo }>): void;
+  function getTransfer (transferId: string): Promise<{ transfer_info: types.TransferInfo }>;
+  function getTransfer (transferId: string, callbacks?: types.Callbacks<{ transfer_info: types.TransferInfo }>): void | Promise<{ transfer_info: types.TransferInfo}> {
+    const request =
+      new Request()
+        .setName('getTransfer')
+        .setMethod(HTTP_METHOD.POST)
+        .setParam(transferId)
+        .setValidator(validateTransferId);
+
+    if (callbacks) {
+      send<{ transfer_info: types.TransferInfo }>(request, callbacks);
+    } else {
+      return send<{ transfer_info: types.TransferInfo }>(request);
+    }
+  }
+  this.getTransfer = getTransfer;
 
   /**
    * Call this method after creating the {@link AW4.Connect} object. It is mandatory to call this
@@ -444,29 +482,33 @@ export function Connect (options: ConnectOptions) {
    *
    * @returns {Object}
    */
-  this.initSession = function (applicationId?: string) {
-    if (Utils.isNullOrUndefinedOrEmpty(APPLICATION_ID)) {
-      if (Utils.isNullOrUndefinedOrEmpty(applicationId)) {
-        APPLICATION_ID = Utils.getLocalStorage(Utils.LS_CONNECT_APP_ID);
-        if (Utils.isNullOrUndefinedOrEmpty(APPLICATION_ID)) {
-          APPLICATION_ID = Utils.utoa(Utils.generateUuid());
-          Utils.setLocalStorage(Utils.LS_CONNECT_APP_ID, APPLICATION_ID);
-        }
-      } else {
-        APPLICATION_ID = applicationId;
-      }
-    } else {
-      return Utils.createError(-1, 'Session was already initialized');
+  this.initSession = function (id: string = ''): types.ApplicationIdObject | types.ConnectError {
+    if (!Utils.isNullOrUndefinedOrEmpty(APPLICATION_ID)) {
+      return Utils.createError(-1, 'Session was already initialized.');
     }
-    if (!isAppIdEntropyOk(APPLICATION_ID)) {
+
+    if (!Utils.isNullOrUndefinedOrEmpty(id)) {
+      APPLICATION_ID = id;
+    } else {
+      let appId = Utils.getLocalStorage(LS_CONNECT_APP_ID);
+       /** Generate a new application id */
+      if (!appId) {
+        appId = Utils.utoa(Utils.generateUuid());
+      }
+      APPLICATION_ID = appId;
+    }
+
+    Utils.setLocalStorage(LS_CONNECT_APP_ID, APPLICATION_ID);
+    if (!Utils.entropyOk(APPLICATION_ID)) {
       Logger.warn('WARNING: app_id field entropy might be too low.');
     }
-    // Initialize requests
+
+     /** Initialize requests */
     let error = this.start();
-    if (error == null) {
-      return { 'app_id' : APPLICATION_ID };
+    if (error && Utils.isError(error)) {
+      return Utils.createError(-1, error);
     }
-    return error;
+    return { 'app_id' : APPLICATION_ID };
   };
 
   /**
@@ -493,10 +535,24 @@ export function Connect (options: ConnectOptions) {
    * `{@link TransferSpec}`
    * @return {null}
    */
-  this.modifyTransfer = function (transferId: string, options: Partial<ITransferSpec>, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/modify/' + transferId, options, callbacks);
-    return null;
-  };
+  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>, callbacks: types.Callbacks<{}>): void;
+  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>): Promise<{}>;
+  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
+    const request =
+      new Request()
+        .setName('modifyTransfer')
+        .setMethod(HTTP_METHOD.POST)
+        .setParam(transferId)
+        .setBody(options)
+        .setValidator(validateTransferId);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  }
+  this.modifyTransfer = modifyTransfer;
 
   /**
    * Read file as 64-bit encoded data.
@@ -521,15 +577,23 @@ export function Connect (options: ConnectOptions) {
    * ```
    * @return {null|Error}
    */
-  this.readAsArrayBuffer = function (options: { path: string }, callbacks: ICallbacks) {
-    console.warn('AW4.Connect#readAsArrayBuffer will be deprecated in the future.');
-    // let params = {};
-    if (!options) {
-      return Utils.createError(-1, 'Invalid options parameter');
+  function readAsArrayBuffer (options: { path: string }, callbacks: types.Callbacks<types.ArrayBufferOutput>): void;
+  function readAsArrayBuffer (options: { path: string }): Promise<types.ArrayBufferOutput>;
+  function readAsArrayBuffer (options: { path: string }, callbacks?: types.Callbacks<types.ArrayBufferOutput>): void | Promise<types.ArrayBufferOutput> {
+    const request =
+      new Request()
+        .setName('readAsArrayBuffer')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(options)
+        .setValidator(validateOptions);
+
+    if (callbacks) {
+      send<types.ArrayBufferOutput>(request, callbacks);
+    } else {
+      return send<types.ArrayBufferOutput>(request);
     }
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/file/read-as-array-buffer/', options, callbacks);
-    return null;
-  };
+  }
+  this.readAsArrayBuffer = readAsArrayBuffer;
 
   /**
    * Read 64-bit encoded chunk from file.
@@ -557,14 +621,31 @@ export function Connect (options: ConnectOptions) {
    * @return {null|Error}
    */
 
-  this.readChunkAsArrayBuffer = function (options: { path: string, offset: number, chunkSize: number }, callbacks: ICallbacks) {
-    console.warn('AW4.Connect#readChunkAsArrayBuffer will be deprecated in the future.');
-    if (!options.path || typeof options.offset === 'undefined' || typeof options.chunkSize === 'undefined') {
-      return Utils.createError(-1, 'Invalid parameters');
+  function readChunkAsArrayBuffer (
+    options: { path: string, offset: number, chunkSize: number },
+    callbacks: types.Callbacks<types.ArrayBufferOutput>
+  ): void;
+  function readChunkAsArrayBuffer (
+    options: { path: string, offset: number, chunkSize: number }
+  ): Promise<types.ArrayBufferOutput>;
+  function readChunkAsArrayBuffer (
+    options: { path: string, offset: number, chunkSize: number },
+    callbacks?: types.Callbacks<types.ArrayBufferOutput>
+  ): void | Promise<types.ArrayBufferOutput> {
+    const request =
+      new Request()
+        .setName('readChunkAsArrayBuffer')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(options)
+        .setValidator(validateBufferOptions);
+
+    if (callbacks) {
+      send<types.ArrayBufferOutput>(request, callbacks);
+    } else {
+      return send<types.ArrayBufferOutput>(request);
     }
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/file/read-chunk-as-array-buffer/', options, callbacks);
-    return null;
-  };
+  }
+  this.readChunkAsArrayBuffer = readChunkAsArrayBuffer;
 
   /**
    * Unsubscribe from Aspera Web events. If `type` is not specified,
@@ -583,7 +664,7 @@ export function Connect (options: ConnectOptions) {
    * @param {Function} [listener] The function used to subscribe in {@link AW4.Connect#addEventListener}
    * @return {Boolean}
    */
-  this.removeEventListener = function (type?: string, listener?: () => any) {
+  this.removeEventListener = function (type?: types.EventString, listener?: types.EventListener): boolean {
     let listenerFound = false;
 
     if (typeof type === 'undefined') {
@@ -632,6 +713,7 @@ export function Connect (options: ConnectOptions) {
       clearInterval(transferEventIntervalId);
       transferEventIntervalId = 0;
     }
+
     return listenerFound;
   };
 
@@ -650,10 +732,23 @@ export function Connect (options: ConnectOptions) {
    *   `{@link TransferSpec}`
    * @return {null}
    */
-  this.removeTransfer = function (transferId: string, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/remove/' + transferId, null, callbacks);
-    return null;
-  };
+  function removeTransfer (transferId: string, callbacks: types.Callbacks<{}>): void;
+  function removeTransfer (transferId: string): Promise<{}>;
+  function removeTransfer (transferId: string, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
+    const request =
+      new Request()
+        .setName('removeTransfer')
+        .setMethod(HTTP_METHOD.POST)
+        .setParam(transferId)
+        .setValidator(validateTransferId);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  }
+  this.removeTransfer = removeTransfer;
 
    /**
     * Resume a transfer that was stopped.
@@ -678,17 +773,35 @@ export function Connect (options: ConnectOptions) {
     * `{@link TransferSpec}`
     * @return {null}
     */
-  this.resumeTransfer = function (transferId: string, options: Partial<ITransferSpec>, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/resume/' + transferId, options, callbacks);
-    return null;
-  };
+  function resumeTransfer (
+    transferId: string,
+    options: Partial<types.TransferSpec>,
+    callbacks: types.Callbacks<types.ResumeTransferOutput>
+  ): void;
+  function resumeTransfer (
+    transferId: string,
+    options: Partial<types.TransferSpec>
+  ): Promise<types.ResumeTransferOutput>;
+  function resumeTransfer (
+    transferId: string,
+    options: Partial<types.TransferSpec>,
+    callbacks?: types.Callbacks<types.ResumeTransferOutput>
+  ): void | Promise<types.ResumeTransferOutput> {
+    const request =
+      new Request()
+        .setName('resumeTransfer')
+        .setMethod(HTTP_METHOD.POST)
+        .setParam(transferId)
+        .setBody(options)
+        .setValidator(validateTransferId);
 
-  interface IDragDropOptions {
-    dragEnter?: boolean;
-    dragOver?: boolean;
-    dragLeave?: boolean;
-    drop?: boolean;
+    if (callbacks) {
+      send<types.ResumeTransferOutput>(request, callbacks);
+    } else {
+      return send<types.ResumeTransferOutput>(request);
+    }
   }
+  this.resumeTransfer = resumeTransfer;
 
   /**
    * Sets drag and drop options for the element given in the cssSelector. Please note that
@@ -717,7 +830,10 @@ export function Connect (options: ConnectOptions) {
    *   * `files` (Object) - See {@link dataTransfer}. This is only valid on `drop` events.
    * @return {null|Error}
    */
-  this.setDragDropTargets = function (cssSelector: string, options: IDragDropOptions, listener: (evt: any) => any) {
+
+  this.setDragDropTargets = function (
+    cssSelector: string, options: types.DragDropOptions, listener: types.DragDropListener
+  ): void | types.ConnectError {
     if (!DRAGDROP_ENABLED) {
       return Utils.createError(-1, 'Drop is not enabled in the initialization ' +
         'options, please instantiate Connect again with the dragDropEnabled option set to true.');
@@ -766,7 +882,15 @@ export function Connect (options: ConnectOptions) {
       let dropHelper = function (response: any) {
         listener({ event: evt, files: response });
       };
-      connectHttpRequest(HTTP_METHOD.POST, '/connect/file/dropped-files', data, { success: dropHelper });
+      const request =
+        new Request()
+          .setName('droppedFiles')
+          .setMethod(HTTP_METHOD.POST)
+          .setBody(data);
+
+      send<any>(request, {
+        success: dropHelper
+      });
     };
     for (let i = 0; i < elements.length; i++) {
       // Independent from our implementation
@@ -783,7 +907,6 @@ export function Connect (options: ConnectOptions) {
         elements[i].addEventListener('drop', dropListener);
       }
     }
-    return null;
   };
 
    /**
@@ -800,10 +923,21 @@ export function Connect (options: ConnectOptions) {
     *   `{}`
     * @return {null}
     */
-  this.showAbout = function (callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/about', null, callbacks);
-    return null;
-  };
+  function showAbout (callbacks: types.Callbacks<{}>): void;
+  function showAbout (): Promise<{}>;
+  function showAbout (callbacks?: types.Callbacks<{}>): void | Promise<{}> {
+    const request =
+      new Request()
+        .setName('showAbout')
+        .setMethod(HTTP_METHOD.GET);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  }
+  this.showAbout = showAbout;
 
   /**
    * Open the destination directory of the transfer using the system file
@@ -821,10 +955,23 @@ export function Connect (options: ConnectOptions) {
    *   `{}`
    * @return {null}
    */
-  this.showDirectory = function (transferId: string, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/finder/' + transferId, null, callbacks);
-    return null;
-  };
+  function showDirectory (transferId: string, callbacks: types.Callbacks<{}>): void;
+  function showDirectory (transferId: string): Promise<{}>;
+  function showDirectory (transferId: string, callbacks?: types.Callbacks<{}>): void | Promise<types.HttpResponse> {
+    const request =
+      new Request()
+        .setName('showDirectory')
+        .setMethod(HTTP_METHOD.GET)
+        .setParam(transferId)
+        .setValidator(validateTransferId);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  }
+  this.showDirectory = showDirectory;
 
   /**
    * Displays the IBM Aspera Connect "Preferences" window.
@@ -840,16 +987,61 @@ export function Connect (options: ConnectOptions) {
    *   `{}`
    * @return {null}
    */
-  this.showPreferences = function (callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/preferences', null, callbacks);
-    return null;
-  };
+  function showPreferences (callbacks: types.Callbacks<{}>): void;
+  function showPreferences (): Promise<{}>;
+  function showPreferences (callbacks?: types.Callbacks<{}>): void | Promise<{}> {
+    const request =
+      new Request()
+        .setName('showPreferences')
+        .setMethod(HTTP_METHOD.GET);
 
-  interface ISaveFileDialogOptions {
-    allowedFileTypes?: any;
-    suggestedName?: string;
-    title?: string;
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
   }
+  this.showPreferences = showPreferences;
+
+  /**
+   * Displays the IBM Aspera Connect "Preferences" window opened to a specifiic page.
+   *
+   * *This method is asynchronous*
+   *
+   * @function
+   * @name AW4.Connect#showPreferencesPage
+   * @param {options} options Options used when opening preferences.
+   *
+   * Options:
+   * * `page` {String} - `general`, `transfers`, `network`, `bandwidth`, `security`
+   * @param {Callbacks} callbacks `success` and `error` functions to receive results.
+   *
+   *  Object returned to success callback:
+   *  `{}`
+   * @return {null}
+   */
+  function showPreferencesPage (options: types.PreferencesOptions, callbacks: types.Callbacks<{}>): void;
+  function showPreferencesPage (options: types.PreferencesOptions): Promise<{}>;
+  function showPreferencesPage (options: types.PreferencesOptions, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
+    const allowedPages = ['general', 'transfers', 'bandwidth', 'network', 'security'];
+	  if (options && options.page && allowedPages.indexOf(options.page) > -1) {
+    const request =
+        new Request()
+          .setName('showPreferencesPage')
+          .setMethod(HTTP_METHOD.GET)
+          .setParam(options.page);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  } else {
+    throw new Error('#showPreferencesPage options argument is either missing or incorrect.');
+  }
+  }
+  this.showPreferencesPage = showPreferencesPage;
+
   /**
    * Displays a file chooser dialog for the user to pick a "save-to" path.
    *
@@ -870,25 +1062,32 @@ export function Connect (options: ConnectOptions) {
    * * `title` (String) - The name of the dialog window.
    * @return {null|Error}
    */
-  this.showSaveFileDialog = function (callbacks: ICallbacks, options?: ISaveFileDialogOptions) {
-    // Prepare the options object, use our own local variable to avoid mutating user's object
+
+  this.showSaveFileDialog = function (
+    callbacks: types.Callbacks<types.ShowSaveFileDialogOutput>, options?: types.SaveFileDialogOptions
+  ): void {
     let localOptions: any = {};
     if (Utils.isNullOrUndefinedOrEmpty(options)) {
       options = {};
     }
-    localOptions.title = options!.title || '';
-    localOptions.suggestedName = options!.suggestedName || '';
-    localOptions.allowedFileTypes = options!.allowedFileTypes || '';
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-save-file-dialog/', localOptions, callbacks);
-    return null;
+
+    localOptions.title = options.title || '';
+    localOptions.suggestedName = options.suggestedName || '';
+    localOptions.allowedFileTypes = options.allowedFileTypes || '';
+
+    const request =
+      new Request()
+        .setName('showSaveFileDialog')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(localOptions);
+
+    if (callbacks) {
+      send<types.ShowSaveFileDialogOutput>(request, callbacks);
+    } else {
+      throw new Error('Must provide callbacks.');
+    }
   };
 
-  interface ISelectFileDialog {
-    allowedFileTypes?: any;
-    allowMultipleSelection?: boolean;
-    suggestedName?: string;
-    title?: string;
-  }
   /**
    * Displays a file browser dialog for the user to select files. The select file
    * dialog call(s) may be separated in time from the later startTransfer(s) call,
@@ -912,24 +1111,32 @@ export function Connect (options: ConnectOptions) {
    * * `title` (String) - The name of the dialog window.
    * @return {null|Error}
    */
-  this.showSelectFileDialog = function (callbacks: ICallbacks, options: ISelectFileDialog) {
-    // Prepare the options object, use our own local variable to avoid mutating user's object
+  this.showSelectFileDialog = function (
+    callbacks: types.Callbacks<types.ShowSelectFileDialogOutput>, options?: types.SelectFileDialogOptions
+  ): void {
     let localOptions: any = {};
     if (Utils.isNullOrUndefinedOrEmpty(options)) {
       options = {};
     }
+
     localOptions.title = options.title || '';
     localOptions.suggestedName = options.suggestedName || '';
     localOptions.allowMultipleSelection = Utils.isNullOrUndefinedOrEmpty(options.allowMultipleSelection) || options.allowMultipleSelection;
     localOptions.allowedFileTypes = options.allowedFileTypes || '';
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-open-file-dialog/', localOptions, callbacks);
-    return null;
+
+    const request =
+      new Request()
+        .setName('showSelectFileDialog')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(localOptions);
+
+    if (callbacks) {
+      send<types.ShowSelectFileDialogOutput>(request, callbacks);
+    } else {
+      throw new Error('Must provide callbacks.');
+    }
   };
 
-  interface ISelectFolderDialog {
-    allowMultipleSelection?: boolean;
-    title?: string;
-  }
   /**
    * Displays a file browser dialog for the user to select directories. The select
    * folder dialog call(s) may be separated in time from the later startTransfer(s)
@@ -952,16 +1159,27 @@ export function Connect (options: ConnectOptions) {
    * * `title` (String) - The name of the dialog window.
    * @return {null|Error}
    */
-  this.showSelectFolderDialog = function (callbacks: ICallbacks, options: ISelectFolderDialog) {
-    // Prepare the options object, use our own local variable to avoid mutating user's object
+  this.showSelectFolderDialog = function (
+    callbacks: types.Callbacks<types.ShowSelectFolderDialogOutput>, options?: types.SelectFolderDialogOptions
+  ): void {
     let localOptions: any = {};
     if (Utils.isNullOrUndefinedOrEmpty(options)) {
       options = {};
     }
+
     localOptions.title = options.title || '';
     localOptions.allowMultipleSelection = Utils.isNullOrUndefinedOrEmpty(options.allowMultipleSelection) || options.allowMultipleSelection;
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/windows/select-open-folder-dialog/', localOptions, callbacks);
-    return null;
+    const request =
+      new Request()
+        .setName('showSelectFolderDialog')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(localOptions);
+
+    if (callbacks) {
+      send<types.ShowSelectFolderDialogOutput>(request, callbacks);
+    } else {
+      throw new Error('Must provide callbacks.');
+    }
   };
 
   /**
@@ -978,10 +1196,21 @@ export function Connect (options: ConnectOptions) {
    *   `{}`
    * @return {null}
    */
-  this.showTransferManager = function (callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/transfer-manager', null, callbacks);
-    return null;
-  };
+  function showTransferManager (callbacks: types.Callbacks<{}>): void;
+  function showTransferManager (): Promise<{}>;
+  function showTransferManager (callbacks?: types.Callbacks<{}>): void | Promise<{}> {
+    const request =
+      new Request()
+        .setName('showTransferManager')
+        .setMethod(HTTP_METHOD.GET);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  }
+  this.showTransferManager = showTransferManager;
 
   /**
    * Displays the IBM Aspera Connect "Transfer Monitor" window for the transfer.
@@ -998,36 +1227,55 @@ export function Connect (options: ConnectOptions) {
    *   `{}`
    * @return {null}
    */
-  this.showTransferMonitor = function (transferId: string, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/windows/transfer-monitor/' + transferId, null, callbacks);
-    return null;
-  };
+  function showTransferMonitor (transferId: string, callbacks: types.Callbacks<{}>): void;
+  function showTransferMonitor (transferId: string): Promise<{}>;
+  function showTransferMonitor (transferId: string, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
+    const request =
+      new Request()
+        .setName('showTransferMonitor')
+        .setMethod(HTTP_METHOD.GET)
+        .setParam(transferId)
+        .setValidator(validateTransferId);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  }
+  this.showTransferMonitor = showTransferMonitor;
 
   /**
    * Start looking for Connect. Please note that this is called internally by {@link AW4.Connect#initSession}
-   * and it should only be called directory after a call to {@link AW4.Connect#stop}.
+   * and it should only be called directly after a call to {@link AW4.Connect#stop}.
    *
    * @function
    * @name AW4.Connect#start
    * @return {null|Error}
    */
-  this.start = function () {
-    if (APPLICATION_ID === '') {
-      return Utils.createError(-1, 'Please call initSession first');
+  this.start = function (): void | types.ConnectError {
+    if (Utils.isNullOrUndefinedOrEmpty(APPLICATION_ID)) {
+      return Utils.createError(-1, 'Please call #initSession first.');
     }
-    requestHandler = new RequestHandler();
-    // Add status listener to connect
-    requestHandler.addStatusListener(manageConnectStatus);
-    // Initialize request
-    let options = {
-      pluginId: PLUGIN_ID,
-      containerId: PLUGIN_CONTAINER_ID,
-      initializeTimeout: INITIALIZE_TIMEOUT,
-      sdkLocation: SDK_LOCATION.value(),
-      connectMethod: CONNECT_METHOD,
-      minVersion: MINIMUM_VERSION
-    };
-    return requestHandler.init(options);
+
+    /** Initialize request handler and launch Connect */
+    requestHandler.init().then(
+      () => {
+        Logger.log(`Initialization finished. Connect status: ${connectStatus}`);
+        if (connectStatus === STATUS.RUNNING) {
+          connectReady();
+        } else {
+          Logger.log('Connect API is not ready.');
+        }
+
+        initFinished = true;
+      }
+    ).catch(
+      (error) => {
+        Logger.error('Initialization error:', error);
+        initFinished = true;
+      }
+    );
   };
 
   /**
@@ -1059,14 +1307,13 @@ export function Connect (options: ConnectOptions) {
    *
    * @returns {Object|Error}
    */
-  this.startTransfer = function (transferSpec: ITransferSpec, asperaConnectSettings: IAsperaConnectSettings, callbacks: ICallbacks) {
-    if (Utils.isNullOrUndefinedOrEmpty(transferSpec)) {
-      return Utils.createError(-1, 'Invalid transferSpec parameter');
-    }
-
+  function startTransfer (
+    transferSpec: types.TransferSpec,
+    asperaConnectSettings: types.ConnectSpec,
+    callbacks: types.Callbacks<types.StartTransferOutput>
+  ): { request_id: string } {
     let settings = asperaConnectSettings || {};
-
-    let transferSpecs: ITransferSpecs = {
+    let transferSpecs: types.TransferSpecs = {
       transfer_specs : [{
         transfer_spec : transferSpec,
         aspera_connect_settings : settings
@@ -1074,7 +1321,8 @@ export function Connect (options: ConnectOptions) {
     };
 
     return this.startTransfers(transferSpecs, callbacks);
-  };
+  }
+  this.startTransfer = startTransfer;
 
   /**
    * Initiates one or more transfers (_currently only the first `transfer_spec`
@@ -1124,25 +1372,23 @@ export function Connect (options: ConnectOptions) {
    *
    * @returns {Object|Error}
    */
-  this.startTransfers = function (transferSpecs: ITransferSpecs, callbacks: ICallbacks) {
-    if (Utils.isNullOrUndefinedOrEmpty(transferSpecs)) {
-      return Utils.createError(-1, 'Invalid transferSpecs parameter');
+  this.startTransfers = function (
+    transferSpecs: types.TransferSpecs, callbacks: types.Callbacks<types.StartTransferOutput>
+  ): { request_id: string } {
+    if (Utils.isNullOrUndefinedOrEmpty(callbacks)) {
+      Logger.warn('#startTransfers was not provided with callbacks.');
     }
-    let i;
-    let requestId;
-    let transferSpec;
 
-    requestId = Utils.generateUuid();
+    let requestId = Utils.generateUuid();
+    const request =
+      new Request()
+        .setName('startTransfer')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(transferSpecs)
+        .setRequestId(requestId);
 
-    for (i = 0; i < transferSpecs.transfer_specs.length; i++) {
-      transferSpec = transferSpecs.transfer_specs[i];
-      addStandardConnectSettings(transferSpec);
-      transferSpec.aspera_connect_settings.request_id = requestId;
-      if (Utils.isNullOrUndefinedOrEmpty(transferSpec.aspera_connect_settings.back_link)) {
-        transferSpec.aspera_connect_settings.back_link = window.location.href;
-      }
-    }
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/start', transferSpecs, callbacks);
+    send<types.StartTransferOutput>(request, callbacks);
+
     return { request_id : requestId };
   };
 
@@ -1154,8 +1400,8 @@ export function Connect (options: ConnectOptions) {
    * @name AW4.Connect#stop
    * @return {null}
    */
-  this.stop = function () {
-    return requestHandler.stopRequests();
+  this.stop = function (): void {
+    requestHandler.stopRequests();
   };
 
   /**
@@ -1173,10 +1419,23 @@ export function Connect (options: ConnectOptions) {
    *   `{}`
    * @return {null}
    */
-  this.stopTransfer = function (transferId: string, callbacks: ICallbacks) {
-    connectHttpRequest(HTTP_METHOD.POST, '/connect/transfers/stop/' + transferId, null, callbacks);
-    return null;
-  };
+  function stopTransfer (transferId: string, callbacks: types.Callbacks<{}>): void;
+  function stopTransfer (transferId: string): Promise<{}>;
+  function stopTransfer (transferId: string, callbacks?: types.Callbacks<{}>): Promise<{}> | void {
+    const request =
+      new Request()
+        .setName('stopTransfer')
+        .setMethod(HTTP_METHOD.POST)
+        .setParam(transferId)
+        .setValidator(validateTransferId);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  }
+  this.stopTransfer = stopTransfer;
 
   /**
    * Get the IBM Aspera Connect version.
@@ -1196,14 +1455,23 @@ export function Connect (options: ConnectOptions) {
    *   ```
    * @return {null}
    */
-  this.version = function (callbacks: ICallbacks) {
-    if (Utils.isNullOrUndefinedOrEmpty(callbacks)) {
-      return null;
+  function version (callbacks: types.Callbacks<types.VersionOutput>): void;
+  function version (): Promise<types.VersionOutput>;
+  function version (callbacks?: types.Callbacks<types.VersionOutput>): Promise<types.VersionOutput> | void {
+    const request =
+      new Request()
+        .setName('version')
+        .setMethod(HTTP_METHOD.GET);
+
+    if (callbacks) {
+      send<types.VersionOutput>(request, callbacks);
+    } else {
+      return send<types.VersionOutput>(request);
     }
-    connectHttpRequest(HTTP_METHOD.GET, '/connect/info/version', null, callbacks);
-    return null;
-  };
-}
+  }
+  this.version = version;
+
+} as any as ConnectConstructor;
 
 /**
  * AW4.Connect.EVENT
@@ -1217,8 +1485,8 @@ export function Connect (options: ConnectOptions) {
  * AW4.Connect.EVENT.STATUS // returns "status"
  * AW4.Connect.EVENT.TRANSFER // returns "transfer"
  */
-Connect.EVENT = EVENT;
-Connect.HTTP_METHOD = HTTP_METHOD;
+ConnectClient.EVENT = EVENT;
+ConnectClient.HTTP_METHOD = HTTP_METHOD;
 /**
  * AW4.Connect.STATUS
  * @typedef {Object} STATUS
@@ -1234,7 +1502,11 @@ Connect.HTTP_METHOD = HTTP_METHOD;
  * AW4.Connect.STATUS.RETRYING // returns "RETRYING"
  * // etc...
  */
-Connect.STATUS = STATUS;
+let localStatus = Utils.copyObject(STATUS);
+delete localStatus.DEGRADED;
+delete localStatus.STOPPED;
+delete localStatus.WAITING;
+ConnectClient.STATUS = localStatus;
 /**
  * AW4.Connect.TRANSFER_STATUS
  *
@@ -1252,7 +1524,9 @@ Connect.STATUS = STATUS;
  * @property {String} WILLRETRY="willretry" Transfer waiting to retry after a
  *   recoverable error.
  */
-Connect.TRANSFER_STATUS = TRANSFER_STATUS;
+ConnectClient.TRANSFER_STATUS = TRANSFER_STATUS;
+
+export default ConnectClient;
 
 /**
  * The data format for statistics for all existing transfers.
@@ -1297,6 +1571,8 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  * @property {String} current_file The full path of the current file.
  * @property {Number} elapsed_usec The duration in microseconds of the transfer since it started
  *   transferring.
+ * @property {String} explorer_path The path opened in Explorer/Finder when user clicks
+ *   'Open Containing Folder' in Connect's Activity window.
  * @property {String} end_time The time when the transfer was completed.
  * @property {Array} files A list of files that have been active in this
  *   transfer session. Note that files that have not been active yet in this session
@@ -1342,6 +1618,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  *       "calculated_rate_kbps": 34,
  *       "current_file": "/temp/tinyfile0001",
  *       "elapsed_usec": 3000000,
+ *       "explorer_path": "/Users/aspera/Downloads/connect_downloads/10MB.3",
  *       "end_time": "",
  *       "files": [
  *          {
@@ -1394,6 +1671,9 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  * @property {Boolean} [create_dir=false] Creates the destination directory if it
  *   does not already exist. When enabling this option, the destination path is
  *   assumed to be a directory path.
+ * @property {Boolean} [obfuscate_file_names=false] If this value is `true`, Connect
+ *   will obfuscate all filenames. All files will be renamed to have random names.
+ *   Applies only to uploads. This is not reversible.
  * @property {String} [destination_root="/"] The transfer destination file path.
  *   If destinations are specified in `paths`, this value is prepended to each destination.
  *
@@ -1532,6 +1812,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  *       "source": "tinyfile0002"
  *     }
  *   ],
+ *   "obfuscate_file_names": false,
  *   "remote_host": "demo.asperasoft.com",
  *   "remote_user": "asperaweb",
  *   "authentication": "password",
@@ -1619,7 +1900,7 @@ Connect.TRANSFER_STATUS = TRANSFER_STATUS;
  * If an Error is thrown during a callback, it is logged to window.console
  * (if supported by the browser).
  *
- * @typedef {Object} Callbacks
+ * @typedef {Object} types.Callbacks
  */
 
 /**
