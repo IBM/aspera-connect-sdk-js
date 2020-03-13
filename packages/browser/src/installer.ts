@@ -412,7 +412,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       }
     };
     // load references from file and parse to load in the iframe
-    let parseIstallJSON = function (connectversionsSdkLocation: string) {
+    const parseIstallJSON = (connectversionsSdkLocation: string) => {
       let parsedInstallJSON = connectRefs;
       let installEntries = parsedInstallJSON.entries;
       let procesJSONentry = function (entryJSON: any) {
