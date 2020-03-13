@@ -598,7 +598,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       };
     }
     // IE will complain that in strict mode functions cannot be nested inside a statement, so we have to define it here
-    function handleMessage (event: any) {
+    const handleMessage = (event: any) => {
       // iFrame installation: Handling of messages by the parent window.
       if (isActivityEvent(event.data)) {
         Logger.debug('Connect bar activity: ', event.data);
