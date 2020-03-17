@@ -20,6 +20,9 @@ let getExtensionStoreLink = () => {
       return 'https://addons.mozilla.org/en-US/firefox/addon/ibm-aspera-connect';
   } else if (Utils.BROWSER.EDGE_WITH_EXTENSION === true) {
       return 'ms-windows-store://pdp/?productid=9N6XL57H8BMG';
+  } else if (Utils.BROWSER.EDGE_CHROMIUM === true) {
+      // TODO: switch to microsoft edge addon store
+      return 'https://chrome.google.com/webstore/detail/ibm-aspera-connect/kpoecbkildamnnchnlgoboipnblgikpn';
   } else if (Utils.BROWSER.CHROME === true) {
       return 'https://chrome.google.com/webstore/detail/ibm-aspera-connect/kpoecbkildamnnchnlgoboipnblgikpn';
   }

@@ -24,6 +24,7 @@ export default {
   CHROME: /chrome|crios|crmo/i.test(ua) && !/opera|opr/i.test(ua) && !/edge/i.test(ua),
   FIREFOX: /firefox|iceweasel/i.test(ua) && !/edge/i.test(ua) && checkFirefox(ua, 50),
   FIREFOX_LEGACY: /firefox|iceweasel/i.test(ua) && !/edge/i.test(ua) && !checkFirefox(ua, 50),
+  EDGE_CHROMIUM: /edg/i.test(ua) && !/edge/i.test(ua),
   EDGE_WITH_EXTENSION: /edge/i.test(ua) && checkEdge(ua, 14),
   EDGE_LEGACY: /edge/i.test(ua) && !checkEdge(ua, 14),
   SAFARI: /safari/i.test(ua) && !/chrome|crios|crmo/i.test(ua) && !/edge/i.test(ua),
