@@ -682,7 +682,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
             //   passed oneClick = false.
             let rel = connectOptions.oneClick ? 'enclosure-one-click' : 'enclosure';
             // Serve FIPS installers if opted in
-            if (connectOptions.useFips) {
+            if (connectOptions.useFips && /Win/.test(navigator.platform)) {
               rel = rel + '-fips';
             }
 
