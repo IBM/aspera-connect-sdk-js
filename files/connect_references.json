@@ -343,6 +343,13 @@
                     "rel": "enclosure"
                 },
                 {
+                    "title": "Linux 64-bit Installer",
+                    "type": "application/octet-stream",
+                    "href": "bin/#LINUX64_CONNECT_INSTALLER#",
+                    "hreflang": "en",
+                    "rel": "enclosure-one-click"
+                },
+                {
                     "title": "Aspera Connect for Linux HTML Documentation",
                     "type": "text/html",
                     "href": #LINUX_DOCS_HTML_ENTRIES#,
