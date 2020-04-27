@@ -7,6 +7,7 @@
     "build:browser": "npm --prefix packages/browser run build",
     "build:bundle": "./scripts/bundle-sdk.sh",
     "build:carbon": "npm --prefix packages/carbon-installer run build",
+    "build:skip-zip": "run-s build:browser build:carbon build:bundle",
     "build:zip": "./scripts/zip-sdk.sh",
     "bump": "node ./scripts/bump-versions.js",
     "clean": "rimraf *.zip *ConnectSDK* dist packages/browser/docs packages/browser/esm packages/browser/build packages/browser/dist",

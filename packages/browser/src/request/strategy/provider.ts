@@ -45,15 +45,15 @@ class Provider implements types.Provider {
 
         let installed = await this.strategy.detectExtension!(1000);
         if (!installed) {
-          let isMin39 = this._options.minVersion !== '' && !Utils.versionLessThan(this._options.minVersion, '3.9');
           let supportsInstall = ConnectInstaller.supportsInstallingExtensions === true;
 
-          if (this._options.connectMethod === 'extension' || (isMin39 && supportsInstall)) {
+          if (this._options.connectMethod === 'extension' || supportsInstall) {
             if (!this.supportsSafariAppExt()) {
               this._options.requestStatusCallback(STATUS.EXTENSION_INSTALL);
               window.postMessage('show_extension_install', '*');
             }
           } else {
+            Logger.debug('Falling back to http strategy');
             this.setHttpStrategy();
           }
         }
