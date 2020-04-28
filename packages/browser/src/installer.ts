@@ -756,8 +756,8 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         window.addEventListener('message', handleMessage, false);
       }
     }
-        // if the iframe is hidden due to dismiss, make it visible again.
-    iframe.style.visibility = 'visible';
+    // if the iframe is hidden due to dismiss, reset the display style
+    iframe.style.display = "";
 
     if (iframeLoadedFlag) {
       iframe.contentWindow!.postMessage(eventType, '*');
@@ -930,7 +930,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
 
     let iframe = document.getElementById(connectOptions.iframeId);
     if (typeof iframe !== 'undefined' && iframe !== null) {
-      iframe.style.visibility = 'hidden';
+      iframe.style.display = 'none';
     }
 
     return;
