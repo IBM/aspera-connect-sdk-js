@@ -64,6 +64,7 @@ class RequestHandler implements types.RequestHandler {
           body: requestInfo.body
         };
 
+        Logger.debug(`Processing request queue for endpoint: ${endpoint.path}`);
         this._strategy.httpRequest(endpoint, requestInfo.requestId)
           .then((response) => {
             return this.handleResponse<any>(response);

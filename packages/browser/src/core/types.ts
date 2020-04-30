@@ -171,6 +171,15 @@ export interface DataTransfer {
   };
 }
 
+export interface TestSshPortsOptions {
+  /** Domain name of the transfer server */
+  remote_host: string;
+  /** SSH port */
+  ssh_port?: number;
+  /** Timeout value in seconds */
+  timeout_sec?: number;
+}
+
 type FileObject = {
   /** Last modified timestamp of file */
   lastModifiedDate: string,
@@ -478,6 +487,10 @@ export interface ConnectClient {
   stopTransfer (transferId: string, callbacks: Callbacks<{}>): void;
   stopTransfer (transferId: string): Promise<{}>;
   stopTransfer (transferId: string, callbacks?: Callbacks<{}>): void | Promise<{}>;
+
+  testSshPorts (options: TestSshPortsOptions, callbacks: Callbacks<{}>): void;
+  testSshPorts (options: TestSshPortsOptions): Promise<{}>;
+  testSshPorts (options: TestSshPortsOptions, callbacks?: Callbacks<{}>): void | Promise<{}>;
 
   version (callbacks: Callbacks<VersionOutput>): void;
   version (): Promise<VersionOutput>;

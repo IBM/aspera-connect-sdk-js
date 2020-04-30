@@ -660,7 +660,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         notifyListeners(event.data);
         this.startExtensionInstall();
       }
-    }
+    };
     // IE will complain that in strict mode functions cannot be nested inside a statement, so we have to define it here
     const iframeLoaded = () => {
       iframeLoadedFlag = true;
@@ -757,7 +757,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       }
     }
     // if the iframe is hidden due to dismiss, reset the display style
-    iframe.style.display = "";
+    iframe.style.display = '';
 
     if (iframeLoadedFlag) {
       iframe.contentWindow!.postMessage(eventType, '*');

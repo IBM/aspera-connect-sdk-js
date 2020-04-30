@@ -1438,6 +1438,53 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   this.stopTransfer = stopTransfer;
 
   /**
+   * Test that Connect can open a TCP connection to `remote_host` over the given `ssh_port`.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name AW4.Connect#testSshPorts
+   * @param {Object} options Test options.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
+   *
+   *   Object returned to success callback:
+   *   `{}`
+   *
+   * Options:
+   * * `remote_host` (String) - Domain name of the transfer server.
+   * * `ssh_port` (Number) - SSH port. Default: `33001`.
+   * * `timeout_sec` (Number) - Timeout value in seconds. Default: `3`.
+   *
+   * @return {null}
+   */
+  function testSshPorts (options: types.TestSshPortsOptions, callbacks: types.Callbacks<{}>): void;
+  function testSshPorts (options: types.TestSshPortsOptions): Promise<{}>;
+  function testSshPorts (options: types.TestSshPortsOptions, callbacks?: types.Callbacks<{}>): Promise<{}> | void {
+    if (options && options.remote_host) {
+      let localOptions: any = {};
+      localOptions.remote_host = options.remote_host;
+      localOptions.ssh_port = options.ssh_port || 33001;
+      localOptions.timeout_sec = options.timeout_sec || 3;
+
+      const request =
+        new Request()
+          .setName('testSshPorts')
+          .setMethod(HTTP_METHOD.POST)
+          .setBody(localOptions);
+
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
+    } else {
+      throw new Error('#testSshPorts options argument is either missing or incorrect.');
+    }
+  }
+  this.testSshPorts = testSshPorts;
+
+  /**
    * Get the IBM Aspera Connect version.
    *
    * *This method is asynchronous.*
