@@ -87,6 +87,10 @@ export const apiEndpoints: any = {
     route: 'stop/${id}',
     prefix: '/connect/transfers/'
   },
+  testSshPorts: {
+    route: 'ports',
+    prefix: '/connect/info/'
+  },
   version: {
     route: 'version',
     prefix: '/connect/info/'
