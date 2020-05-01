@@ -13,6 +13,14 @@ export const validateBufferOptions = (request: any) => {
   }
 };
 
+export const validateChecksumOptions = (request: any) => {
+  validateOptions(request);
+  const { body } = request;
+  if (isNullOrUndefinedOrEmpty(body.path) || isNullOrUndefinedOrEmpty(body.offset) || isNullOrUndefinedOrEmpty(body.chunkSize) || isNullOrUndefinedOrEmpty(body.checksumMethod)) {
+    throwError('Invalid or missing options parameters');
+  }
+};
+
 export const validateMethod = (request: any) => {
   const { method } = request;
   if (!method) {

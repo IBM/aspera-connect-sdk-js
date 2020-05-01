@@ -35,6 +35,10 @@ export const apiEndpoints: any = {
     route: 'read-chunk-as-array-buffer/',
     prefix: '/connect/file/'
   },
+  getChecksum: {
+    route: 'checksum/',
+    prefix: '/connect/file/'
+  },
   removeTransfer: {
     route: 'remove/${id}',
     prefix: '/connect/transfers/'
