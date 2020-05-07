@@ -40,9 +40,10 @@ class Provider implements types.Provider {
       } else if (this.requiresHttp()) {
         this.setHttpStrategy();
       } else {
-        Logger.debug('Using extension strategy');
+        Logger.debug('Attempting extension strategy');
         this.strategy = this.supportsNativeHost() ? this.create(NativeHostStrategy) : this.create(SafariAppStrategy);
 
+        Logger.debug('Checking if extension installed...');
         let installed = await this.strategy.detectExtension!(1000);
         if (!installed) {
           let supportsInstall = ConnectInstaller.supportsInstallingExtensions === true;

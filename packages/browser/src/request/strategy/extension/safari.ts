@@ -50,8 +50,9 @@ class SafariAppStrategy extends BaseExtensionStrategy {
   }
 
   detectExtension = async (timeoutMs: number = -1): Promise<boolean> => {
-    /** First check if previously detected */
+    /** First check if we have already detected the extension */
     if (this.extensionDetected) {
+      Logger.debug('Skipping extension check - already detected.');
       return true;
     }
 
@@ -62,6 +63,7 @@ class SafariAppStrategy extends BaseExtensionStrategy {
     let waitUntilDetected = (): Promise<boolean> => {
       return new Promise((resolve) => {
         let attemptNumber = 1;
+
         let check = () => {
           Logger.debug('Detecting Connect extension. Attempt ' + attemptNumber);
           attemptNumber++;
@@ -72,6 +74,7 @@ class SafariAppStrategy extends BaseExtensionStrategy {
           if (connectDetected) {
             let extensionEnable = connectDetected.getAttribute('extension-enable');
             if (extensionEnable === 'true') {
+              Logger.debug('Detected extension');
               clearInterval(this.detectionRetry);
               // Additional check to see if connect check is responding
               this.checkEvent();
@@ -99,12 +102,11 @@ class SafariAppStrategy extends BaseExtensionStrategy {
 
         // NOTE: Safari bugs sometime leads to breakdown in getting responses
         let versionResponse = (evt: any) => {
-          if (evt.type === 'AsperaConnectResponse' && 'detail' in evt && typeof evt.detail === 'object') {
+          if (evt.type === 'AsperaConnectCheckResponse' && 'detail' in evt && typeof evt.detail === 'object') {
             document.removeEventListener('AsperaConnectCheckResponse', versionResponse);
-            Logger.log('Extension detected: ' + JSON.stringify(evt.detail));
+            Logger.log('Got response from Connect: ' + JSON.stringify(evt.detail));
             clearInterval(this.detectionRetry);
             this.extensionDetected = true;
-            this.changeConnectStatus(STATUS.RUNNING);
             resolve(true);
           }
         };
@@ -142,6 +144,7 @@ class SafariAppStrategy extends BaseExtensionStrategy {
   }
 
   startup = async () => {
+    Logger.debug('startup()');
     // @ts-ignore
     document.addEventListener('AsperaConnectResponse', this.resolveHttpResponse);
     /** Await extension detection */
