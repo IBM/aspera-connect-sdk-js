@@ -332,7 +332,7 @@ class RequestHandler implements types.RequestHandler {
   async httpFallback <T> (api: 'version' | 'ping'): Promise<T | void> {
     let httpFallback = this._provider.getHttpStrategy();
     let endpoint = {
-      path: `/connect/info/${api}`,
+      path: 'connect/info/' + api,
       method: 'GET'
     };
     let requestId = this._nextId++;
@@ -400,6 +400,7 @@ class RequestHandler implements types.RequestHandler {
     this._handlerStatus = '';
 
     /** Await implementation selection */
+    Logger.debug('Determining request strategy...');
     this._strategy = await this._provider.getStrategy();
     /** Reject promise if init times out */
     let timeoutPromise = new Promise<types.ConnectError>((reject) => {
