@@ -62,13 +62,12 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   // Private constants
   ////////////////////////////////////////////////////////////////////////////
   const DEFAULT_SDK_LOCATION = '//d3gcli72yxqn2z.cloudfront.net/connect/v4';
-  const CONNECT_VERSIONS_JSON = '/connect_references.min.json';
+  const CONNECT_VERSIONS_JS = '/connectversions.min.js';
 
   ////////////////////////////////////////////////////////////////////////////
   // Private variables
   ////////////////////////////////////////////////////////////////////////////
   let connectOptions: any = {};
-  let connectRefs: any;
   let listeners: any = [];
   let connectJSONreferences: any | undefined;
   let showInstallTimerID = 0;
@@ -149,23 +148,6 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         fileref.setAttribute('rel', 'stylesheet');
         fileref.setAttribute('type', 'text/css');
         fileref.setAttribute('href', file);
-      } else if (type.toLowerCase() === 'json') {
-        let xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if (this.readyState === 4 && this.status === 200) {
-            let resp = this.responseText;
-            let jsonVersions = JSON.parse(resp);
-            // setConnectRefs(jsonVersions);
-            connectRefs = jsonVersions;
-
-            if (typeof callback === 'function') {
-              callback(true);
-            }
-          }
-        };
-        xhttp.open('GET', file, true);
-        xhttp.send();
-        return;
       } else {
         return;
       }
@@ -413,7 +395,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     };
     // load references from file and parse to load in the iframe
     const parseIstallJSON = (connectversionsSdkLocation: string) => {
-      let parsedInstallJSON = connectRefs;
+      let parsedInstallJSON = (window as any).connectVersions;
       let installEntries = parsedInstallJSON.entries;
       let procesJSONentry = function (entryJSON: any) {
         replaceJSONWithFullHref(connectversionsSdkLocation, entryJSON);
@@ -443,13 +425,13 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     };
     let scriptLoaded = function (success: boolean) {
       let fallbackURL = DEFAULT_SDK_LOCATION;// connectOptions.sdkLocation;
-      if (success && connectRefs !== undefined) {
+      if (success && (window as any).connectVersions !== undefined) {
         parseIstallJSON(updatesURL);
       } else if (updatesURL !== fallbackURL) {
         updatesURL = fallbackURL;
       }
     };
-    loadFiles([updatesURL + CONNECT_VERSIONS_JSON], 'json', scriptLoaded);
+    loadFiles([updatesURL + CONNECT_VERSIONS_JS], 'js', scriptLoaded);
     return;
   };
 
