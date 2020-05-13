@@ -11,7 +11,13 @@ import RequestHandler from './request/handler';
 import { HTTP_METHOD, STATUS, EVENT, TRANSFER_STATUS, LS_CONNECT_APP_ID } from './constants';
 import ApiService from './core/api';
 import Request from './core/request';
-import { validateAuthSpec, validateBufferOptions, validateTransferId, validateOptions } from './core/validators';
+import {
+validateAuthSpec,
+validateBufferOptions,
+validateTransferId,
+validateOptions,
+validateChecksumOptions
+} from './core/validators';
 import { ConnectGlobals } from './helpers/globals';
 import * as types from './core/types';
 
@@ -594,7 +600,6 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     }
   }
   this.readAsArrayBuffer = readAsArrayBuffer;
-
   /**
    * Read 64-bit encoded chunk from file.
    *
@@ -646,6 +651,64 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     }
   }
   this.readChunkAsArrayBuffer = readChunkAsArrayBuffer;
+
+/**
+ * Calculates checksum of the given chunk size of the file.
+ *
+ * *This method is asynchronous.*
+ *
+ * @function
+ * @name AW4.Connect#getChecksum
+ * @param {Object} options Object with options needed for reading a chunk.
+ *
+ * Options:
+ * * `path` (String) - Absolute path to the file we want to read the chunk from.
+ * * `offset` (Number) - Offset (in bytes) that we want to start reading the file.
+ * * `chunkSize` (Number) - The size (in bytes) of the chunk we want.
+ * * `checksumMethod` (String) - The hash method we want to apply on chunk. Allowed checksum methods are "md5", "sha1", "sha256", "sha512".
+ * @param {Callbacks} callbacks `success` and `error` functions to receive
+ * results.
+ *
+ * Object returned to success callback:
+ * ```
+ * {
+ *   "checksumMethod" : "md5"
+ *   "checksum" : "35cf801a..."
+ * }
+ * ```
+ * @return {null}
+ */
+
+  function getChecksum (options: types.GetChecksumOptions, callbacks: types.Callbacks<types.ChecksumFileOutput>): void;
+  function getChecksum (options: types.GetChecksumOptions): Promise<types.ChecksumFileOutput>;
+  function getChecksum (options: types.GetChecksumOptions, callbacks?: types.Callbacks<types.ChecksumFileOutput>): Promise<types.ChecksumFileOutput> | void {
+    if (options && options.path) {
+      let localOptions: any = {};
+      const allowedChecksumMethods = ['md5', 'sha1', 'sha256', 'sha512'];
+      localOptions.path = options.path;
+      localOptions.offset = options.offset || 0;
+      localOptions.chunkSize = options.chunkSize || 0;
+      localOptions.checksumMethod = options.checksumMethod || 'md5';
+      if (Utils.isNullOrUndefinedOrEmpty(localOptions.checksumMethod) || allowedChecksumMethods.indexOf(localOptions.checksumMethod) === -1) {
+        throw new Error(localOptions.checksumMethod + ' is not a supported checksum method.');
+      }
+      const request =
+        new Request()
+        .setName('getChecksum')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(localOptions)
+        .setValidator(validateChecksumOptions);
+
+      if (callbacks) {
+        send<types.ChecksumFileOutput>(request, callbacks);
+      } else {
+        return send<types.ChecksumFileOutput>(request);
+      }
+    } else {
+      throw new Error('#getChecksum options argument is either missing or incorrect.');
+    }
+  }
+  this.getChecksum = getChecksum;
 
   /**
    * Unsubscribe from Aspera Web events. If `type` is not specified,

@@ -20,6 +20,13 @@ export interface InstallerOptions {
   useFips?: boolean;
 }
 
+export interface GetChecksumOptions {
+  path: string;
+  offset?: number;
+  chunkSize?: number;
+  checksumMethod?: 'md5' | 'sha1' | 'sha256' | 'sha512';
+}
+
 export type ExtensionPartialRequest = Pick<HttpEndpoint, 'method' | 'body'>;
 
 export interface ExtensionRequest extends ExtensionPartialRequest {
@@ -412,6 +419,10 @@ export interface ConnectClient {
     callbacks?: Callbacks<ArrayBufferOutput>
   ): void | Promise<ArrayBufferOutput>;
 
+  getChecksum (options: GetChecksumOptions, callbacks: Callbacks<ChecksumFileOutput>): void;
+  getChecksum (options: GetChecksumOptions): Promise<ChecksumFileOutput>;
+  getChecksum (options: GetChecksumOptions, callbacks?: Callbacks<ChecksumFileOutput>): void | Promise<ChecksumFileOutput>;
+
   removeEventListener (type?: EventString, listener?: EventListener): boolean;
 
   removeTransfer (transferId: string, callbacks: Callbacks<{}>): void;
@@ -515,6 +526,11 @@ export interface ResumeTransferOutput {
 export interface ArrayBufferOutput {
   type: string;
   data: string;
+}
+
+export interface ChecksumFileOutput {
+  checksumMethod: 'md5' | 'sha1' | 'sha256' | 'sha512';
+  checksum: string;
 }
 
 export interface DropEventOutput extends DragDropEvent {}
