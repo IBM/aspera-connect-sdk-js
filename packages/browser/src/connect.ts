@@ -273,6 +273,9 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       /** Should not get here. */
       return;
     } else {
+      Logger.debug('Resetting max activity outstanding.');
+      outstandingActivityReqs = 0;
+
       setConnectStatus(STATUS.RUNNING);
     }
 
