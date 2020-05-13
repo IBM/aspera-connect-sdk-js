@@ -222,8 +222,27 @@ def bundle_installers(output_dir)
   cr.write(contents)
   cr.close()
 
+  # Update connectversions.js based on connect_references.json
+  cvpth = "#{$scriptdir}/../files/connectversions.js"
+  cvjs_contents = File.read(cvpth)
+  cvjs_contents = cvjs_contents.gsub(/#AS_CONNECT_REFERENCES#/, contents)
+
+  cvjs = File.open("#{output_dir}/connectversions.js", 'w')
+  cvjs.write(cvjs_contents)
+  cvjs.close()
+
   # Minify both connect_references.json and connectversions.js
   `node #{$scriptdir}/3rdparty/minifier/minify-tool.js --json #{output_dir}/connect_references.json > #{output_dir}/connect_references.min.json`
+
+  contents = File.read("#{output_dir}/connect_references.min.json")
+  cvjs_contents = File.read(cvpth)
+  cvjs_contents = cvjs_contents.gsub(/#AS_CONNECT_REFERENCES#/, contents)
+  cr = File.open("#{output_dir}/connectversions.min.js.tmp", 'w')
+  cr.write(cvjs_contents)
+  cr.close()
+  `node #{$scriptdir}/3rdparty/minifier/minify-tool.js --js #{output_dir}/connectversions.min.js.tmp > #{output_dir}/connectversions.min.js`
+  FileUtils.rm_rf("#{output_dir}/connectversions.min.js.tmp")
+
   return 0
 end
 
