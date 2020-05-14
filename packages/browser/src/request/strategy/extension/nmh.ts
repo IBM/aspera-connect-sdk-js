@@ -220,6 +220,7 @@ class NativeHostStrategy extends BaseExtensionStrategy {
     await this.detectExtension();
     /** Await Connect detection */
     await this.detectConnect();
+    Logger.debug('nmh init finished');
   }
 }
 

@@ -46,6 +46,10 @@ class HttpStrategy implements types.RequestStrategy {
 
   /** Track http implementation state */
   changeConnectStatus = (newConnectStatus: string) => {
+    if (this.connectStatus === newConnectStatus) {
+      return;
+    }
+
     Logger.debug('[' + this.objectId + '] Http request handler status changing from[' + this.connectStatus
           + '] to[' + newConnectStatus + ']');
     this.connectStatus = newConnectStatus;
@@ -93,6 +97,8 @@ class HttpStrategy implements types.RequestStrategy {
       await new Promise(resolve => {
         setTimeout(async () => {
           await this.detectConnect(false);
+          /** Go to running here if Connect was installed during loop after initial timeout */
+          this.changeConnectStatus(STATUS.RUNNING);
           resolve();
         }, retryTimeS * 1000);
       });
