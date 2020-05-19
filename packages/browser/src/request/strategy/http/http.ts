@@ -69,7 +69,7 @@ class HttpStrategy implements types.RequestStrategy {
       this.connectPort = port;
       let results = await this.ping(requestId);
 
-      if (results && results.status === 200) {
+      if (results && Utils.isSuccessCode(results.status)) {
         success = true;
         break;
       }

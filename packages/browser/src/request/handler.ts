@@ -125,7 +125,7 @@ class RequestHandler implements types.RequestHandler {
   checkVersionCallback = (response: types.ResolvedHttpResponse) => {
     this.versionChecked = true;
     delete this._idRequestHash[response.requestId];
-    if (response.status === 200) {
+    if (Utils.isSuccessCode(response.status)) {
       let parsedResponse = Utils.parseJson<types.VersionOutput>(response.body);
       if (Utils.isError(parsedResponse)) {
         Logger.error('Failed to parse version response: ' + response);
