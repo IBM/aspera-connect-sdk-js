@@ -1,11 +1,11 @@
 export const Dictionary = {
   launching        : 'Launching IBM Aspera Connect...',
-  installOnSafari  : "Once IBM Aspera Connect is installed, please restart the browser.",
+  installOnSafari  : 'Once IBM Aspera Connect is installed, please restart the browser.',
   retryButton      : 'Retry',
   retry            : 'Cannot reach Connect',
   running          : 'IBM Aspera Connect is running!',
   alreadyInstalled : 'Already installed?',
-  troubleshoot     : 'Troubleshoot' ,
+  troubleshoot     : 'Troubleshoot',
   refreshButton    : 'Refresh',
   bannerTitle      : 'To enable Aspera uploads and downloads, you need to install or upgrade to IBM Aspera Connect {3.9.1}.',
   tryRestarting    : 'Or, try restarting the browser.',
