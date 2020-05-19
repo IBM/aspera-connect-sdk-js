@@ -374,6 +374,11 @@ export function nextObjectId () {
   return nextObjId;
 }
 
+/** Returns true if status code is 2xx */
+export function isSuccessCode (code: number) {
+  return code >= 200 && code < 300;
+}
+
 export function getLocalStorage (key: string) {
   try {
     if (typeof(localStorage) === 'undefined') {
