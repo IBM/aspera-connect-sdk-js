@@ -1,0 +1,2466 @@
+<!DOCTYPE html>
+
+<!--
+
+$Id: main.html 92785 2014-09-09 19:49:11Z joaquin $
+
+$Author: joaquin $
+$Date: 2014-09-09 12:49:11 -0700 (Tue, 09 Sep 2014) $
+
+$HeadURL: svn://joaquin@zob/connect/trunk/plugin/test/qa/main.html $
+$Revision: 92785 $
+
+
+TODO:
+* scripted tests
+* list valid parameter values, and default value
+* help text
+* allow multiple event listeners (tab for each?); specify event type
+
+-->
+
+<html>
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Cache-control" content="no-cache">
+<title>Aspera Web API Tests</title>
+<link type="text/css" href="jquery-css-ui-lightness/jquery-ui-1.8.17.custom.css"
+    rel="stylesheet" />
+<meta name="description" content="">
+<meta name="keywords" content="">
+
+<style media="screen" type="text/css">
+body {
+    font-family: helvetica, sans-serif;
+    font-size: 80%;
+    margin: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#page-header {
+    margin: 2em;
+    text-align: center;
+}
+
+/*
+ * tab group
+ */
+.tabs {
+    margin: 2em;
+}
+
+.tabs h2 {
+    margin: 0.2em;
+}
+
+/*
+ * form lists
+ */
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    margin: 0 0 0.8em 0;
+}
+
+.field-list label:FIRST-CHILD {
+    display: inline-block;
+    margin: 0.2em 0 0 0;
+    text-align: right;
+}
+
+.field-list label:FIRST-CHILD:after {
+    content: ":"
+}
+
+/*
+ * two lists as two columns
+ */
+.two-column-ul ul {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.two-column-ul ul:FIRST-CHILD {
+    margin-right: 2em;
+}
+
+/*
+ * configuration tabs
+ */
+#config-tabs>div {
+    min-height: 15.5em;
+}
+
+#config-tab-server label:FIRST-CHILD {
+    width: 9em;
+}
+
+#config-tab-files ul:FIRST-CHILD label:FIRST-CHILD {
+    width: 5em;
+}
+
+#config-paths ul {
+    margin-top: 1em;
+    width: 47%;
+}
+
+#config-paths li {
+    margin: 0;
+}
+
+#config-paths label {
+    display: block;
+    text-align: left;
+}
+
+#config-paths input {
+    width: 100%;
+}
+
+#config-paths textarea {
+    height: 7.5em;
+    width: 100%;
+}
+
+#config-tab-bandwidth label:FIRST-CHILD {
+    width: 11em;
+}
+
+#config-tab-bandwidth ul:FIRST-CHILD label:FIRST-CHILD {
+    width: 9em;
+}
+
+#config-tab-transfer label:FIRST-CHILD {
+    width: 15em;
+}
+
+#config-tab-plugin label:FIRST-CHILD {
+    width: 10em;
+}
+
+#config-tab-plugin ul:FIRST-CHILD label:FIRST-CHILD {
+    width: 14.5em;
+}
+
+#config-tab-json textarea {
+    height: 11.5em;
+    margin-top: 1em;
+    width: 100%;
+}
+
+#config-tab-bookmark ul {
+    margin-top: 1em;
+    width: 100%;
+}
+
+#config-tab-bookmark li {
+    margin: 0;
+}
+
+#config-tab-bookmark textarea {
+    height: 10em;
+    width: 100%;
+}
+
+/*
+ * test lists
+ */
+.test-list label {
+    margin-left: 0.2em;
+}
+
+/*
+ * two lists as two columns
+ */
+.test-list ul {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.test-list ul:FIRST-CHILD {
+    margin-right: 2em;
+}
+
+/*
+ * test tabs
+ */
+#test-tabs>div {
+    min-height: 15.5em;
+}
+
+#test-tab-dialogs div{
+    margin-top: 1em;
+}
+
+#test-tab-dialogs label:FIRST-CHILD {
+    vertical-align: top;
+}
+
+#test-tab-dialogs ul:FIRST-CHILD label:FIRST-CHILD {
+    text-align: right;
+    width: 11em;
+}
+
+.drop-target  {
+        width:100px;
+        height:100px;
+        background:silver;
+        margin:12px;
+        display:inline-block;
+}
+
+.drop-target.active  {
+    background-color:green;
+}
+
+.drop-target-legacy  {
+    width:200px;
+    height:100px;
+    background:silver;
+    margin:12px;
+    display:inline-block;
+}
+
+#drop-target {
+    height: 100px;
+    width: 200px;
+    /* allows sub-elements to use position: absolute */
+    position: relative;
+}
+
+#drop-target p {
+    border-style: dashed;
+    padding: 1em;
+    /* occupy 100% of parent, including padding and border */
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+#drop-result {
+    margin-top: 1em;
+    width: 100%
+}
+
+/*
+ * result tabs
+ */
+#result-tabs>div {
+    height: 30em;
+}
+
+#transfer-list,#log-main,#log-events {
+    height: 100%;
+    width: 100%;
+}
+
+#transfer-list {
+    overflow: auto; /* enable scrollbars */
+}
+
+#transfer-list button {
+    width: 6em;
+}
+
+#transfer-list li {
+    border-bottom: solid gray 1px;
+    margin-bottom: 1em;
+    padding-bottom: 1em;
+}
+
+#transfer-list .transfer-title {
+    margin: 0 0 0.5em 0;
+}
+
+#transfer-list .transfer-status,#transfer-list .progress-bar {
+    display: inline-block;
+    margin: 0 1em 0 0;
+    vertical-align: middle;
+    width: 15em;
+}
+
+#transfer-list .transfer-status {
+    padding: 1px; /* to match progress bar size */
+}
+
+#stat-connect-ui-transfer-count {
+    margin-bottom: 3em;
+}
+
+</style>
+
+<script type="text/javascript" src="../../dist/v4/asperaweb-4.js"></script>
+<script type="text/javascript" src="../../dist/v4/asperaweb-4-legacy.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/jquery-ui.js"></script>
+
+<script type="text/javascript">
+    "use strict";
+
+    // init after plugin object is created
+    var EVENT = null;
+    var TRANSFER_STATUS = null;
+
+    var FORM_ID = "form";
+    var LINE_BREAK = "\n--------------------------------------------------------------------------------\n";
+    var TEXT_AREA_LIMIT = 20000;
+    var RADIO_TOGGLE_CLASS = "checked";
+
+    var TRANSFER_FIELDS =
+        ["source_root",
+         "destination_root",
+         "token",
+         "cookie",
+         "direction",
+         "remote_host",
+         "remote_user",
+         "fasp_port",
+         "ssh_port",
+         "dgram_size",
+         "rate_policy",
+         "target_rate_kbps",
+         "min_rate_kbps",
+         "cipher",
+         "content_protection",
+         "http_fallback",
+         "http_fallback_port",
+         "authentication",
+         "remote_password",
+         "resume",
+         "save-before-overwrite",
+         "obfuscate_file_names",
+         "content_protection_passphrase",
+         "lock_rate_policy",
+         "lock_target_rate",
+         "target_rate_cap_kbps",
+         "lock_min_rate",
+         "source_paths",
+         "destination_paths",
+         "allow_dialogs",
+         "back_link",
+         "use_absolute_destination_path",
+         "return_paths",
+         "return_files",
+         "create_dir",
+         "tags"];
+
+    var PLUGIN_ARGS =
+        ["connectLaunchWaitTimeoutMs",
+         "sdkLocation",
+         "pollingTime",
+         "dragDropEnabled",
+         "wampRouter",
+         "wampRealm",
+         "websocketPort",
+         "secureWebsocket",
+         "wampLibDbgOn",
+         "useWamp"];
+
+    var SAVE_EXCLUDES = ["json", "bookmark"];
+
+    var pluginId = "aw-plugin";
+    var gCallbacks = {
+        success : function(arg) {
+            log("Success callback.", arg);
+        },
+        error : function(arg) {
+            log("Error callback.", arg);
+        }
+    };
+    var wCallbacks = {
+        onSuccess : gCallbacks.success,
+        onError : gCallbacks.error,
+        success : gCallbacks.success,
+        error : gCallbacks.error
+    };
+
+    function pickCallbacks(useWamp) {
+        return (useWamp ? wCallbacks : gCallbacks);
+    };
+
+    var plugin = null;
+
+    var startTransferCount = 0;
+
+    $(document).ready(function() {
+        $("#config-tabs").tabs();
+        $("#test-tabs").tabs();
+        $("#result-tabs").tabs();
+
+        var b = $(".run-button");
+        b.append("Run");
+        b.button();
+        b.click(function(e) {
+            e.preventDefault(); // prevent form submission
+            tests[$(this).attr("value")]();
+        });
+
+        b = $(".update-button");
+        b.append("Update");
+        b.button();
+        b.click(function(e) {
+            e.preventDefault(); // prevent form submission
+            var id = $(this).attr("value");
+            $("#" + id).val(formatJson(updateData[id]));
+        });
+
+        b = $("#to-json-button");
+        b.button();
+        b.click(function(e) {
+            e.preventDefault(); // prevent form submission
+            $("#input_json").val(formatJson(
+                formInputToObj({}, null, SAVE_EXCLUDES)));
+        });
+
+        b = $("#to-forms-button");
+        b.button();
+        b.click(function(e) {
+            e.preventDefault(); // prevent form submission
+            objToForm(JSON.parse($("#input_json").val()));
+        });
+
+        b = $("#bookmark-button");
+        b.button();
+        b.click(function(e) {
+            e.preventDefault(); // prevent form submission
+            var url = window.location.href.split("?")[0];
+            url += "?" + base64Encode(JSON.stringify(
+                formInputToObj({}, null, SAVE_EXCLUDES)));
+            $("#input_bookmark").val(url);
+        });
+
+        $(":radio").click(function() {
+            toggleRadio(this);
+        }).filter(":checked").addClass(RADIO_TOGGLE_CLASS);
+
+        var search = window.location.search;
+        if (search !== "") {
+            objToForm(JSON.parse(base64Decode(search.slice(1))))
+        }
+
+        objToForm({
+            containerId : "drop-target",
+            dragDropEnabled : true,
+            id : pluginId
+        });
+
+        if (typeof AW4.ConnectInstaller == 'undefined')
+            AW4.ConnectInstaller = { 'supportsExtensions': true };
+        $("#input_webExtensions").change(function(evt) {
+            AW4.ConnectInstaller.supportsExtensions = $('#input_webExtensions').is(':checked')
+        });
+    });
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Test Functions
+    ///////////////////////////////////////////////////////////////////////////
+    var tests = {};
+
+    tests.addEventListener = function() {
+        log("Invoking addEventListener.", [EVENT.TRANSFER]);
+        log("addEventListener returned.", plugin.addEventListener(
+            EVENT.TRANSFER,
+            transferListener));
+    };
+
+    tests.authenticate = function() {
+        var spec = createStartSpec();
+        var opts = formInputToObj({}, ["useWamp"]);
+        log("Invoking authenticate.", spec.transfer_spec);
+        log("authenticate returned.",
+            plugin.authenticate(spec.transfer_spec, pickCallbacks(opts.useWamp)));
+    };
+
+    tests.constructor = function() {
+        var args = {};
+        formInputToObj(args, PLUGIN_ARGS);
+        plugin = createPlugin(args);
+        EVENT = AW4.Connect.EVENT;
+        TRANSFER_STATUS = AW4.Connect.TRANSFER_STATUS;
+    };
+
+    tests.getAllTransfers = function(callback) {
+      var opts = formInputToObj({}, ["useWamp"]);
+      var callbacks = {
+        success : function(result) {
+          log("Success callback.", result);
+          var count, i, result, statusCount;
+          statusCount = {
+            "initiating" : 0,
+            "running" : 0,
+            "willretry" : 0,
+            "cancelled" : 0,
+            "completed" : 0,
+            "failed" : 0,
+            "queued" : 0,
+            "removed" : 0
+          };
+
+          $("#stat-transfer-count").text(
+            "transfer count: " + result.transfers.length);
+
+          for (i = 0; i<result.transfers.length; i++) {
+            statusCount[result.transfers[i].status] += 1;
+          }
+          $.each(statusCount, function(status, count) {
+            $("#stat-" + status + "-count").text(
+              status + " count: " + count);
+          });
+          if (callback !== undefined)
+            callback(result);
+        },
+        error : function(arg) {
+          log("Error callback.", arg);
+        }
+      };
+      var wCallbacks = {
+        onSuccess : callbacks.success,
+        onError : callbacks.error,
+        success : callbacks.success,
+        error : callbacks.error
+      };
+
+      log("Invoking getAllTransfers.");
+      log("getAllTransfers returned.", plugin.getAllTransfers(opts.useWamp ? wCallbacks : callbacks));
+    };
+
+    tests.getStatus = function() {
+      log("Invoking getStatus.");
+      log("getStatus returned.", plugin.getStatus());
+    };
+
+    tests.initSession = function() {
+        var arg = $("#input_applicationId").val();
+        log("Invoking initSession.", arg);
+        log("initSession returned.", plugin.initSession(arg));
+    };
+
+    tests.initAll = function() {
+        tests.constructor();
+        tests.addEventListener();
+        tests.initSession();
+    };
+
+    tests.modifyTransfer = function(transferId) {
+        var spec = createStartSpec();
+        log("Invoking modifyTransfer.", transferId, spec.transfer_spec);
+        log("modifyTransfer returned.", plugin.modifyTransfer(
+            transferId, spec.transfer_spec, gCallbacks));
+    };
+
+    tests.modifiedSelectFolder = function() {
+        var opts = formInputToObj({}, ["useWamp"]);
+        var callbacks = {
+            success : function(arg) {
+                log("Success callback.", arg);
+                if (arg.length == 0) {
+                    return;
+                }
+                var spec = createStartSpec();
+                spec.aspera_connect_settings.use_absolute_destination_path = true;
+                spec.transfer_spec.destination_root = arg.dataTransfer.files[0].name + "_mod";
+                log("Invoking startTransfer.",
+                    spec.transfer_spec, spec.aspera_connect_settings);
+                log("startTransfer returned.", plugin.startTransfer(
+                    spec.transfer_spec, spec.aspera_connect_settings, pickCallbacks(opts.useWamp)));
+            },
+            error : function(arg) {
+                log("Error callback.", arg);
+            }
+        }
+        tests.showSelectFolderDialog(callbacks);
+    };
+
+    tests.removeAllTransfers = function() {
+      var callback = function(result) {
+        var i, transfers = result.transfers;
+        for (i = 0; i < transfers.length; i++) {
+          tests.removeTransfer(transfers[i].uuid);
+        }
+      };
+      tests.getAllTransfers(callback);
+    };
+
+    tests.removeEventListener = function() {
+        var args = EVENT.TRANSFER;
+        log("Invoking removeEventListener.", args);
+        log("removeEventListener returned.", plugin.removeEventListener(
+            args,
+            transferListener));
+    };
+
+    tests.removeTransfer = function(transferId) {
+        log("Invoking removeTransfer.", transferId);
+        log("removeTransfer returned.", plugin.removeTransfer(transferId, gCallbacks));
+    };
+
+    tests.resumeAllTransfers = function() {
+      var callback = function(result) {
+        var i, transfers = result.transfers;
+        for (i = 0; i < transfers.length; i++) {
+          tests.resumeTransfer(transfers[i].uuid);
+        }
+      };
+      tests.getAllTransfers(callback);
+    };
+
+    tests.resumeTransfer = function(transferId) {
+        log("Invoking resumeTransfer.", transferId);
+        log("resumeTransfer returned.", plugin.resumeTransfer(transferId, gCallbacks));
+    };
+
+    tests.setDragDropTargets = function() {
+        var options = formInputToObj(
+            {},
+            ["dragEnter", "dragOver", "dragLeave", "drop"]);
+        log("Invoking SetDragDropTargets.", options);
+        log("showSaveFileDialog SetDragDropTargets.", plugin.setDragDropTargets(
+            ".drop-target",
+            options,
+            dragdropListener));
+    };
+
+    tests.setDragDropLegacyTargets = function() {
+        var args = {};
+        args.id = "aspera-web-legacy";
+        args.containerId = "single-drag-drop-legacy";
+        args.image = AW4.Utils.getFullURI("./images/aspera-logo.jpeg");
+        args.dropAllowDirectories = true;
+        args.dropAllowMultiple = true;
+        args.height = 168;
+        args.width = 300;
+        var staticPlugin = new AW4.Legacy.DragDrop(args);
+        staticPlugin.addEventListener(AW4.Legacy.DragDrop.EVENT.DROPEX, dragdropLegacyListener);
+
+        args = {};
+        args.id = "aspera-web-legacy-mdd";
+        args.containerId = "multi-drag-drop-legacy";
+        args.image = AW4.Utils.getFullURI("./images/dragndrop.jpg");
+        args.dropAllowDirectories = true;
+        args.dropAllowMultiple = true;
+        args.height = 100;
+        args.width = 200;
+        var mddPlugin = new AW4.Legacy.DragDrop(args);
+        mddPlugin.addEventListener(AW4.Legacy.DragDrop.EVENT.DROPEX, dragdropLegacyListener);
+        mddPlugin.setDropTargets(".mdd-plugin");
+
+        args = {};
+        args.id = "aspera-web-legacy-mddt";
+        args.containerId = "multi-drag-drop-transparent-legacy";
+        args.dropAllowDirectories = true;
+        args.dropAllowMultiple = true;
+        args.height = 100;
+        args.width = 200;
+        args.transparent = true;
+        var mddtPlugin = new AW4.Legacy.DragDrop(args);
+        mddtPlugin.addEventListener(AW4.Legacy.DragDrop.EVENT.DROPEX, dragdropLegacyListener);
+        mddtPlugin.setDropTargets(".mddt-plugin");
+    };
+
+    tests.showAbout = function() {
+        var opts = formInputToObj({}, ["useWamp"]);
+        log("Invoking showAbout.", opts);
+        log("showAbout returned.", plugin.showAbout(pickCallbacks(opts.useWamp)));
+    };
+
+    tests.showDirectory = function(transferId) {
+        var opts = formInputToObj({}, ["useWamp"]);
+        log("Invoking showDirectory.", transferId);
+        log("showDirectory returned.", plugin.showDirectory(transferId, pickCallbacks(opts.useWamp)));
+    };
+
+    tests.showSelectFileDialog = function() {
+        var options = formInputToObj(
+            {},
+            ["title", "allowMultipleSelection", "allowedFileTypes", "useWamp"]);
+        log("Invoking showSelectFileDialog.", options);
+        log("showSelectFileDialog returned.", plugin.showSelectFileDialog(
+            pickCallbacks(options.useWamp),
+            options));
+    };
+
+    tests.showSelectFolderDialog = function(callbacks) {
+        var opts = formInputToObj({}, ["useWamp"]);
+        if (!callbacks) {
+            callbacks = pickCallbacks(opts.useWamp);
+        }
+        var options = formInputToObj(
+            {},
+            ["title", "allowMultipleSelection"]);
+        log("Invoking showSelectFolderDialog.", options);
+        log("showSelectFolderDialog returned.", plugin.showSelectFolderDialog(
+            callbacks,
+            options));
+    };
+
+    tests.showPreferences = function() {
+        var opts = formInputToObj({}, ["useWamp"]);
+        log("Invoking showPreferences.", opts);
+        log("showPreferences returned.", plugin.showPreferences(pickCallbacks(opts.useWamp)));
+    };
+
+    tests.showPreferencesPage = function() {
+        var options = formInputToObj(
+            {},
+            ["page"]);
+        log("Invoking showPreferencesPage.", options);
+        log("showPreferencesPage returned.", plugin.showPreferencesPage(options, pickCallbacks(options.useWamp)));
+    };
+
+    tests.showSaveFileDialog = function() {
+        var options = formInputToObj(
+            {},
+            ["title", "suggestedName", "allowedFileTypes", "useWamp"]);
+        log("Invoking showSaveFileDialog.", options);
+        log("showSaveFileDialog returned.", plugin.showSaveFileDialog(
+            pickCallbacks(options.useWamp),
+            options));
+    };
+
+    tests.showTransferManager = function() {
+        var opts = formInputToObj({}, ["useWamp"]);
+        log("Invoking showTransferManager.");
+        log("showTransferManager returned.", plugin.showTransferManager(pickCallbacks(opts.useWamp)));
+    };
+
+    tests.showTransferMonitor = function(transferId) {
+        var opts = formInputToObj({}, ["useWamp"]);
+        log("Invoking showTransferMonitor.", transferId);
+        log("showTransferMonitor returned.", plugin
+            .showTransferMonitor(transferId, pickCallbacks(opts.useWamp)));
+    };
+
+    tests.startTransfer = function() {
+        var opts = formInputToObj({}, ["useWamp"]);
+        var spec = createStartSpec();
+        var paths = parseInt($("#input_startTransferPathCount").val());
+        var i;
+        if (!isNaN(paths)) {
+            for (i=0; i<paths; i++) {
+                spec.transfer_spec.paths.push(spec.transfer_spec.paths[0]);
+            }
+        }
+
+        var count = parseInt($("#input_startTransferCount").val());
+        count = isNaN(count) ? 1 : count;
+        for (i=0; i<count; i++) {
+            startTransferCount++;
+            if (spec.transfer_spec.tags && spec.transfer_spec.tags.aspera) {
+              spec.transfer_spec.tags.aspera.index = startTransferCount;
+            }
+
+            log("Invoking startTransfer.",
+                spec.transfer_spec, spec.aspera_connect_settings);
+            log("startTransfer returned.", plugin.startTransfer(
+                spec.transfer_spec, spec.aspera_connect_settings, pickCallbacks(opts.useWamp)));
+        }
+    };
+
+    tests.startTransfers = function() {
+        var opts = formInputToObj({}, ["useWamp"]);
+        var count = JSON.parse($("#input_startTransfersCount").val());
+        count = isNaN(count) ? 1 : count;
+        var specs = {
+          transfer_specs : []
+        };
+        var spec = createStartSpec();
+        for (var i=0; i<count; i++) {
+          startTransferCount++;
+          spec.transfer_spec.tags.aspera.index = startTransferCount;
+          specs.transfer_specs.push(spec);
+        }
+        log("Invoking startTransfers.", specs);
+        log("startTransfers returned.", plugin.startTransfers(specs, pickCallbacks(opts.useWamp)));
+    };
+
+    tests.stopAllTransfers = function() {
+      var callback = function(result) {
+        var i, transfers = result.transfers;
+        for (i = 0; i < transfers.length; i++) {
+          tests.stopTransfer(transfers[i].uuid);
+        }
+      };
+      tests.getAllTransfers(callback);
+    };
+
+    tests.stopTransfer = function(transferId) {
+        log("Invoking stopTransfer.", transferId);
+        log("stopTransfer returned.", plugin.stopTransfer(transferId, gCallbacks));
+    };
+
+    tests.functionList = function() {
+        var fns, i, j;
+
+        fns = $("#input_functionList").val().split(" ");
+
+        for (i = 0; i < $("#input_functionListIterations").val(); i++) {
+            for (j = 0; j < fns.length; j++) {
+                tests[fns[j]]();
+            }
+        }
+    };
+
+    tests.version = function() {
+        var opts = formInputToObj({}, ["useWamp"]);
+        log("Invoking version.", opts);
+        log("version returned.", plugin.version(pickCallbacks(opts.useWamp)));
+    };
+
+    tests.getChecksum = function() {
+      var checksumFile = $("#input_checksum_file").val();
+      var offset = parseInt($("#input_checksum_offset").val()) || 0;
+      var chunkSize = parseInt($("#input_checksum_chunksize").val()) || 0;
+      var options = formInputToObj(
+          {
+            path: checksumFile,
+            offset: offset,
+            chunkSize: chunkSize
+          },
+          ["checksumMethod"]);
+      log("Invoking getChecksum.", options);
+      log("getChecksum returned.", plugin.getChecksum(options, gCallbacks));
+    }
+
+    tests.stop = function () {
+      log("Invoking stop.");
+      plugin.stop();
+    }
+
+    tests.start = function () {
+      log("Invoking start.");
+      plugin.start();
+    }
+
+    tests.showFilePreview = function() {
+        var filePath, imgSrc;
+        log("Previewing image");
+        filePath = $("#input_showFilePreview").val();
+        var callbacks = {
+            success : function(arg) {
+                log("Success callback data type: ", arg.type);
+                var imgSrc = "data:" + arg.type + ";base64," + arg.data;
+                $("#img_showFilePreview").attr("src", imgSrc);
+            },
+            error : function(arg) {
+                log("Error callback.", arg);
+            }
+        }
+        log("readAsArrayBuffer returned. " + plugin.readAsArrayBuffer({path: filePath}, callbacks));
+    };
+
+    tests.invalidUri = function() {
+        var opts = formInputToObj({}, ["useWamp"]);
+        log("Invoking invalidUri.", opts);
+        log("invalidUri returned.", plugin.invalidUri(pickCallbacks(opts.useWamp)));
+    };
+
+    tests.shutdownWampSessn = function() {
+        var opts = formInputToObj({}, ["useWamp"]);
+        log("Invoking shutdownWampSessn.", opts);
+        log("shutdownWampSessn returned.", plugin.shutdownWampSessn(pickCallbacks(opts.useWamp)));
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Helper Functions
+    ///////////////////////////////////////////////////////////////////////////
+
+    function formInputToObj(obj, include, exclude) {
+        var form, i, input, key, value;
+
+        if (arguments.length === 0) {
+            obj = {};
+        }
+
+        form = document.getElementById(FORM_ID).elements;
+        for (i = 0; i < form.length; i++) {
+            input = form[i];
+            key = getJsonKeyFromInputField(input);
+            if (key === null) continue;
+            value = $.trim(input.value);
+            try {
+                value = JSON.parse(value);
+            } catch (e) {
+            }
+
+            if (!isNullOrUndefined(include)) {
+                if ($.inArray(key, include) == -1) {
+                    continue;
+                }
+            } else if (!isNullOrUndefined(exclude)) {
+                if ($.inArray(key, exclude) !== -1) {
+                    continue;
+                }
+            }
+
+            if (input.type === "radio") {
+                if (input.checked === true) {
+                    obj[key] = value;
+                }
+            } else if (input.type === "checkbox") {
+                obj[key] = input.checked;
+            } else {
+                if (value !== "") {
+                    obj[key] = value;
+                }
+            }
+        }
+        return obj;
+    }
+
+    function clearForm() {
+        var i;
+        var form = document.getElementById(FORM_ID).elements;
+        for (i = 0; i < form.length; i++) {
+            var input = form[i];
+
+            if (input.type === "radio" || input.type === "checkbox") {
+                if (input.checked) {
+                    input.checked = false;
+                }
+            } else {
+                input.value = "";
+            }
+        }
+    }
+
+    function createPlugin(args) {
+        log("Invoking AW4.Connect.", args);
+        var plugin = new AW4.Connect(args);
+        log("AW4.Connect returned.");
+
+        return plugin;
+    }
+
+    function createStartSpec() {
+        var connect_settings, dest, destArray, i, path, source, sourceArray, spec, temp, wrapper;
+        destArray = null;
+        spec = {
+            paths : [],
+            tags : {
+                aspera : {}
+            }
+        };
+        formInputToObj(spec, TRANSFER_FIELDS);
+
+        dest = spec.destination_paths;
+        source = spec.source_paths;
+
+        if (isDefined(dest)) {
+            delete spec.destination_paths;
+            dest = dest.toString();
+            destArray = dest.split('\n');
+        }
+
+        if (isDefined(source)) {
+            delete spec.source_paths;
+            source = source.toString();
+            sourceArray = source.split('\n');
+            for (i = 0; i < sourceArray.length; i++) {
+                path = {
+                    source : $.trim(sourceArray[i])
+                };
+                if (destArray !== null && i < destArray.length) {
+                    path.destination = $.trim(destArray[i]);
+                }
+                spec.paths.push(path);
+            }
+        }
+
+        connect_settings = {};
+        if (isDefined(spec.allow_dialogs)) {
+            temp = spec.allow_dialogs;
+            delete spec.allow_dialogs;
+            connect_settings.allow_dialogs = temp;
+        }
+        if (isDefined(spec.back_link)) {
+            temp = spec.back_link;
+            delete spec.back_link;
+            connect_settings.back_link = temp;
+        }
+        if (isDefined(spec.use_absolute_destination_path)) {
+            temp = spec.use_absolute_destination_path;
+            delete spec.use_absolute_destination_path;
+            connect_settings.use_absolute_destination_path = temp;
+        }
+        if (isDefined(spec.return_paths)) {
+            temp = spec.return_paths;
+            delete spec.return_paths;
+            connect_settings.return_paths = temp;
+        }
+        if (isDefined(spec.return_files)) {
+            temp = spec.return_files;
+            delete spec.return_files;
+            connect_settings.return_files = temp;
+        }
+        wrapper = {
+            transfer_spec : spec,
+            aspera_connect_settings : connect_settings
+        };
+
+        return wrapper;
+    }
+
+    function dragdropListener(dragDropObject) {
+        //Get element to update the counter, the one that contains the GIF needs to look for the parent
+        var divElement;
+        if (dragDropObject.event.target.tagName == 'DIV') {
+            divElement = dragDropObject.event.target;
+        } else {
+            divElement = dragDropObject.event.target.parentNode;
+        }
+        var counterElement = document.getElementById(divElement.id + "-counter");
+        if (dragDropObject.event.type === "dragenter") {
+            counterElement.children[0].innerHTML = parseInt(counterElement.children[0].innerHTML) + 1;
+        } else if (dragDropObject.event.type === "dragover") {
+            counterElement.children[1].innerHTML = parseInt(counterElement.children[1].innerHTML) + 1;
+        }  else if (dragDropObject.event.type === "dragleave") {
+            counterElement.children[2].innerHTML = parseInt(counterElement.children[2].innerHTML) + 1;
+        } else if (dragDropObject.event.type === "drop") {
+            counterElement.children[3].innerHTML = parseInt(counterElement.children[3].innerHTML) + 1;
+            $("#drop-result").val(formatJson(dragDropObject.files));
+
+            var text = "["
+                + new Date().toLocaleTimeString()
+                + "] "
+                + dragDropObject.event.type
+                + ":\n"
+                + formatJson(dragDropObject.files)
+                + LINE_BREAK;
+            setTextArea("#log-events", text, "append", true);
+        }
+    };
+
+    function dragdropLegacyListener(type, data) {
+        $("#drop-legacy-result").val(formatJson(data.dataTransfer));
+
+        var text = "["
+            + new Date().toLocaleTimeString()
+            + "] "
+            + type
+            + ":\n"
+            + formatJson(data.dataTransfer)
+            + LINE_BREAK;
+        setTextArea("#log-events", text, "append", true);
+    };
+
+    function getJsonKeyFromInputField(input) {
+        var key;
+
+        if (input.type === "radio") {
+            key = input.name;
+        } else {
+            key = input.id;
+        }
+
+        if (key.indexOf("input_") == -1) {
+            return null;
+        } else {
+            return key.slice(6);
+        }
+    }
+
+    function handleTransferEvent(transfer) {
+        var exists, transferId, $listItem;
+
+        transferId = transfer.uuid;
+        $listItem = $("#" + transferId);
+        exists = $listItem.length !== 0;
+
+        if (transfer.status === TRANSFER_STATUS.REMOVED) {
+            if (exists) {
+                $listItem.remove();
+            }
+            return;
+        }
+
+        if (exists) {
+            $listItem = $("#" + transferId);
+        } else {
+            // new transfer
+            $listItem = $("#hidden-transfer-list-item").clone();
+            $listItem.attr("id", transferId);
+            $listItem.removeClass("hidden");
+            $listItem.find(".transfer-title").text(
+                transfer.transfer_spec.tags.aspera.index + " - " +
+                transfer.title);
+            var $buttons = $listItem.find("button");
+            $buttons.button();
+            $buttons.click(function(e) {
+                e.preventDefault(); // prevent form submission
+                tests[$(this).attr("value")](transferId);
+            });
+            $listItem.find(".progress-bar").progressbar();
+            $listItem.prependTo($("#transfer-list"));
+        }
+
+        // update status/progress
+        var $status = $listItem.find(".transfer-status");
+        $status.text(transfer.status);
+        if (transfer.status === TRANSFER_STATUS.FAILED) {
+            $listItem.attr("title", transfer.error_desc
+                + " ("
+                + transfer.error_code
+                + ")");
+        }
+
+        var $progress = $listItem.find(".progress-bar");
+        $progress.progressbar("value", transfer.percentage * 100);
+        var running = transfer.status === TRANSFER_STATUS.RUNNING;
+        $status.toggleClass("hidden", running);
+        $progress.toggleClass("hidden", !running);
+    }
+
+    function isDefined(x) {
+        return typeof x !== "undefined";
+    }
+
+    function isNullOrUndefined(x) {
+        return x === null || isUndefined(x);
+    }
+
+    /**
+     * @param x
+     * @returns {Boolean}
+     */
+    function isNullOrUndefinedOrEmpty(x) {
+        return x === "" || isNullOrUndefined(x);
+    }
+
+    /**
+     * @param x
+     * @returns {Boolean}
+     */
+    function isUndefined(x) {
+        return typeof x === "undefined";
+    }
+
+    /**
+    * Accepts additional arguments after message to print as JSON
+    */
+    function log(message) {
+        var arg, i, msg;
+
+        msg = "[" + new Date().toLocaleTimeString() + "] " + message;
+        if (arguments.length > 1) {
+            msg += "\nData:";
+        }
+        for (i = 1; i < arguments.length; i++) {
+            msg += "\n";
+            arg = arguments[i];
+            msg += (!isNullOrUndefined(arg) && typeof arg === "object")
+                ? formatJson(arg)
+                : arg;
+        }
+
+        try {
+            console.log(msg);
+        } catch (e) {
+        }
+
+        setTextArea("#log-main", msg + LINE_BREAK, "append", true);
+    }
+
+    function objToForm(obj) {
+        var form, i, input, key, value;
+
+        form = document.getElementById(FORM_ID).elements;
+        for (i = 0; i < form.length; i++) {
+            input = form[i];
+            key = getJsonKeyFromInputField(input);
+            if (key === null) continue;
+            value = obj[key];
+            if (isUndefined(value)) continue;
+
+            if (input.type === "radio") {
+                if (!input.checked && input.value === String(value)) {
+                    toggleRadio(input);
+                }
+            } else if (input.type === "checkbox") {
+                input.checked = value;
+            } else {
+                if (typeof value === "object") {
+                    value = JSON.stringify(value);
+                }
+                input.value = value;
+            }
+        }
+        return obj;
+    }
+
+    // op = set|append|prepend
+    function setTextArea(taSelector, text, op, preventScroll) {
+        if ((taSelector === "#log-main" && $("#input_disableLogging:checked").length != 0) ||
+            (taSelector === "#log-events" && $("#input_disableEventLogging:checked").length != 0))
+        {
+            return;
+        }
+
+        var $textarea = $(taSelector);
+        var scrollTop = $textarea.scrollTop();
+
+        switch (op) {
+        case "set" :
+            if (text.length > TEXT_AREA_LIMIT) {
+                text = text.slice(0, TEXT_AREA_LIMIT);
+            }
+            break;
+        case "append" :
+            text = $textarea.val() + text;
+            if (text.length > TEXT_AREA_LIMIT) {
+                text = text.slice(text.length - TEXT_AREA_LIMIT);
+            }
+            break;
+        case "prepend" :
+            text = text + $textarea.val();
+            if (text.length > TEXT_AREA_LIMIT) {
+                text = text.slice(0, TEXT_AREA_LIMIT);
+            }
+            break;
+        default :
+            throw new Error("Unsupported operation: " + op);
+        }
+
+        var clientHeight = $textarea.prop("clientHeight");
+        var atBottom = (scrollTop + clientHeight + 50) > $textarea
+            .prop("scrollHeight");
+        $textarea.val(text);
+        if (preventScroll) {
+            if (atBottom) {
+                $textarea.scrollTop($textarea.prop("scrollHeight")
+                    - clientHeight);
+            } else {
+                $textarea.scrollTop(scrollTop);
+            }
+        }
+    }
+
+    function toggleRadio(element) {
+        var $element = $(element);
+        var checked = $element.hasClass(RADIO_TOGGLE_CLASS);
+        $(":radio[name=" + element.name + "]").removeClass(RADIO_TOGGLE_CLASS);
+
+        element.checked = !checked;
+        if (!checked) {
+            $element.addClass(RADIO_TOGGLE_CLASS);
+        }
+    }
+
+    function transferListener(type, allTransfersInfo) {
+        if (type === EVENT.TRANSFER) {
+            for (var i = 0; i < allTransfersInfo.transfers.length; i++) {
+                handleTransferEvent(allTransfersInfo.transfers[i]);
+            }
+
+            // stats
+            $("#stat-connect-ui-transfer-count").text(
+                "transfer count (in Connect UI): " +
+                ($("#transfer-list li").length - 1));
+
+            var text = "["
+                + new Date().toLocaleTimeString()
+                + "] "
+                + type
+                + ":\n"
+                + formatJson(allTransfersInfo)
+                + LINE_BREAK;
+            setTextArea("#log-events", text, "append", true);
+        }
+    }
+
+    function realTypeOf(v) {
+        if (typeof (v) === "object") {
+            if (v === null) {
+                return "null";
+            }
+            if (v.constructor === [].constructor) {
+                return "array";
+            }
+            if (v.constructor === new Date().constructor) {
+                return "date";
+            }
+            if (v.constructor === new RegExp().constructor) {
+                return "regex";
+            }
+            return "object";
+        }
+        return typeof (v);
+    }
+
+    function formatJson(oData, sIndent) {
+        if (arguments.length < 2) {
+            sIndent = "";
+        }
+        var sIndentStyle = "    ";
+        var sDataType = realTypeOf(oData);
+        var sHTML;
+        var iCount;
+
+        // open object
+        if (sDataType === "array") {
+            if (oData.length === 0) {
+                return "[]";
+            }
+            sHTML = "[";
+        } else {
+            iCount = 0;
+            var x;
+            for (x in oData) {
+                iCount += 1;
+            }
+            if (iCount === 0) { // object is empty
+                return "{}";
+            }
+            sHTML = "{";
+        }
+
+        // loop through items
+        iCount = 0;
+        var sKey;
+        for (sKey in oData) {
+            var vValue = oData[sKey];
+            if (iCount > 0) {
+                sHTML += ",";
+            }
+            if (sDataType === "array") {
+                sHTML += ("\n" + sIndent + sIndentStyle);
+            } else {
+                sHTML += ("\n" + sIndent + sIndentStyle + "\"" + sKey + "\"" + ": ");
+            }
+
+            // display relevant data type
+            switch (realTypeOf(vValue)) {
+            case "array" :
+            case "object" :
+                sHTML += formatJson(vValue, (sIndent + sIndentStyle));
+                break;
+            case "boolean" :
+            case "number" :
+                sHTML += vValue.toString();
+                break;
+            case "null" :
+                sHTML += "null";
+                break;
+            case "string" :
+                sHTML += ("\"" + vValue + "\"");
+                break;
+            default :
+                sHTML += ("TYPEOF: " + typeof (vValue));
+            }
+
+            // loop
+            iCount += 1;
+        }
+
+        // close object
+        if (sDataType === "array") {
+            sHTML += ("\n" + sIndent + "]");
+        } else {
+            sHTML += ("\n" + sIndent + "}");
+        }
+
+        // return
+        return sHTML;
+    }
+
+    function base64Decode(data) {
+        // http://kevin.vanzonneveld.net
+        // +   original by: Tyler Akins (http://rumkin.com)
+        // +   improved by: Thunder.m
+        // +      input by: Aman Gupta
+        // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+        // +   bugfixed by: Onno Marsman
+        // +   bugfixed by: Pellentesque Malesuada
+        // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+        // +      input by: Brett Zamir (http://brett-zamir.me)
+        // +   bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+        // *     example 1: base64Decode('S2V2aW4gdmFuIFpvbm5ldmVsZA==');
+        // *     returns 1: 'Kevin van Zonneveld'
+        // mozilla has this native
+        // - but breaks in 2.0.0.12!
+        //if (typeof this.window['btoa'] == 'function') {
+        //    return btoa(data);
+        //}
+        var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        var o1, o2, o3, h1, h2, h3, h4, bits, i = 0, ac = 0, dec = "", tmp_arr = [];
+
+        if (!data) {
+            return data;
+        }
+
+        data += '';
+
+        do { // unpack four hexets into three octets using index points in b64
+            h1 = b64.indexOf(data.charAt(i++));
+            h2 = b64.indexOf(data.charAt(i++));
+            h3 = b64.indexOf(data.charAt(i++));
+            h4 = b64.indexOf(data.charAt(i++));
+
+            bits = h1 << 18 | h2 << 12 | (h3 << 6) | h4;
+
+            o1 = (bits >> 16) & 0xff;
+            o2 = bits >> 8 & 0xff;
+            o3 = bits & 0xff;
+
+            if (h3 == 64) {
+                tmp_arr[ac++] = String.fromCharCode(o1);
+            } else if (h4 == 64) {
+                tmp_arr[ac++] = String.fromCharCode(o1, o2);
+            } else {
+                tmp_arr[ac++] = String.fromCharCode(o1, o2, o3);
+            }
+        } while (i < data.length);
+
+        dec = tmp_arr.join('');
+
+        return dec;
+    }
+
+    function base64Encode(data) {
+        // http://kevin.vanzonneveld.net
+        // +   original by: Tyler Akins (http://rumkin.com)
+        // +   improved by: Bayron Guevara
+        // +   improved by: Thunder.m
+        // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+        // +   bugfixed by: Pellentesque Malesuada
+        // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+        // +   improved by: Rafał Kukawski (http://kukawski.pl)
+        // *     example 1: base64Encode('Kevin van Zonneveld');
+        // *     returns 1: 'S2V2aW4gdmFuIFpvbm5ldmVsZA=='
+        // mozilla has this native
+        // - but breaks in 2.0.0.12!
+        //if (typeof this.window['atob'] == 'function') {
+        //    return atob(data);
+        //}
+        var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+        var o1, o2, o3, h1, h2, h3, h4, bits, i = 0, ac = 0, enc = "", tmp_arr = [];
+
+        if (!data) {
+            return data;
+        }
+
+        do { // pack three octets into four hexets
+            o1 = data.charCodeAt(i++);
+            o2 = data.charCodeAt(i++);
+            o3 = data.charCodeAt(i++);
+
+            bits = o1 << 16 | (o2 << 8) | o3;
+
+            h1 = (bits >> 18) & 0x3f;
+            h2 = bits >> 12 & 0x3f;
+            h3 = bits >> 6 & 0x3f;
+            h4 = bits & 0x3f;
+
+            // use hexets to index into b64, and append result to encoded string
+            tmp_arr[ac++] = b64.charAt(h1)
+                + b64.charAt(h2)
+                + b64.charAt(h3)
+                + b64.charAt(h4);
+        } while (i < data.length);
+
+        enc = tmp_arr.join('');
+
+        var r = data.length % 3;
+
+        return (r ? enc.slice(0, r - 3) : enc) + '==='.slice(r || 3);
+
+    }
+</script>
+
+</head>
+
+
+
+<body>
+<form id="form">
+
+<div id="page-header">
+    <h1>Aspera Web API Tests</h1>
+    <h2><a href="../../dist/v4/docs/api/asperaweb-4/index.html">Documentation</a></h2>
+</div>
+
+<div id="config-tabs" class="tabs">
+    <h2>Configuration</h2>
+
+    <ul>
+        <li>
+            <a href="#config-tab-plugin">Plugin</a>
+        </li>
+        <li>
+            <a href="#config-tab-server">Server</a>
+        </li>
+        <li>
+            <a href="#config-tab-files">Files</a>
+        </li>
+        <li>
+            <a href="#config-tab-bandwidth">Bandwidth</a>
+        </li>
+        <li>
+            <a href="#config-tab-transfer">Transfer</a>
+        </li>
+        <li>
+            <a href="#config-tab-json">JSON</a>
+        </li>
+        <li>
+            <a href="#config-tab-bookmark">Bookmark</a>
+        </li>
+    </ul>
+
+    <div id="config-tab-plugin" class="two-column-ul">
+        <ul class="field-list">
+            <li>
+                <label for="input_applicationId">applicationId (initSession)</label>
+                <input id="input_applicationId" type="text" value=""
+                    size="30" />
+            </li>
+            <li>
+                <label for="input_connectLaunchWaitTimeoutMs">connectLaunchWaitTimeoutMs</label>
+                <input id="input_connectLaunchWaitTimeoutMs" type="text"
+                    value="" size="15" />
+            </li>
+            <li>
+                <label for="input_sdkLocation">sdkLocation</label>
+                <input id="input_sdkLocation" type="text" value="../../dist/v4"
+                    size="15" />
+            </li>
+            <li>
+                <label for="input_pollingTime">linkCapacityKbps</label>
+                <input id="input_pollingTime" type="text" value="2000"
+                    size="15" />
+            </li>
+            <li>
+                <label>dragDropEnabled</label>
+                <label>
+                    <input name="input_dragDropEnabled" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_dragDropEnabled" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+            <!--
+            <li>
+                <label for="input_wampRouter">wampRouter</label>
+                <input id="input_wampRouter" type="text" value="127.0.0.1"
+                    size="15" />
+            </li>
+            <li>
+                <label for="input_wampRealm">wampRealm</label>
+                <input id="input_wampRealm" type="text" value="realm1"
+                    size="15" />
+            </li>
+            <li>
+                <label for="input_websocketPort">websocketPort</label>
+                <input id="input_websocketPort" type="text" value="9999"
+                    size="15" />
+            </li>
+            <li>
+                <label for="input_secureWebsocket">secureWebsocket</label>
+                <input id="input_secureWebsocket" type="checkbox" value="false" />
+            </li>
+            <li>
+                <label for="input_wampLibDbgOn">wampLibDbgOn</label>
+                <input id="input_wampLibDbgOn" type="checkbox" value="false" />
+            </li>
+            <li>
+                <label for="input_useWamp">useWamp</label>
+                <input id="input_useWamp" type="checkbox" value="false" />
+            </li>
+            -->
+            <li>
+                <label for="input_webExtensions">Support web extension install</label>
+                <input id="input_webExtensions" type="checkbox" checked />
+            </li>
+        </ul>
+    </div>
+
+    <div id="config-tab-server" class="two-column-ul">
+        <ul class="field-list">
+            <li>
+                <label for="input_remote_host">remote_host</label>
+                <input id="input_remote_host" type="text" size="30" />
+            </li>
+            <li>
+                <label for="input_remote_user">remote_user</label>
+                <input id="input_remote_user" type="text" size="30" />
+            </li>
+            <li>
+                <label>authentication</label>
+                <label>
+                    <input name="input_authentication" type="radio"
+                        value="password" />
+                    password
+                </label>
+                <label>
+                    <input name="input_authentication" type="radio"
+                        value="token" />
+                    token
+                </label>
+            </li>
+            <li>
+                <label for="input_remote_password">remote_password</label>
+                <input id="input_remote_password" type="text" size="30" />
+            </li>
+            <li>
+                <label for="input_token">token</label>
+                <input id="input_token" type="text" size="30" />
+            </li>
+            <li>
+                <label for="input_back_link">back_link</label>
+                <input id="input_back_link" type="text" size="30" />
+            </li>
+        </ul>
+        <ul class="field-list">
+            <li>
+                <label for="input_fasp_port">fasp_port</label>
+                <input id="input_fasp_port" type="text" size="15" />
+            </li>
+            <li>
+                <label for="input_ssh_port">ssh_port</label>
+                <input id="input_ssh_port" type="text" size="15" />
+            </li>
+            <li>
+                <label>http_fallback</label>
+                <label>
+                    <input name="input_http_fallback" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_http_fallback" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+            <li>
+                <label for="input_http_fallback_port">http_fallback_port</label>
+                <input id="input_http_fallback_port" type="text"
+                    size="15" />
+            </li>
+            <li>
+                <label>allow_dialogs</label>
+                <label>
+                    <input name="input_allow_dialogs" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_allow_dialogs" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+        </ul>
+    </div>
+
+    <div id="config-tab-files" class="two-column-ul">
+        <ul class="field-list">
+            <li>
+                <label>direction</label>
+                <label>
+                    <input name="input_direction" type="radio"
+                        value="send" />
+                    send
+                </label>
+                <label>
+                    <input name="input_direction" type="radio"
+                        value="receive" />
+                    receive
+                </label>
+            </li>
+            <li>
+                <label>create_dir</label>
+                <label>
+                    <input name="input_create_dir" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_create_dir" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+        </ul>
+        <ul class="field-list">
+            <li>
+                <label>use_absolute_destination_path</label>
+                <label>
+                    <input name="input_use_absolute_destination_path" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_use_absolute_destination_path" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+            <li>
+                <label>return_paths</label>
+                <label>
+                    <input name="input_return_paths" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_return_paths" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+            <li>
+                <label>return_files</label>
+                <label>
+                    <input name="input_return_files" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_return_files" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+        </ul>
+        <div id="config-paths" class="two-column-ul">
+            <ul>
+                <li>
+                    <label for="input_source_root">source_root</label>
+                    <input id="input_source_root" type="text" size="30" />
+                </li>
+                <li>
+                    <label for="input_source_paths">source_paths</label>
+                    <textarea id="input_source_paths" cols="30" rows="5"></textarea>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <label for="input_destination_root">destination_root</label>
+                    <input id="input_destination_root" type="text" size="30" />
+                </li>
+                <li>
+                    <label for="input_destination_paths">destination_paths</label>
+                    <textarea id="input_destination_paths" cols="30"
+                        rows="5"></textarea>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="config-tab-bandwidth" class="two-column-ul">
+        <ul class="field-list">
+            <li>
+                <label>rate_policy</label>
+                <label>
+                    <input name="input_rate_policy" type="radio"
+                        value="fixed" />
+                    fixed
+                </label>
+                <label>
+                    <input name="input_rate_policy" type="radio"
+                        value="high" />
+                    high
+                </label>
+                <label>
+                    <input name="input_rate_policy" type="radio"
+                        value="fair" />
+                    fair
+                </label>
+                <label>
+                    <input name="input_rate_policy" type="radio"
+                        value="low" />
+                    low
+                </label>
+            </li>
+            <li>
+                <label for="input_target_rate_kbps">target_rate_kbps</label>
+                <input id="input_target_rate_kbps" type="text" value=""
+                    size="15" />
+            </li>
+            <li>
+                <label for="input_min_rate_kbps">min_rate_kbps</label>
+                <input id="input_min_rate_kbps" type="text" value=""
+                    size="15" />
+            </li>
+        </ul>
+        <ul class="field-list">
+            <!--
+            <li>
+                <label>policy_allowed</label>
+                <label>
+                    <input name="input_policy_allowed" type="radio"
+                        value="fixed" />
+                    fixed
+                </label>
+                <label>
+                    <input name="input_policy_allowed" type="radio"
+                        value="high" />
+                    high
+                </label>
+                <label>
+                    <input name="input_policy_allowed" type="radio"
+                        value="fair" />
+                    fair
+                </label>
+                <label>
+                    <input name="input_policy_allowed" type="radio"
+                        value="low" />
+                    low
+                </label>
+            </li>
+             -->
+            <li>
+                <label>lock_rate_policy</label>
+                <label>
+                    <input name="input_lock_rate_policy" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_lock_rate_policy" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+            <li>
+                <label for="input_target_rate_cap_kbps">target_rate_cap_kbps</label>
+                <input id="input_target_rate_cap_kbps" type="text"
+                    value="" size="15" />
+            </li>
+            <li>
+                <label>lock_target_rate</label>
+                <label>
+                    <input name="input_lock_target_rate" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_lock_target_rate" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+            <li>
+                <label>lock_min_rate</label>
+                <label>
+                    <input name="input_lock_min_rate" type="radio"
+                        value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_lock_min_rate" type="radio"
+                        value="false" />
+                    false
+                </label>
+            </li>
+        </ul>
+    </div>
+
+    <div id="config-tab-transfer" class="two-column-ul">
+        <ul class="field-list">
+            <li>
+                <label>resume</label>
+                <label>
+                    <input name="input_resume" type="radio" value="none" />
+                    none
+                </label>
+                <label>
+                    <input name="input_resume" type="radio"
+                        value="attributes" />
+                    attributes
+                </label>
+                <label>
+                    <input name="input_resume" type="radio"
+                        value="sparse_checksum" />
+                    sparse_checksum
+                </label>
+                <label>
+                    <input name="input_resume" type="radio"
+                        value="full_checksum" />
+                    full_checksum
+                </label>
+            </li>
+            <li>
+                <label>save-before-overwrite</label>
+                <label>
+                    <input type="radio" name="input_save-before-overwrite" value="yes" /> yes
+                </label>
+                <label>
+                    <input type="radio" name="input_save-before-overwrite" value="no" /> no
+                </label>
+            </li>
+            <li>
+                <label>obfuscate_file_names</label>
+                <label>
+                    <input type="radio" name="input_obfuscate_file_names" value="true" /> true
+                </label>
+                <label>
+                    <input type="radio" name="input_obfuscate_file_names" value="false" /> false
+                </label>
+            </li>
+            <li>
+                <label>cipher</label>
+                <label>
+                    <input name="input_cipher" type="radio"
+                        value="aes-128" />
+                    aes-128
+                </label>
+                <label>
+                    <input name="input_cipher" type="radio" value="none" />
+                    none
+                </label>
+            </li>
+            <li>
+                <label>content_protection</label>
+                <label>
+                    <input name="input_content_protection" type="radio"
+                        value="encrypt" />
+                    encrypt
+                </label>
+                <label>
+                    <input name="input_content_protection" type="radio"
+                        value="decrypt" />
+                    decrypt
+                </label>
+            </li>
+            <li>
+                <label for="input_content_protection_passphrase">content_protection_passphrase</label>
+                <input id="input_content_protection_passphrase"
+                    type="text" value="" size="30" />
+            </li>
+            <li>
+                <label for="input_cookie">cookie</label>
+                <input id="input_cookie" type="text" value="" size="30" />
+            </li>
+            <li>
+                <label for="input_dgram_size">dgram_size</label>
+                <input id="input_dgram_size" type="text" value=""
+                    size="15" />
+            </li>
+            <li>
+                <label for="input_tags">JSON tags</label>
+                <input id="input_tags" type="text" value="" size="50" />
+            </li>
+        </ul>
+    </div>
+
+    <div id="config-tab-json">
+        <div>
+            <button id="to-json-button">To JSON</button>
+            <button id="to-forms-button">To Forms</button>
+        </div>
+        <textarea id="input_json" cols="80" rows="5"></textarea>
+    </div>
+
+    <div id="config-tab-bookmark">
+        <div>
+            <button id="bookmark-button">Generate</button>
+        </div>
+        <ul>
+            <li>
+                <label for="input_bookmark">Bookmark URL</label>
+                <textarea id="input_bookmark" cols="80" rows="5"
+                    readonly="readonly"></textarea>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div id="test-tabs" class="tabs">
+    <h2>Tests</h2>
+
+    <ul>
+        <li>
+            <a href="#test-tab-init">Init</a>
+        </li>
+        <li>
+            <a href="#test-tab-dialogs">Dialogs</a>
+        </li>
+        <li>
+            <a href="#test-tab-transfer">Transfer</a>
+        </li>
+        <li>
+            <a href="#test-tab-drag-drop">Drag & Drop</a>
+        </li>
+        <li>
+            <a href="#test-tab-automation">Automation</a>
+        </li>
+        <li>
+            <a href="#test-tab-security">Security</a>
+        </li>
+        <li>
+            <a href="#test-tab-preview">Image Preview</a>
+        </li>
+        <li>
+            <a href="#test-tab-misc">Misc</a>
+        </li>
+    </ul>
+
+    <div id="test-tab-init" class="test-list">
+        <ul>
+            <li>
+                <button id="test-init-all" class="run-button"
+                    value="initAll"></button>
+                <label for="test-init-all">
+                    <strong>Initialize all (steps 1-3)</strong>
+                </label>
+            </li>
+            <li>
+                <button id="test-constructor" class="run-button"
+                    value="constructor"></button>
+                <label for="test-constructor">Step 1: AW4.Connect</label>
+            </li>
+            <li>
+                <button id="test-add-event-listener" class="run-button"
+                    value="addEventListener"></button>
+                <label for="test-add-event-listener">Step 2:
+                    addEventListener</label>
+            </li>
+            <li>
+                <button id="test-init" class="run-button"
+                    value="initSession"></button>
+                <label for="test-init">Step 3: initSession</label>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <button id="test-remove-event-listener" class="run-button"
+                        value="removeEventListener"></button>
+                <label for="test-remove-event-listener">removeEventListener</label>
+            </li>
+            <li>
+                <button id="test-get-status" class="run-button"
+                    value="getStatus"></button>
+                <label for="test-get-status">getStatus</label>
+            </li>
+            <li>
+                <button id="test-version" class="run-button" value="version"></button>
+                <label for="test-version">version</label>
+            </li>
+            <li>
+                <button id="test-stop" class="run-button" value="stop"></button>
+                <label for="test-stop">stop</label>
+            </li>
+            <li>
+                <button id="test-start" class="run-button" value="start"></button>
+                <label for="test-start">start</label>
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <button id="test-invalid-uri" class="run-button" value="invalidUri"></button>
+                <label for="test-invalid-uri">an invalid uri</label>
+            </li>
+        </ul>
+    </div>
+
+    <div id="test-tab-dialogs" class="two-column-ul">
+        <ul class="field-list">
+            <li>
+                <label for="input_title">title</label>
+                <input id="input_title" type="text" value="" size="30" />
+            </li>
+            <li>
+                <label for="input_suggestedName">suggestedName</label>
+                <input id="input_suggestedName" type="text" value=""
+                    size="30" />
+            </li>
+            <li>
+                <label>allowMultipleSelection</label>
+                <label>
+                    <input name="input_allowMultipleSelection"
+                        type="radio" value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_allowMultipleSelection"
+                        type="radio" value="false" />
+                    false
+                </label>
+            </li>
+            <li>
+                <label for="input_page">page</label>
+                <input id="input_page" type="text" value="" size="30" />
+            </li>
+        </ul>
+        <ul class="field-list">
+            <li>
+                <label for="input_allowedFileTypes"><a href="../../dist/v4/docs/api/asperaweb-4/objects/FileFilters/index.html">allowedFileTypes</a></label>
+                <textarea id="input_allowedFileTypes" cols="30" rows="3"></textarea>
+            </li>
+        </ul>
+        <div class="test-list">
+            <ul>
+                <li>
+                    <button id="test-show-select-file-dialog"
+                        class="run-button" value="showSelectFileDialog"></button>
+                    <label for="test-show-select-file-dialog">showSelectFileDialog</label>
+                </li>
+                <li>
+                    <button id="test-show-select-folder-dialog"
+                        class="run-button" value="showSelectFolderDialog"></button>
+                    <label for="test-show-select-folder-dialog">showSelectFolderDialog</label>
+                </li>
+
+                <li>
+                    <button id="test-show-save-file-dialog"
+                        class="run-button" value="showSaveFileDialog"></button>
+                    <label for="test-show-save-file-dialog">showSaveFileDialog</label>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <button id="test-show-about" class="run-button"
+                        value="showAbout"></button>
+                    <label for="test-show-about">showAbout</label>
+                </li>
+                <li>
+                    <button id="test-show-preferences" class="run-button"
+                        value="showPreferences"></button>
+                    <label for="test-show-preferences">showPreferences</label>
+                </li>
+                <li>
+                    <button id="test-show-preferences-page" class="run-button"
+                        value="showPreferencesPage"></button>
+                    <label for="test-show-preferences-page">showPreferencesPage</label>
+                </li>
+                <li>
+                    <button id="test-show-transfer-manager"
+                        class="run-button" value="showTransferManager"></button>
+                    <label for="test-show-transfer-manager">showTransferManager</label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="test-tab-transfer" class="test-list">
+        <ul>
+            <li>
+                <button id="test-authenticate" class="run-button"
+                    value="authenticate"></button>
+                <label for="test-authenticate">authenticate</label>
+            </li>
+            <li>
+                <button id="test-start-transfer" class="run-button"
+                    value="startTransfer"></button>
+                <label for="test-start-transfer">startTransfer</label>
+            </li>
+            <li>
+                <label for="input_startTransferCount">repeat #:</label>
+                <input id="input_startTransferCount" type="text" value=""
+                    size="20" />
+            </li>
+            <li>
+                <label for="input_startTransferPathCount">repeat paths #:</label>
+                <input id="input_startTransferPathCount" type="text" value=""
+                    size="20" />
+            </li>
+            <li>
+                <button id="test-start-transfers" class="run-button"
+                    value="startTransfers"></button>
+                <label for="test-start-transfers">startTransfers</label>
+            </li>
+            <li>
+                <label for="input_startTransfersCount">count:</label>
+                <input id="input_startTransfersCount" type="text" value=""
+                    size="20" />
+            </li>
+        </ul>
+        <ul>
+            <li>
+                <button id="test-get-all-transfers" class="run-button"
+                    value="getAllTransfers"></button>
+                <label for="test-get-all-transfers">getAllTransfers</label>
+            </li>
+            <li>
+                <button id="test-stop-all-transfers" class="run-button"
+                    value="stopAllTransfers"></button>
+                <label for="test-stop-all-transfers">stopAllTransfers</label>
+            </li>
+            <li>
+                <button id="test-resume-all-transfers" class="run-button"
+                    value="resumeAllTransfers"></button>
+                <label for="test-resume-all-transfers">resumeAllTransfers</label>
+            </li>
+            <li>
+                <button id="test-remove-all-transfers" class="run-button"
+                    value="removeAllTransfers"></button>
+                <label for="test-remove-all-transfers">removeAllTransfers</label>
+            </li>
+        </ul>
+    </div>
+
+    <div id="test-tab-drag-drop">
+        <p id="drag-drop-instructions">
+        First initialize plugin (Init tab > AW4.Connect)  <br></br>
+        Multi-drop test (with transparency). <br></br>
+        </p>
+        <ul class="field-list">
+            <li>
+                <label>dragEnter</label>
+                <label>
+                    <input name="input_dragEnter"
+                        type="radio" value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_dragEnter"
+                        type="radio" value="false" />
+                    false
+                </label>
+            </li>
+            <li>
+                <label>dragOver</label>
+                <label>
+                    <input name="input_dragOver"
+                        type="radio" value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_dragOver"
+                        type="radio" value="false" />
+                    false
+                </label>
+            </li>
+        </ul>
+        <ul class="field-list">
+            <li>
+                <label>dragLeave</label>
+                <label>
+                    <input name="input_dragLeave"
+                        type="radio" value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_dragLeave"
+                        type="radio" value="false" />
+                    false
+                </label>
+            </li>
+            <li>
+                <label>drop</label>
+                <label>
+                    <input name="input_drop"
+                        type="radio" value="true" />
+                    true
+                </label>
+                <label>
+                    <input name="input_drop"
+                        type="radio" value="false" />
+                    false
+                </label>
+            </li>
+        </ul>
+        <br></br>
+        <div class="test-list">
+            <ul>
+                <li>
+                    <button id="test-set-drag-drop-targets"
+                        class="run-button" value="setDragDropTargets"></button>
+                    <label for="test-set-drag-drop-targets">setDragDropTargets</label>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <div style="display:inline-block">
+                <div id="drop-target1" class="drop-target" style="border-radius: 100000px;"></div>
+                <div id="drop-target1-counter">
+                    DragEnter<div>0</div>
+                    DragOver<div>0</div>
+                    DragLeave<div>0</div>
+                    Drop<div>0</div>
+                </div>
+            </div>
+            <div style="display:inline-block">
+                <div id="drop-target2" class="drop-target"></div>
+                <div id="drop-target2-counter">
+                    DragEnter<div>0</div>
+                    DragOver<div>0</div>
+                    DragLeave<div>0</div>
+                    Drop<div>0</div>
+                </div>
+            </div>
+            <div style="display:inline-block">
+                <div id="drop-target3" class="drop-target">
+                    <img style="display:inline-block;width:100%;height:100%" src="./images/rotating_globe.gif"></img>
+                </div>
+                <div id="drop-target3-counter">
+                    DragEnter<div>0</div>
+                    DragOver<div>0</div>
+                    DragLeave<div>0</div>
+                    Drop<div>0</div>
+                </div>
+            </div>
+        </div>
+        <textarea id="drop-result" cols="200" rows="20" readonly="readonly"></textarea>
+    </div>
+
+    <div id="test-tab-automation" class="test-list">
+        <ul>
+            <li>
+                <button id="test-function-list" class="run-button"
+                    value="functionList"></button>
+                <label for="test-function-list">functionList</label>
+                <input id="input_functionList" type="text" value=""
+                    size="20" />
+                <label for="input_functionListIterations">iterations:</label>
+                <input id="input_functionListIterations" type="text" value="" size="5" />
+            </li>
+        </ul>
+    </div>
+
+    <div id="test-tab-security" class="test-list">
+        <ul>
+            <li>
+                <button id="test-modified-select-folder" class="run-button"
+                    value="modifiedSelectFolder"></button>
+                <label for="test-modified-select-folder">
+                    Modify selected destination folder before download
+                </label>
+            </li>
+        </ul>
+    </div>
+
+    <div id="test-tab-preview" class="test-list">
+        <ul>
+            <li>
+            <input id="input_showFilePreview" type="text" value="" size="30" />
+            <button id="button_showFilePreview" class="run-button" value="showFilePreview"/>
+            </li>
+            <img id="img_showFilePreview" alt="Image Preview" height="20%" width="20%"/>
+        </ul>
+    </div>
+    <div id="test-tab-misc" class="test-list">
+        <ul>
+            <li>
+                <label>checksumMethod</label>
+                <label>
+                    <input name="input_checksumMethod" type="radio"
+                        value="md5" />
+                    md5
+                </label>
+                <label>
+                    <input name="input_checksumMethod" type="radio"
+                        value="sha1" />
+                    sha1
+                </label>
+                <label>
+                    <input name="input_checksumMethod" type="radio"
+                        value="sha256" />
+                    sha256
+                </label>
+                <label>
+                    <input name="input_checksumMethod" type="radio"
+                        value="sha512" />
+                    sha512
+                </label>
+            </li>
+            <li>
+                <label for="input_checksum_file">path</label>
+                <input id="input_checksum_file" type="text" value="" size="50" />
+            </li>
+            <li>
+                <label for="input_checksum_offset">offset</label>
+                <input id="input_checksum_offset" type="text" value="" size="20" />
+            </li>
+            <li>
+                <label for="input_checksum_chunksize">chunkSize</label>
+                <input id="input_checksum_chunksize" type="text" value="" size="20" />
+            </li>
+            <li>
+                <button id="test-getchecksum" class="run-button"
+                    value="getChecksum"></button>
+                <label for="test-getchecksum">getChecksum</label>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div id="result-tabs" class="tabs">
+    <h2>Output</h2>
+
+    <ul>
+        <li>
+            <a href="#result-tab-transfers">Transfers</a>
+        </li>
+        <li>
+            <a href="#result-tab-stats">Stats</a>
+        </li>
+        <li>
+            <a href="#result-tab-log">Log</a>
+        </li>
+        <li>
+            <a href="#result-tab-events">Events</a>
+        </li>
+    </ul>
+
+    <div id="result-tab-transfers">
+        <ul id="transfer-list">
+            <li id="hidden-transfer-list-item" class="hidden">
+                <p class="transfer-title">transfer-title</p>
+                <div class="progress-bar"></div>
+                <p class="transfer-status">transfer-status</p>
+                <button class="show-directory-button"
+                    value="showDirectory">Folder</button>
+                <button class="show-transfer-monitor-button"
+                    value="showTransferMonitor">Monitor</button>
+                <button class="stop-transfer-button"
+                    value="stopTransfer">Stop</button>
+                <button class="resume-transfer-button"
+                    value="resumeTransfer">Resume</button>
+                <button class="modify-transfer-button"
+                    value="modifyTransfer">Modify</button>
+                <button class="remove-transfer-button"
+                    value="removeTransfer">Remove</button>
+            </li>
+        </ul>
+    </div>
+
+    <div id="result-tab-stats">
+        <ul>
+            <li id="stat-connect-ui-transfer-count"></li>
+        </ul>
+        <p><strong>getAllTransfers test result:</strong></p>
+        <ul>
+            <li id="stat-transfer-count"></li>
+            <li id="stat-initiating-count"></li>
+            <li id="stat-running-count"></li>
+            <li id="stat-willretry-count"></li>
+            <li id="stat-cancelled-count"></li>
+            <li id="stat-completed-count"></li>
+            <li id="stat-failed-count"></li>
+            <li id="stat-queued-count"></li>
+        </ul>
+    </div>
+
+    <div id="result-tab-log">
+        <input id="input_disableLogging" type="checkbox" />
+        <label for="input_disableLogging">Disabled</label>
+        <textarea id="log-main" cols="80" rows="20" readonly="readonly"></textarea>
+    </div>
+
+    <div id="result-tab-events">
+        <input id="input_disableEventLogging" type="checkbox" />
+        <label for="input_disableEventLogging">Disabled</label>
+        <textarea id="log-events" cols="80" rows="20" readonly="readonly"></textarea>
+    </div>
+</div>
+
+</form>
+</body>
+
+</html>
