@@ -13,9 +13,9 @@ import ApiService from './core/api';
 import Request from './core/request';
 import {
 validateAuthSpec,
+validateArrayBufferOptions,
 validateBufferOptions,
 validateTransferId,
-validateOptions,
 validateChecksumOptions
 } from './core/validators';
 import { ConnectGlobals } from './helpers/globals';
@@ -594,7 +594,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setName('readAsArrayBuffer')
         .setMethod(HTTP_METHOD.POST)
         .setBody(options)
-        .setValidator(validateOptions);
+        .setValidator(validateArrayBufferOptions);
 
     if (callbacks) {
       send<types.ArrayBufferOutput>(request, callbacks);
@@ -685,30 +685,28 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   function getChecksum (options: types.GetChecksumOptions, callbacks: types.Callbacks<types.ChecksumFileOutput>): void;
   function getChecksum (options: types.GetChecksumOptions): Promise<types.ChecksumFileOutput>;
   function getChecksum (options: types.GetChecksumOptions, callbacks?: types.Callbacks<types.ChecksumFileOutput>): Promise<types.ChecksumFileOutput> | void {
-    if (options && options.path) {
-      let localOptions: any = {};
-      const allowedChecksumMethods = ['md5', 'sha1', 'sha256', 'sha512'];
-      localOptions.path = options.path;
-      localOptions.offset = options.offset || 0;
-      localOptions.chunkSize = options.chunkSize || 0;
-      localOptions.checksumMethod = options.checksumMethod || 'md5';
-      if (Utils.isNullOrUndefinedOrEmpty(localOptions.checksumMethod) || allowedChecksumMethods.indexOf(localOptions.checksumMethod) === -1) {
-        throw new Error(localOptions.checksumMethod + ' is not a supported checksum method.');
-      }
-      const request =
-        new Request()
-        .setName('getChecksum')
-        .setMethod(HTTP_METHOD.POST)
-        .setBody(localOptions)
-        .setValidator(validateChecksumOptions);
+    if (!options) {
+      throw new Error('#getChecksum options argument is either missing or incorrect');
+    }
 
-      if (callbacks) {
-        send<types.ChecksumFileOutput>(request, callbacks);
-      } else {
-        return send<types.ChecksumFileOutput>(request);
-      }
+    let localOptions: types.GetChecksumOptions = {
+      path: options.path,
+      offset: options.offset || 0,
+      chunkSize: options.chunkSize || 0,
+      checksumMethod: options.checksumMethod || 'md5'
+    };
+
+    const request =
+      new Request()
+      .setName('getChecksum')
+      .setMethod(HTTP_METHOD.POST)
+      .setBody(localOptions)
+      .setValidator(validateChecksumOptions);
+
+    if (callbacks) {
+      send<types.ChecksumFileOutput>(request, callbacks);
     } else {
-      throw new Error('#getChecksum options argument is either missing or incorrect.');
+      return send<types.ChecksumFileOutput>(request);
     }
   }
   this.getChecksum = getChecksum;

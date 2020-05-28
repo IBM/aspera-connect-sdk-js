@@ -1,23 +1,26 @@
 import { isNullOrUndefinedOrEmpty } from '../utils';
 
 export const validateAuthSpec = (request: any) => {
-  const msg = 'Invalid authSpec paramter.';
-  validateBody(request, msg);
+  validateOptions(request);
+  const required = ['remote_host'];
+  validateKeys(request, 'authSpec', required);
 };
 
 export const validateBufferOptions = (request: any) => {
   validateOptions(request);
-  const { body } = request;
-  if (!body.path || typeof body.offset === 'undefined' || typeof body.chunkSize === 'undefined') {
-    throwError('Invalid or missing options parameters');
-  }
+  const required = ['path', 'offset', 'chunkSize'];
+  validateKeys(request, '#readChunkAsArrayBuffer options', required);
 };
 
 export const validateChecksumOptions = (request: any) => {
   validateOptions(request);
+  const required = ['path'];
+  validateKeys(request, '#getChecksum options', required);
+
+  const allowedMethods = ['md5', 'sha1', 'sha256', 'sha512'];
   const { body } = request;
-  if (isNullOrUndefinedOrEmpty(body.path) || isNullOrUndefinedOrEmpty(body.offset) || isNullOrUndefinedOrEmpty(body.chunkSize) || isNullOrUndefinedOrEmpty(body.checksumMethod)) {
-    throwError('Invalid or missing options parameters');
+  if (body && body.checksumMethod && allowedMethods.indexOf(body.checksumMethod) === -1) {
+    throwError(`${body.checksumMethod} is not a supported checksum method`);
   }
 };
 
@@ -35,9 +38,10 @@ export const validateName = (request: any) => {
   }
 };
 
-export const validateOptions = (request: any) => {
-  const msg = 'Must provide options parameter.';
-  validateBody(request, msg);
+export const validateArrayBufferOptions = (request: any) => {
+  validateOptions(request);
+  const required = ['path'];
+  validateKeys(request, '#readAsArrayBuffer options', required);
 };
 
 export const validateTransferId = (request: any) => {
@@ -52,6 +56,23 @@ const validateBody = (request: any, msg: string) => {
   if (isNullOrUndefinedOrEmpty(body)) {
     throwError(msg);
   }
+};
+
+/**
+ * Validate request body contains given keys
+ */
+const validateKeys = (request: any, parameterName: string, keys: string[]) => {
+  keys.forEach((key) => {
+    if (isNullOrUndefinedOrEmpty(request.body[key])) {
+      const msg = `Invalid ${parameterName} parameter: ${key} is missing or invalid`;
+      throwError(msg);
+    }
+  });
+};
+
+const validateOptions = (request: any) => {
+  const msg = 'Must provide options parameter.';
+  validateBody(request, msg);
 };
 
 const throwError = (msg: string) => {
