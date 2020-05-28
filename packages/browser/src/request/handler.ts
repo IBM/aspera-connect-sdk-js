@@ -268,7 +268,8 @@ class RequestHandler implements types.RequestHandler {
 
       let parsedResponse = Utils.parseJson<T>(response.body);
       delete this._idRequestHash[response.requestId];
-      if (Utils.isError(parsedResponse)) {
+      // Reject if response has error fields or if status code is not 2xx
+      if (Utils.isError(parsedResponse) || !Utils.isSuccessCode(response.status)) {
         Logger.trace('rejecting response...');
         reject(parsedResponse);
       } else {
