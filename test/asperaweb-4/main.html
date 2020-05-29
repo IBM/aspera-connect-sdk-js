@@ -359,6 +359,7 @@ li {
     var PLUGIN_ARGS =
         ["connectLaunchWaitTimeoutMs",
          "sdkLocation",
+         "authorizationKey",
          "pollingTime",
          "dragDropEnabled",
          "wampRouter",
@@ -1519,6 +1520,11 @@ li {
 
     <div id="config-tab-plugin" class="two-column-ul">
         <ul class="field-list">
+            <li>
+                <label for="input_authorizationKey">authorizationKey (http.uri)</label>
+                <input id="input_authorizationKey" type="text" value=""
+                    size="30" />
+            </li>
             <li>
                 <label for="input_applicationId">applicationId (initSession)</label>
                 <input id="input_applicationId" type="text" value=""
