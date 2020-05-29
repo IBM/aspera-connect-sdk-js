@@ -7,7 +7,7 @@ var testInitSessionExtensions = function() {
         this.asperaWeb = new AW4.Connect( { connectMethod: 'http' } );
       }
       app_id = this.asperaWeb.initSession();
-      
+
       setTimeout(() => {
         expect(app_id).to.have.property('app_id').and.to.match(/(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/);
         done();
@@ -23,7 +23,7 @@ var testInitSessionExtensions = function() {
         this.asperaWeb = new AW4.Connect( { connectMethod: 'http' } );
       }
       app_id = this.asperaWeb.initSession("dwosk");
-      
+
       setTimeout(() => {
         expect(app_id).to.have.property('app_id').and.to.equal("dwosk");
         done();
@@ -39,7 +39,7 @@ var testInitSessionExtensions = function() {
         this.asperaWeb = new AW4.Connect( { connectMethod: 'http' } );
       }
       this.asperaWeb.initSession();
-      
+
       setTimeout(() => {
         done();
       }, 100);
@@ -47,7 +47,7 @@ var testInitSessionExtensions = function() {
 
     it('should return error with code -1', function(done) {
       this.err = this.asperaWeb.initSession();
-      
+
       setTimeout(() => {
         expect(this.err.error.code).to.equal(-1);
         done();
@@ -56,18 +56,18 @@ var testInitSessionExtensions = function() {
 
     it('should return error with \"Invalid request\"', function(done) {
       this.err = this.asperaWeb.initSession();
-      
+
       setTimeout(() => {
         expect(this.err.error.internal_message).equal("Invalid request");
         done();
       }, 100);
     });
 
-    it('should return error with \"Session was already initialized\"', function(done) {
+    it('should return error with \"Session was already initialized.\"', function(done) {
       this.err = this.asperaWeb.initSession();
-      
+
       setTimeout(() => {
-        expect(this.err.error.user_message).to.equal("Session was already initialized");
+        expect(this.err.error.user_message).to.equal("Session was already initialized.");
         done();
       }, 100);
     });
@@ -87,7 +87,7 @@ var testInitSessionExtensions = function() {
       beforeEach(function() {
         this.clock = sinon.useFakeTimers();
       });
-      
+
       it('should set Connect status to FAILED', function(done) {
         // Simulate extension not installed
         document.removeEventListener('AsperaConnectCheck', returnVersion);
@@ -125,7 +125,7 @@ var testInitSessionExtensions = function() {
         this.server.respondWith('GET', /version/, [200, { "Content-Type": "application/json" }, '{ "version": "3.7.4.157934" }']);
 
         this.asperaWeb.initSession();
-        
+
         setTimeout(() => {
           expect(this.asperaWeb.getStatus()).to.equal('OUTDATED');
           this.asperaWeb.stop();
@@ -137,7 +137,7 @@ var testInitSessionExtensions = function() {
     context('when user has Connect 3.8.0 installed', function() {
       it('should set Connect status to RUNNING', function(done) {
         this.asperaWeb.initSession();
-        
+
         setTimeout(() => {
           expect(this.asperaWeb.getStatus()).to.equal('RUNNING');
           done();
@@ -160,7 +160,7 @@ var testInitSessionExtensions = function() {
     context('when user has Connect 3.8.0 installed', function() {
       it('should set Connect status to OUTDATED', function(done) {
         this.asperaWeb.initSession();
-        
+
         setTimeout(() => {
           expect(this.asperaWeb.getStatus()).to.equal('OUTDATED');
           this.asperaWeb.stop();
@@ -188,7 +188,7 @@ var testInitSessionExtensions = function() {
 
       it('should call /connect/update/require with minVersion', function(done) {
         this.asperaWeb.initSession();
-        
+
         setTimeout(() => {
           if (this.useExtensions) {
             expect(extensionRequests.last().body).to.match(/"min_version":"3.9.0"/);
@@ -219,7 +219,7 @@ var testInitSessionExtensions = function() {
 
         it('should call /connect/update/require with sdk_location', function(done) {
           this.asperaWeb.initSession();
-          
+
           setTimeout(() => {
             if (this.useExtensions) {
               expect(extensionRequests.last().body).to.match(/sdk_location.*example.com\/connect\/v4/);
@@ -271,7 +271,7 @@ var testInitSessionExtensions = function() {
 
         this.asperaWeb.initSession();
         // this.clock.tick(1000);
-        
+
         setTimeout(() => {
           var status = this.asperaWeb.getStatus();
           if (this.useExtensions) {

@@ -1376,6 +1376,10 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     asperaConnectSettings: types.ConnectSpec,
     callbacks: types.Callbacks<types.StartTransferOutput>
   ): { request_id: string } {
+    if (Utils.isNullOrUndefinedOrEmpty(transferSpec)) {
+      throw new Error('#startTransfer transferSpec is missing or invalid');
+    }
+
     let settings = asperaConnectSettings || {};
     let transferSpecs: types.TransferSpecs = {
       transfer_specs : [{
@@ -1462,10 +1466,10 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    *
    * @function
    * @name AW4.Connect#stop
-   * @return {null}
+   * @return {Boolean}
    */
-  this.stop = function (): void {
-    requestHandler.stopRequests();
+  this.stop = function (): boolean {
+    return requestHandler.stopRequests();
   };
 
   /**

@@ -428,6 +428,8 @@ class RequestHandler implements types.RequestHandler {
     if (typeof this._strategy.stop === 'function') {
       this._strategy.stop();
     }
+
+    return true;
   }
 }
 
