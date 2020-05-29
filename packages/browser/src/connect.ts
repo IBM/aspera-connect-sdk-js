@@ -1824,6 +1824,30 @@ export default ConnectClient;
  *
  *   Default: Server-side minimum rate default setting (aspera.conf). Will respect
  *   both local and server-side minimum rate caps if set.
+ * @property {"always"|"none"|"diff"|"older"|"diff+older"} [overwrite_policy="diff"] Overwrite
+ *   destination files with the source files of the same name.
+ *
+ *   `none` - Never overwrite the file. However, if the parent folder is not empty,
+ *   its access, modify, and change times may still be updated.
+ *
+ *   `always` - Always overwrite the file. The destination file will be overwritten
+ *   even if it is identical to the source.
+ *
+ *   `diff` - Overwrite the file if it is different from the source, depending on
+ *   the `resume` property.
+ *
+ *   `older` - Overwrite the file if its timestamp is older than the source timestamp.
+ *
+ *   `diff+older` - Overwrite the file if it is older and different than the source,
+ *   depending on the `resume` property.
+ *
+ *   If the `overwrite_policy` is `diff` or `diff+older`, difference is determined by
+ *   the `resume` property. If `resume` is empty or `none` is specified, the source
+ *   and destination files are always considered different and the destination file
+ *   is always overwritten. If `attributes`, the source and destination files are
+ *   compared based on file attributes (currently file size). If `sparse_checksum`,
+ *   the source and destination files are compared based on sparse checksum. If `full_checksum`,
+ *   the source and destination files are compared based on full checksum.
  * @property {Array} paths A list of the file and directory paths to transfer.
  *   Use `destination_root` to specify the destination directory.
  *
@@ -1928,6 +1952,7 @@ export default ConnectClient;
  *     }
  *   ],
  *   "obfuscate_file_names": false,
+ *   "overwrite_policy": "diff",
  *   "remote_host": "demo.asperasoft.com",
  *   "remote_user": "asperaweb",
  *   "authentication": "password",
