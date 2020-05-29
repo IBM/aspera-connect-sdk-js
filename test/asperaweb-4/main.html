@@ -339,6 +339,7 @@ li {
          "remote_password",
          "resume",
          "save-before-overwrite",
+         "overwrite_policy",
          "obfuscate_file_names",
          "content_protection_passphrase",
          "lock_rate_policy",
@@ -1901,6 +1902,24 @@ li {
                 </label>
                 <label>
                     <input type="radio" name="input_save-before-overwrite" value="no" /> no
+                </label>
+            </li>
+            <li>
+                <label>overwrite_policy</label>
+                <label>
+                    <input type="radio" name="input_overwrite_policy" value="always" /> always
+                </label>
+                <label>
+                    <input type="radio" name="input_overwrite_policy" value="none" /> none
+                </label>
+                <label>
+                    <input type="radio" name="input_overwrite_policy" value="diff" /> diff
+                </label>
+                <label>
+                    <input type="radio" name="input_overwrite_policy" value="older" /> older
+                </label>
+                <label>
+                    <input type="radio" name="input_overwrite_policy" value="diff+older" /> diff+older
                 </label>
             </li>
             <li>
