@@ -543,6 +543,18 @@ li {
       log("getStatus returned.", plugin.getStatus());
     };
 
+    tests.testSshPorts = function() {
+      log("Invoking testSshPorts.");
+      var remote_host = $("#input_remote_host").val();
+      var ssh_port = $("#input_ssh_port").val();
+      var options = {
+        remote_host: remote_host,
+        ssh_port: ssh_port,
+        timeout_sec: 10
+      };
+      log("testSshPorts returned.", plugin.testSshPorts(options, gCallbacks));
+    };
+
     tests.initSession = function() {
         var arg = $("#input_applicationId").val();
         log("Invoking initSession.", arg);
@@ -2099,6 +2111,11 @@ li {
             <li>
                 <button id="test-invalid-uri" class="run-button" value="invalidUri"></button>
                 <label for="test-invalid-uri">an invalid uri</label>
+            </li>
+            <li>
+                <button id="test-ssh-ports" class="run-button"
+                    value="testSshPorts"></button>
+                <label for="test-ssh-ports">testSshPorts</label>
             </li>
         </ul>
     </div>
