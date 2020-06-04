@@ -1373,8 +1373,17 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   function startTransfer (
     transferSpec: types.TransferSpec,
     asperaConnectSettings: types.ConnectSpec,
-    callbacks: types.Callbacks<types.StartTransferOutput>
-  ): { request_id: string } {
+    callbacks: types.Callbacks<{}>
+  ): { request_id: string };
+  function startTransfer (
+    transferSpec: types.TransferSpec,
+    asperaConnectSettings: types.ConnectSpec
+  ): Promise<{}>;
+  function startTransfer (
+    transferSpec: types.TransferSpec,
+    asperaConnectSettings: types.ConnectSpec,
+    callbacks?: types.Callbacks<{}>
+  ): { request_id: string } | Promise<{}> {
     if (Utils.isNullOrUndefinedOrEmpty(transferSpec)) {
       throw new Error('#startTransfer transferSpec is missing or invalid');
     }
@@ -1395,6 +1404,27 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   }
   this.startTransfer = startTransfer;
 
+  function startTransfers (transferSpecs: types.TransferSpecs, callbacks: types.Callbacks<{}>): { request_id: string };
+  function startTransfers (transferSpecs: types.TransferSpecs): Promise<{}>;
+  function startTransfers (
+    transferSpecs: types.TransferSpecs,
+    callbacks?: types.Callbacks<{}>
+  ): { request_id: string } | Promise<{}> {
+    let requestId = Utils.generateUuid();
+    const request =
+      new Request()
+        .setName('startTransfer')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(transferSpecs)
+        .setRequestId(requestId);
+
+    if (callbacks) {
+      send<{ request_id: string }>(request, callbacks);
+      return { request_id : requestId };
+    } else {
+      return send<{ request_id: string }>(request);
+    }
+  }
   /**
    * Initiates one or more transfers (_currently only the first `transfer_spec`
    * is used_). Call {@link AW4.Connect#getAllTransfers} to get transfer
@@ -1439,29 +1469,11 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    *   This call fails if validation fails or the user rejects the transfer.
    *
    * Object returned to success callback:
-   * `{@link TransferInfo}`
+   * `{}`
    *
    * @returns {Object|Error}
    */
-  this.startTransfers = function (
-    transferSpecs: types.TransferSpecs, callbacks: types.Callbacks<types.StartTransferOutput>
-  ): { request_id: string } {
-    if (Utils.isNullOrUndefinedOrEmpty(callbacks)) {
-      Logger.warn('#startTransfers was not provided with callbacks.');
-    }
-
-    let requestId = Utils.generateUuid();
-    const request =
-      new Request()
-        .setName('startTransfer')
-        .setMethod(HTTP_METHOD.POST)
-        .setBody(transferSpecs)
-        .setRequestId(requestId);
-
-    send<types.StartTransferOutput>(request, callbacks);
-
-    return { request_id : requestId };
-  };
+  this.startTransfers = startTransfers;
 
   /**
    * Stop all requests from Connect to restart activity, please

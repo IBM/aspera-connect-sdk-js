@@ -486,13 +486,21 @@ export interface ConnectClient {
   startTransfer (
     transferSpec: TransferSpec,
     asperaConnectSettings: ConnectSpec,
-    callbacks: Callbacks<StartTransferOutput>
+    callbacks: Callbacks<{}>
   ): { request_id: string };
+  startTransfer (
+    transferSpec: TransferSpec,
+    asperaConnectSettings: ConnectSpec
+  ): Promise<{}>;
+  startTransfer (
+    transferSpec: TransferSpec,
+    asperaConnectSettings: ConnectSpec,
+    callbacks?: Callbacks<{}>
+  ): { request_id: string } | Promise<{}>;
 
-  startTransfers (
-    transferSpecs: TransferSpecs,
-    callbacks: Callbacks<StartTransferOutput>
-  ): { request_id: string };
+  startTransfers (transferSpecs: TransferSpecs, callbacks: Callbacks<{}>): { request_id: string };
+  startTransfers (transferSpecs: TransferSpecs): Promise<{}>;
+  startTransfers (transferSpecs: TransferSpecs, callbacks?: Callbacks<{}>): { request_id: string } | Promise<{}>;
 
   stop (): void;
 
