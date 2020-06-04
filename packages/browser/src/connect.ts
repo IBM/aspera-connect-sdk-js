@@ -1201,6 +1201,44 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   };
 
   /**
+   * Displays a file browser dialog for the user to select files. The select file
+   * dialog call(s) may be separated in time from the later startTransfer(s) call,
+   * but they must occur in the same Connect session.
+   *
+   * @function
+   * @name AW4.Connect#showSelectFileDialogPromise
+   * @param {Object} [options] File chooser options
+   *
+   * Options:
+   * * `allowedFileTypes` ({@link FileFilters}) - Filter the files displayed by file extension.
+   * * `allowMultipleSelection` (Boolean) -  Allow the selection of multiple
+   *    files. Default: `true`.
+   * * `title` (String) - The name of the dialog window.
+   * @return {Promise<dataTransfer>}
+   */
+  this.showSelectFileDialogPromise = function (
+    options?: types.SelectFileDialogOptions
+  ): Promise<types.ShowSelectFileDialogOutput> {
+    let localOptions: any = {};
+    if (Utils.isNullOrUndefinedOrEmpty(options)) {
+      options = {};
+    }
+
+    localOptions.title = options.title || '';
+    localOptions.suggestedName = options.suggestedName || '';
+    localOptions.allowMultipleSelection = Utils.isNullOrUndefinedOrEmpty(options.allowMultipleSelection) || options.allowMultipleSelection;
+    localOptions.allowedFileTypes = options.allowedFileTypes || '';
+
+    const request =
+      new Request()
+        .setName('showSelectFileDialog')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(localOptions);
+
+    return send<types.ShowSelectFileDialogOutput>(request);
+  };
+
+  /**
    * Displays a file browser dialog for the user to select directories. The select
    * folder dialog call(s) may be separated in time from the later startTransfer(s)
    * call, but they must occur in the same Connect session.
@@ -1243,6 +1281,40 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     } else {
       throw new Error('Must provide callbacks.');
     }
+  };
+
+  /**
+   * Displays a file browser dialog for the user to select directories. The select
+   * folder dialog call(s) may be separated in time from the later startTransfer(s)
+   * call, but they must occur in the same Connect session.
+   *
+   * @function
+   * @name AW4.Connect#showSelectFolderDialogPromise
+   * @param {Object} [options] File chooser options
+   *
+   * Options:
+   * * `allowMultipleSelection` (Boolean) -  Allow the selection of multiple
+   *    folders. Default: `true`.
+   * * `title` (String) - The name of the dialog window.
+   * @return {Promise<dataTransfer>}
+   */
+  this.showSelectFolderDialogPromise = function (
+    options?: types.SelectFolderDialogOptions
+  ): Promise<types.ShowSelectFolderDialogOutput> {
+    let localOptions: any = {};
+    if (Utils.isNullOrUndefinedOrEmpty(options)) {
+      options = {};
+    }
+
+    localOptions.title = options.title || '';
+    localOptions.allowMultipleSelection = Utils.isNullOrUndefinedOrEmpty(options.allowMultipleSelection) || options.allowMultipleSelection;
+    const request =
+      new Request()
+        .setName('showSelectFolderDialog')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(localOptions);
+
+    return send<types.ShowSelectFolderDialogOutput>(request);
   };
 
   function showTransferManager (callbacks: types.Callbacks<{}>): void;

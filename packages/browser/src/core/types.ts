@@ -470,8 +470,10 @@ export interface ConnectClient {
   showSaveFileDialog (callbacks: Callbacks<ShowSaveFileDialogOutput>, options?: SaveFileDialogOptions): void;
 
   showSelectFileDialog (callbacks: Callbacks<ShowSelectFileDialogOutput>, options?: SelectFileDialogOptions): void;
+  showSelectFileDialogPromise (options?: SelectFileDialogOptions): Promise<ShowSelectFileDialogOutput>;
 
   showSelectFolderDialog (callbacks: Callbacks<ShowSelectFolderDialogOutput>, options?: SelectFolderDialogOptions): void;
+  showSelectFolderDialogPromise (options?: SelectFolderDialogOptions): Promise<ShowSelectFolderDialogOutput>;
 
   showTransferManager (callbacks: Callbacks<{}>): void;
   showTransferManager (): Promise<{}>;
