@@ -55,6 +55,10 @@ interface ConnectConstructor {
  *   must be in the same level of security as the web page (HTTP/HTTPS), HTTPS preferred.
  * @param {Number} [options.pollingTime=2000] How often in milliseconds we want to get
  *   updates of transfer status.
+ * @param {Number} [options.maxActivityOutstanding=2] The maximum number of oustanding transfer activity
+ *   requests allowed before being skipped.
+ * @param {Number} [options.extensionRequestTimeout=86400000] How long to wait in milliseconds for extension requests
+ *  to return before failing. Only applies to file and folder dialog APIs.
  * @param {String} [options.minVersion] Minimum version of Connect required by the web
  *   application in order to work. Format: "3.9.0".
  * @param {Boolean} [options.dragDropEnabled=false] Enable drag and drop of files/folders
