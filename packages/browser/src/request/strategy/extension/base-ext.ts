@@ -1,6 +1,7 @@
 import { isNullOrUndefinedOrEmpty, generatePromiseData } from '../../../utils';
 import { STATUS } from '../../../constants';
 import * as types from '../../../core/types';
+import { debug } from '../../../logger';
 
 /*
  * Abstract base class that holds all code that is common to any extension
@@ -60,7 +61,7 @@ abstract class BaseExtensionStrategy implements types.RequestStrategy {
       }
     }
 
-    console.log(req);
+    debug(req);
 
     this.outstandingRequests[requestId] = {
       'req': req,
