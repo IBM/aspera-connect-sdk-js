@@ -357,6 +357,22 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     }
   };
 
+  function authenticate (authSpec: Partial<types.TransferSpec>, callbacks: types.Callbacks<{}>): void;
+  function authenticate (authSpec: Partial<types.TransferSpec>): Promise<{}>;
+  function authenticate (authSpec: Partial<types.TransferSpec>, callbacks?: {}): void | Promise<{}> {
+    const request =
+       new Request()
+         .setName('authenticate')
+         .setMethod(HTTP_METHOD.POST)
+         .setBody(authSpec)
+         .setValidator(validateAuthSpec);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  }
   /**
    * Test authentication credentials against a transfer server.
    *
@@ -379,24 +395,12 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    * `{}`
    * @return {null|Error}
    */
-  function authenticate (authSpec: Partial<types.TransferSpec>, callbacks: types.Callbacks<{}>): void;
-  function authenticate (authSpec: Partial<types.TransferSpec>): Promise<{}>;
-  function authenticate (authSpec: Partial<types.TransferSpec>, callbacks?: {}): void | Promise<{}> {
-    const request =
-       new Request()
-         .setName('authenticate')
-         .setMethod(HTTP_METHOD.POST)
-         .setBody(authSpec)
-         .setValidator(validateAuthSpec);
-
-    if (callbacks) {
-      send<{}>(request, callbacks);
-    } else {
-      return send<{}>(request);
-    }
-  }
   this.authenticate = authenticate;
 
+  function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number): void;
+  function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number = 0): void | Promise<types.AllTransfersInfo> {
+    return getAllTransfersHelper(iterationToken, callbacks);
+  }
   /**
    * Get statistics for all transfers.
    *
@@ -413,10 +417,6 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    *   had activity since the last call.
    * @return {null}
    */
-  function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number): void;
-  function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number = 0): void | Promise<types.AllTransfersInfo> {
-    return getAllTransfersHelper(iterationToken, callbacks);
-  }
   this.getAllTransfers = getAllTransfers;
 
   /**
@@ -430,23 +430,6 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     return connectStatus;
   };
 
-  /**
-   * Get statistics for a single transfer.
-   *
-   * @function
-   * @name AW4.Connect#getTransfer
-   * @param {Callbacks} callbacks `success` and `error` functions to receive
-   *  results.
-   *
-   *  Object returned to success callback:
-   *  See `{@link TransferInfo}`
-   *  ```
-   *  {
-   *   "transfer_info": TransferInfo
-   *  }
-   * @param {String} transferId The ID (`uuid`) of the transfer to retreive.
-   * @return {null}
-   */
   function getTransfer (transferId: string, callbacks: types.Callbacks<{ transfer_info: types.TransferInfo }>): void;
   function getTransfer (transferId: string): Promise<{ transfer_info: types.TransferInfo }>;
   function getTransfer (transferId: string, callbacks?: types.Callbacks<{ transfer_info: types.TransferInfo }>): void | Promise<{ transfer_info: types.TransferInfo}> {
@@ -463,6 +446,23 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<{ transfer_info: types.TransferInfo }>(request);
     }
   }
+  /**
+   * Get statistics for a single transfer.
+   *
+   * @function
+   * @name AW4.Connect#getTransfer
+   * @param {String} transferId The ID (`uuid`) of the transfer to retrieve.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *  results.
+   *
+   *  Object returned to success callback:
+   *  See `{@link TransferInfo}`
+   *  ```
+   *  {
+   *   "transfer_info": TransferInfo
+   *  }
+   * @return {null}
+   */
   this.getTransfer = getTransfer;
 
   /**
@@ -516,6 +516,23 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     return { 'app_id' : APPLICATION_ID };
   };
 
+  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>, callbacks: types.Callbacks<{}>): void;
+  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>): Promise<{}>;
+  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
+    const request =
+      new Request()
+        .setName('modifyTransfer')
+        .setMethod(HTTP_METHOD.POST)
+        .setParam(transferId)
+        .setBody(options)
+        .setValidator(validateTransferId);
+
+    if (callbacks) {
+      send<{}>(request, callbacks);
+    } else {
+      return send<{}>(request);
+    }
+  }
   /**
    * Change the speed of a running transfer.
    *
@@ -540,25 +557,24 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    * `{@link TransferSpec}`
    * @return {null}
    */
-  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>, callbacks: types.Callbacks<{}>): void;
-  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>): Promise<{}>;
-  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
-    const request =
-      new Request()
-        .setName('modifyTransfer')
-        .setMethod(HTTP_METHOD.POST)
-        .setParam(transferId)
-        .setBody(options)
-        .setValidator(validateTransferId);
-
-    if (callbacks) {
-      send<{}>(request, callbacks);
-    } else {
-      return send<{}>(request);
-    }
-  }
   this.modifyTransfer = modifyTransfer;
 
+  function readAsArrayBuffer (options: { path: string }, callbacks: types.Callbacks<types.ArrayBufferOutput>): void;
+  function readAsArrayBuffer (options: { path: string }): Promise<types.ArrayBufferOutput>;
+  function readAsArrayBuffer (options: { path: string }, callbacks?: types.Callbacks<types.ArrayBufferOutput>): void | Promise<types.ArrayBufferOutput> {
+    const request =
+      new Request()
+        .setName('readAsArrayBuffer')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(options)
+        .setValidator(validateArrayBufferOptions);
+
+    if (callbacks) {
+      send<types.ArrayBufferOutput>(request, callbacks);
+    } else {
+      return send<types.ArrayBufferOutput>(request);
+    }
+  }
   /**
    * Read file as 64-bit encoded data.
    *
@@ -582,48 +598,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    * ```
    * @return {null|Error}
    */
-  function readAsArrayBuffer (options: { path: string }, callbacks: types.Callbacks<types.ArrayBufferOutput>): void;
-  function readAsArrayBuffer (options: { path: string }): Promise<types.ArrayBufferOutput>;
-  function readAsArrayBuffer (options: { path: string }, callbacks?: types.Callbacks<types.ArrayBufferOutput>): void | Promise<types.ArrayBufferOutput> {
-    const request =
-      new Request()
-        .setName('readAsArrayBuffer')
-        .setMethod(HTTP_METHOD.POST)
-        .setBody(options)
-        .setValidator(validateArrayBufferOptions);
-
-    if (callbacks) {
-      send<types.ArrayBufferOutput>(request, callbacks);
-    } else {
-      return send<types.ArrayBufferOutput>(request);
-    }
-  }
   this.readAsArrayBuffer = readAsArrayBuffer;
-  /**
-   * Read 64-bit encoded chunk from file.
-   *
-   * *This method is asynchronous.*
-   *
-   * @function
-   * @name AW4.Connect#readChunkAsArrayBuffer
-   * @param {Object} options Object with options needed for reading a chunk.
-   *
-   * Options:
-   * * `path` (String) - Absolute path to the file we want to read the chunk from.
-   * * `offset` (Number) - Offset (in bytes) that we want to start reading the file.
-   * * `chunkSize` (Number) - The size (in bytes) of the chunk we want.
-   * @param {Callbacks} callbacks `success` and `error` functions to receive
-   * results.
-   *
-   * Object returned to success callback:
-   * ```
-   * {
-   *   "type" : "image/pjpeg",
-   *   "data" : "/9j/4AAQSkZ..."
-   * }
-   * ```
-   * @return {null|Error}
-   */
 
   function readChunkAsArrayBuffer (
     options: { path: string, offset: number, chunkSize: number },
@@ -649,34 +624,32 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<types.ArrayBufferOutput>(request);
     }
   }
+  /**
+   * Read 64-bit encoded chunk from file.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name AW4.Connect#readChunkAsArrayBuffer
+   * @param {Object} options Object with options needed for reading a chunk.
+   *
+   * Options:
+   * * `path` (String) - Absolute path to the file we want to read the chunk from.
+   * * `offset` (Number) - Offset (in bytes) that we want to start reading the file.
+   * * `chunkSize` (Number) - The size (in bytes) of the chunk we want.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   * results.
+   *
+   * Object returned to success callback:
+   * ```
+   * {
+   *   "type" : "image/pjpeg",
+   *   "data" : "/9j/4AAQSkZ..."
+   * }
+   * ```
+   * @return {null|Error}
+   */
   this.readChunkAsArrayBuffer = readChunkAsArrayBuffer;
-
-/**
- * Calculates checksum of the given chunk size of the file.
- *
- * *This method is asynchronous.*
- *
- * @function
- * @name AW4.Connect#getChecksum
- * @param {Object} options Object with options needed for reading a chunk.
- *
- * Options:
- * * `path` (String) - Absolute path to the file we want to read the chunk from.
- * * `offset` (Number) - Offset (in bytes) that we want to start reading the file.
- * * `chunkSize` (Number) - The size (in bytes) of the chunk we want.
- * * `checksumMethod` (String) - The hash method we want to apply on chunk. Allowed checksum methods are "md5", "sha1", "sha256", "sha512".
- * @param {Callbacks} callbacks `success` and `error` functions to receive
- * results.
- *
- * Object returned to success callback:
- * ```
- * {
- *   "checksumMethod" : "md5"
- *   "checksum" : "35cf801a..."
- * }
- * ```
- * @return {null}
- */
 
   function getChecksum (options: types.GetChecksumOptions, callbacks: types.Callbacks<types.ChecksumFileOutput>): void;
   function getChecksum (options: types.GetChecksumOptions): Promise<types.ChecksumFileOutput>;
@@ -705,6 +678,32 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<types.ChecksumFileOutput>(request);
     }
   }
+  /**
+   * Calculates checksum of the given chunk size of the file.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name AW4.Connect#getChecksum
+   * @param {Object} options Object with options needed for reading a chunk.
+   *
+   * Options:
+   * * `path` (String) - Absolute path to the file we want to read the chunk from.
+   * * `offset` (Number) - Offset (in bytes) that we want to start reading the file.
+   * * `chunkSize` (Number) - The size (in bytes) of the chunk we want.
+   * * `checksumMethod` (String) - The hash method we want to apply on chunk. Allowed checksum methods are "md5", "sha1", "sha256", "sha512".
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   * results.
+   *
+   * Object returned to success callback:
+   * ```
+   * {
+   *   "checksumMethod" : "md5"
+   *   "checksum" : "35cf801a..."
+   * }
+   * ```
+   * @return {null}
+   */
   this.getChecksum = getChecksum;
 
   /**
@@ -777,21 +776,6 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     return listenerFound;
   };
 
-  /**
-   * Remove the transfer - terminating it if necessary - from Connect.
-   *
-   * *This method is asynchronous.*
-   *
-   * @function
-   * @name AW4.Connect#removeTransfer
-   * @param {String} transferId The ID(`uuid`) of the transfer to delete.
-   * @param {Callbacks} callbacks `success` and `error` functions to receive
-   *   results.
-   *
-   *   Object returned to success callback:
-   *   `{@link TransferSpec}`
-   * @return {null}
-   */
   function removeTransfer (transferId: string, callbacks: types.Callbacks<{}>): void;
   function removeTransfer (transferId: string): Promise<{}>;
   function removeTransfer (transferId: string, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
@@ -808,31 +792,23 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<{}>(request);
     }
   }
+  /**
+   * Remove the transfer - terminating it if necessary - from Connect.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name AW4.Connect#removeTransfer
+   * @param {String} transferId The ID(`uuid`) of the transfer to delete.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
+   *
+   *   Object returned to success callback:
+   *   `{@link TransferSpec}`
+   * @return {null}
+   */
   this.removeTransfer = removeTransfer;
 
-   /**
-    * Resume a transfer that was stopped.
-    *
-    * *This method is asynchronous.*
-    *
-    * @function
-    * @name AW4.Connect#resumeTransfer
-    * @param {String} transferId The ID(`uuid`) of the transfer to resume
-    * @param {Object} options A subset of {@link TransferSpec}
-    *
-    * Options:
-    * * `token`
-    * * `cookie`
-    * * `authentication`
-    * * `remote_user`
-    * * `remote_password`
-    * * `content_protection_passphrase`
-    * @param {Callbacks} callbacks `success` and `error` functions to receive results.
-    *
-    * Object returned to success callback:
-    * `{@link TransferSpec}`
-    * @return {null}
-    */
   function resumeTransfer (
     transferId: string,
     options: Partial<types.TransferSpec>,
@@ -861,6 +837,29 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<types.ResumeTransferOutput>(request);
     }
   }
+  /**
+   * Resume a transfer that was stopped.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name AW4.Connect#resumeTransfer
+   * @param {String} transferId The ID(`uuid`) of the transfer to resume
+   * @param {Object} options A subset of {@link TransferSpec}
+   *
+   * Options:
+   * * `token`
+   * * `cookie`
+   * * `authentication`
+   * * `remote_user`
+   * * `remote_password`
+   * * `content_protection_passphrase`
+   * @param {Callbacks} callbacks `success` and `error` functions to receive results.
+   *
+   * Object returned to success callback:
+   * `{@link TransferSpec}`
+   * @return {null}
+   */
   this.resumeTransfer = resumeTransfer;
 
   /**
@@ -969,20 +968,6 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     }
   };
 
-   /**
-    * Displays the IBM Aspera Connect "About" window.
-    *
-    * *This method is asynchronous.*
-    *
-    * @function
-    * @name AW4.Connect#showAbout
-    * @param {Callbacks} callbacks `success` and `error` functions to receive
-    *   results.
-    *
-    *   Object returned to success callback:
-    *   `{}`
-    * @return {null}
-    */
   function showAbout (callbacks: types.Callbacks<{}>): void;
   function showAbout (): Promise<{}>;
   function showAbout (callbacks?: types.Callbacks<{}>): void | Promise<{}> {
@@ -997,17 +982,13 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<{}>(request);
     }
   }
-  this.showAbout = showAbout;
-
   /**
-   * Open the destination directory of the transfer using the system file
-   * browser.
+   * Displays the IBM Aspera Connect "About" window.
    *
    * *This method is asynchronous.*
    *
    * @function
-   * @name AW4.Connect#showDirectory
-   * @param {String} transferId The ID(`uuid`) of the transfer to show files for.
+   * @name AW4.Connect#showAbout
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
@@ -1015,6 +996,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    *   `{}`
    * @return {null}
    */
+  this.showAbout = showAbout;
+
   function showDirectory (transferId: string, callbacks: types.Callbacks<{}>): void;
   function showDirectory (transferId: string): Promise<{}>;
   function showDirectory (transferId: string, callbacks?: types.Callbacks<{}>): void | Promise<types.HttpResponse> {
@@ -1031,15 +1014,15 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<{}>(request);
     }
   }
-  this.showDirectory = showDirectory;
-
   /**
-   * Displays the IBM Aspera Connect "Preferences" window.
+   * Open the destination directory of the transfer using the system file
+   * browser.
    *
    * *This method is asynchronous.*
    *
    * @function
-   * @name AW4.Connect#showPreferences
+   * @name AW4.Connect#showDirectory
+   * @param {String} transferId The ID(`uuid`) of the transfer to show files for.
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
@@ -1047,6 +1030,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    *   `{}`
    * @return {null}
    */
+  this.showDirectory = showDirectory;
+
   function showPreferences (callbacks: types.Callbacks<{}>): void;
   function showPreferences (): Promise<{}>;
   function showPreferences (callbacks?: types.Callbacks<{}>): void | Promise<{}> {
@@ -1061,8 +1046,42 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<{}>(request);
     }
   }
+  /**
+   * Displays the IBM Aspera Connect "Preferences" window.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name AW4.Connect#showPreferences
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
+   *
+   *   Object returned to success callback:
+   *   `{}`
+   * @return {null}
+   */
   this.showPreferences = showPreferences;
 
+  function showPreferencesPage (options: types.PreferencesOptions, callbacks: types.Callbacks<{}>): void;
+  function showPreferencesPage (options: types.PreferencesOptions): Promise<{}>;
+  function showPreferencesPage (options: types.PreferencesOptions, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
+    const allowedPages = ['general', 'transfers', 'bandwidth', 'network', 'security'];
+    if (options && options.page && allowedPages.indexOf(options.page) > -1) {
+      const request =
+        new Request()
+          .setName('showPreferencesPage')
+          .setMethod(HTTP_METHOD.GET)
+          .setParam(options.page);
+
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
+    } else {
+      throw new Error('#showPreferencesPage options argument is either missing or incorrect.');
+    }
+  }
   /**
    * Displays the IBM Aspera Connect "Preferences" window opened to a specifiic page.
    *
@@ -1073,33 +1092,13 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    * @param {options} options Options used when opening preferences.
    *
    * Options:
-   * * `page` {String} - `general`, `transfers`, `network`, `bandwidth`, `security`
+   * * `page` (String) - `general`, `transfers`, `network`, `bandwidth`, `security`
    * @param {Callbacks} callbacks `success` and `error` functions to receive results.
    *
    *  Object returned to success callback:
    *  `{}`
    * @return {null}
    */
-  function showPreferencesPage (options: types.PreferencesOptions, callbacks: types.Callbacks<{}>): void;
-  function showPreferencesPage (options: types.PreferencesOptions): Promise<{}>;
-  function showPreferencesPage (options: types.PreferencesOptions, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
-    const allowedPages = ['general', 'transfers', 'bandwidth', 'network', 'security'];
-	  if (options && options.page && allowedPages.indexOf(options.page) > -1) {
-    const request =
-        new Request()
-          .setName('showPreferencesPage')
-          .setMethod(HTTP_METHOD.GET)
-          .setParam(options.page);
-
-    if (callbacks) {
-      send<{}>(request, callbacks);
-    } else {
-      return send<{}>(request);
-    }
-  } else {
-    throw new Error('#showPreferencesPage options argument is either missing or incorrect.');
-  }
-  }
   this.showPreferencesPage = showPreferencesPage;
 
   /**
@@ -1242,20 +1241,6 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     }
   };
 
-  /**
-   * Displays the IBM Aspera Connect "Activity" window.
-   *
-   * *This method is asynchronous.*
-   *
-   * @function
-   * @name AW4.Connect#showTransferManager
-   * @param {Callbacks} callbacks `success` and `error` functions to receive
-   *   results.
-   *
-   *   Object returned to success callback:
-   *   `{}`
-   * @return {null}
-   */
   function showTransferManager (callbacks: types.Callbacks<{}>): void;
   function showTransferManager (): Promise<{}>;
   function showTransferManager (callbacks?: types.Callbacks<{}>): void | Promise<{}> {
@@ -1270,16 +1255,13 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<{}>(request);
     }
   }
-  this.showTransferManager = showTransferManager;
-
   /**
-   * Displays the IBM Aspera Connect "Transfer Monitor" window for the transfer.
+   * Displays the IBM Aspera Connect "Activity" window.
    *
    * *This method is asynchronous.*
    *
    * @function
-   * @name AW4.Connect#showTransferMonitor
-   * @param {String} transferId The ID(`uuid`) of the corresponding transfer.
+   * @name AW4.Connect#showTransferManager
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
@@ -1287,6 +1269,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    *   `{}`
    * @return {null}
    */
+  this.showTransferManager = showTransferManager;
+
   function showTransferMonitor (transferId: string, callbacks: types.Callbacks<{}>): void;
   function showTransferMonitor (transferId: string): Promise<{}>;
   function showTransferMonitor (transferId: string, callbacks?: types.Callbacks<{}>): void | Promise<{}> {
@@ -1303,6 +1287,21 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<{}>(request);
     }
   }
+  /**
+   * Displays the IBM Aspera Connect "Transfer Monitor" window for the transfer.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name AW4.Connect#showTransferMonitor
+   * @param {String} transferId The ID(`uuid`) of the corresponding transfer.
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
+   *
+   *   Object returned to success callback:
+   *   `{}`
+   * @return {null}
+   */
   this.showTransferMonitor = showTransferMonitor;
 
   /**
@@ -1472,21 +1471,6 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     return requestHandler.stopRequests();
   };
 
-  /**
-   * Terminate the transfer. Use {@link AW4.Connect#resumeTransfer} to resume.
-   *
-   * *This method is asynchronous.*
-   *
-   * @function
-   * @name AW4.Connect#stopTransfer
-   * @param {String} transferId The ID(`uuid`) of the transfer to stop.
-   * @param {Callbacks} callbacks `success` and `error` functions to receive
-   *   results.
-   *
-   *   Object returned to success callback:
-   *   `{}`
-   * @return {null}
-   */
   function stopTransfer (transferId: string, callbacks: types.Callbacks<{}>): void;
   function stopTransfer (transferId: string): Promise<{}>;
   function stopTransfer (transferId: string, callbacks?: types.Callbacks<{}>): Promise<{}> | void {
@@ -1503,29 +1487,23 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<{}>(request);
     }
   }
-  this.stopTransfer = stopTransfer;
-
   /**
-   * Test that Connect can open a TCP connection to `remote_host` over the given `ssh_port`.
+   * Terminate the transfer. Use {@link AW4.Connect#resumeTransfer} to resume.
    *
    * *This method is asynchronous.*
    *
    * @function
-   * @name AW4.Connect#testSshPorts
-   * @param {Object} options Test options.
+   * @name AW4.Connect#stopTransfer
+   * @param {String} transferId The ID(`uuid`) of the transfer to stop.
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
    *   Object returned to success callback:
    *   `{}`
-   *
-   * Options:
-   * * `remote_host` (String) - Domain name of the transfer server.
-   * * `ssh_port` (Number) - SSH port. Default: `33001`.
-   * * `timeout_sec` (Number) - Timeout value in seconds. Default: `3`.
-   *
    * @return {null}
    */
+  this.stopTransfer = stopTransfer;
+
   function testSshPorts (options: types.TestSshPortsOptions, callbacks: types.Callbacks<{}>): void;
   function testSshPorts (options: types.TestSshPortsOptions): Promise<{}>;
   function testSshPorts (options: types.TestSshPortsOptions, callbacks?: types.Callbacks<{}>): Promise<{}> | void {
@@ -1550,26 +1528,29 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       throw new Error('#testSshPorts options argument is either missing or incorrect.');
     }
   }
-  this.testSshPorts = testSshPorts;
-
   /**
-   * Get the IBM Aspera Connect version.
+   * Test that Connect can open a TCP connection to `remote_host` over the given `ssh_port`.
    *
    * *This method is asynchronous.*
    *
    * @function
-   * @name AW4.Connect#version
+   * @name AW4.Connect#testSshPorts
+   * @param {Object} options Test options.
+   * Options:
+   * * `remote_host` (String) - Domain name of the transfer server.
+   * * `ssh_port` (Number) - SSH port. Default: `33001`.
+   * * `timeout_sec` (Number) - Timeout value in seconds. Default: `3`.
    * @param {Callbacks} callbacks `success` and `error` functions to receive
    *   results.
    *
    *   Object returned to success callback:
-   *   ```
-   *   {
-   *     "version": "3.9.1.171801"
-   *   }
-   *   ```
+   *   `{}`
+   *
+   *
    * @return {null}
    */
+  this.testSshPorts = testSshPorts;
+
   function version (callbacks: types.Callbacks<types.VersionOutput>): void;
   function version (): Promise<types.VersionOutput>;
   function version (callbacks?: types.Callbacks<types.VersionOutput>): Promise<types.VersionOutput> | void {
@@ -1584,6 +1565,25 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return send<types.VersionOutput>(request);
     }
   }
+  /**
+   * Get the IBM Aspera Connect version and installation context.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name AW4.Connect#version
+   * @param {Callbacks} callbacks `success` and `error` functions to receive
+   *   results.
+   *
+   *   Object returned to success callback:
+   *   ```
+   *   {
+   *     "system_wide": false,
+   *     "version": "3.9.1.171801"
+   *   }
+   *   ```
+   * @return {null}
+   */
   this.version = version;
 
 } as any as ConnectConstructor;
