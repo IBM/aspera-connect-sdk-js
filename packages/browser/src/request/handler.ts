@@ -134,6 +134,7 @@ class RequestHandler implements types.RequestHandler {
         ConnectGlobals.connectVersion = parsedResponse.version;
       }
     } else if (response.status === 0) {
+      Logger.debug('Bad check version response.');
       return;
     }
 
