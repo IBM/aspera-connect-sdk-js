@@ -621,6 +621,11 @@ li {
         log("removeTransfer returned.", plugin.removeTransfer(transferId, gCallbacks));
     };
 
+    tests.getTransfer = function(transferId) {
+        log("Invoking getTransfer.", transferId);
+        log("getTransfer returned.", plugin.getTransfer(transferId, gCallbacks));
+    };
+
     tests.resumeAllTransfers = function() {
       var callback = function(result) {
         var i, transfers = result.transfers;
@@ -2492,6 +2497,8 @@ li {
                     value="modifyTransfer">Modify</button>
                 <button class="remove-transfer-button"
                     value="removeTransfer">Remove</button>
+                <button class="get-transfer-button"
+                    value="getTransfer">Get Info</button>
             </li>
         </ul>
     </div>
