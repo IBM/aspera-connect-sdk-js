@@ -334,7 +334,7 @@ class RequestHandler implements types.RequestHandler {
   async httpFallback <T> (api: 'version' | 'ping'): Promise<T | void> {
     let httpFallback = this._provider.getHttpStrategy();
     let endpoint = {
-      path: 'connect/info/' + api,
+      path: '/connect/info/' + api,
       method: 'GET'
     };
     let requestId = this._nextId++;
