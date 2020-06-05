@@ -1777,6 +1777,20 @@ export default ConnectClient;
  * @property {String} explorer_path The path opened in Explorer/Finder when user clicks
  *   'Open Containing Folder' in Connect's Activity window.
  * @property {String} end_time The time when the transfer was completed.
+ * @property {Object} file_counts A running aggregate count of files in the transfer session
+ *   that have already been processed with information about the number of files attempted,
+ *   completed, failed, and skipped. Note: "completed" includes the number of files
+ *   transferred or skipped.
+ *
+ *   Format:
+ *   ```
+ *   {
+ *     "attempted": 2,
+ *     "completed": 2,
+ *     "failed": 0,
+ *     "skipped": 1
+ *   }
+ *   ```
  * @property {Array} files A list of files that have been active in this
  *   transfer session. Note that files that have not been active yet in this session
  *   will not be reported (and you can assume bytes_written is 0).
@@ -1823,6 +1837,12 @@ export default ConnectClient;
  *       "elapsed_usec": 3000000,
  *       "explorer_path": "/Users/aspera/Downloads/connect_downloads/10MB.3",
  *       "end_time": "",
+ *       "file_counts": {
+ *           "attempted": 1,
+ *           "completed": 1,
+ *           "failed": 0,
+ *           "skipped": 1
+ *       },
  *       "files": [
  *          {
  *            "bytes_expected": 10485760,
