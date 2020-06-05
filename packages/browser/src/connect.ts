@@ -131,6 +131,10 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   let api = new ApiService(requestHandler);
 
   function addStandardSettings (body: types.TransferObject) {
+    if (AUTHORIZATION_KEY.length !== 0) {
+      body.authorization_key = AUTHORIZATION_KEY;
+    }
+
     if (Utils.isNullOrUndefinedOrEmpty(body.aspera_connect_settings)) {
       body.aspera_connect_settings = {};
     }
@@ -1467,10 +1471,6 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         aspera_connect_settings : settings
       }]
     };
-
-    if (AUTHORIZATION_KEY.length !== 0) {
-      transferSpecs.authorization_key = AUTHORIZATION_KEY;
-    }
 
     return this.startTransfers(transferSpecs, callbacks);
   }

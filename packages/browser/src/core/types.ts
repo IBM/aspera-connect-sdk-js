@@ -317,7 +317,6 @@ export interface TransferObject {
 }
 
 export interface TransferSpecs {
-  authorization_key?: string;
   transfer_specs: TransferObject[];
 }
 
