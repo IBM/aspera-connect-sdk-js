@@ -1442,24 +1442,47 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    *   This call fails if validation fails or the user rejects the transfer.
    *
    * Object returned to success callback:
-   * `{@link TransferInfo}`
+   * `{@link TransferSpecs}`
    *
    * @returns {Object|Error}
    */
   function startTransfer (
     transferSpec: types.TransferSpec,
     asperaConnectSettings: types.ConnectSpec,
-    callbacks: types.Callbacks<{}>
-  ): { request_id: string };
-  function startTransfer (
+    callbacks: types.Callbacks<types.StartTransferOutput>
+  ): { request_id: string } {
+    if (Utils.isNullOrUndefinedOrEmpty(transferSpec)) {
+      throw new Error('#startTransfer transferSpec is missing or invalid');
+    }
+
+    let settings = asperaConnectSettings || {};
+    let localCallbacks = callbacks || {};
+    let transferSpecs: types.TransferSpecs = {
+      transfer_specs : [{
+        transfer_spec : transferSpec,
+        aspera_connect_settings : settings
+      }]
+    };
+
+    return this.startTransfers(transferSpecs, localCallbacks);
+  }
+  this.startTransfer = startTransfer;
+
+  /**
+   * Initiates a single transfer. Call {@link AW4.Connect#getAllTransfers} to get transfer
+   * statistics, or register an event listener through {@link AW4.Connect#addEventListener}.
+   *
+   * @function
+   * @name AW4.Connect#startTransferPromise
+   * @param {TransferSpec} transferSpec Transfer parameters.
+   * @param {ConnectSpec} connectSpec Connect options
+   *
+   * @returns {Promise<TransferSpecs>}
+   */
+  function startTransferPromise (
     transferSpec: types.TransferSpec,
     asperaConnectSettings: types.ConnectSpec
-  ): Promise<{}>;
-  function startTransfer (
-    transferSpec: types.TransferSpec,
-    asperaConnectSettings: types.ConnectSpec,
-    callbacks?: types.Callbacks<{}>
-  ): { request_id: string } | Promise<{}> {
+  ): Promise<types.StartTransferOutput> {
     if (Utils.isNullOrUndefinedOrEmpty(transferSpec)) {
       throw new Error('#startTransfer transferSpec is missing or invalid');
     }
@@ -1472,16 +1495,16 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       }]
     };
 
-    return this.startTransfers(transferSpecs, callbacks);
+    return this.startTransfers(transferSpecs);
   }
-  this.startTransfer = startTransfer;
+  this.startTransferPromise = startTransferPromise;
 
-  function startTransfers (transferSpecs: types.TransferSpecs, callbacks: types.Callbacks<{}>): { request_id: string };
-  function startTransfers (transferSpecs: types.TransferSpecs): Promise<{}>;
+  function startTransfers (transferSpecs: types.TransferSpecs, callbacks: types.Callbacks<types.StartTransferOutput>): { request_id: string };
+  function startTransfers (transferSpecs: types.TransferSpecs): Promise<types.StartTransferOutput>;
   function startTransfers (
     transferSpecs: types.TransferSpecs,
-    callbacks?: types.Callbacks<{}>
-  ): { request_id: string } | Promise<{}> {
+    callbacks?: types.Callbacks<types.StartTransferOutput>
+  ): { request_id: string } | Promise<types.StartTransferOutput> {
     let requestId = Utils.generateUuid();
     const request =
       new Request()
@@ -1491,15 +1514,15 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setRequestId(requestId);
 
     if (callbacks) {
-      send<{ request_id: string }>(request, callbacks);
+      send<types.StartTransferOutput>(request, callbacks);
       return { request_id : requestId };
     } else {
-      return send<{ request_id: string }>(request);
+      return send<types.StartTransferOutput>(request);
     }
   }
   /**
    * Initiates one or more transfers (_currently only the first `transfer_spec`
-   * is used_). Call {@link AW4.Connect#getAllTransfers} to get transfer
+   * is used_). It's recommended to instead use {@link AW4.Connect#startTransfer}. Call {@link AW4.Connect#getAllTransfers} to get transfer
    * statistics, or register an event listener through {@link AW4.Connect#addEventListener}.
    *
    * *This method is asynchronous.*
@@ -1518,21 +1541,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    * @param {Object} transferSpecs Transfer parameters.
    *
    * Format:
-   * ```
-   * {
-   *   transfer_specs : [
-   *     {
-   *       transfer_spec : {@link TransferSpec},
-   *       aspera_connect_settings : {@link AW4.ConnectSpec}
-   *     },
-   *     {
-   *       transfer_spec : {@link TransferSpec},
-   *       aspera_connect_settings : {@link AW4.ConnectSpec}
-   *     },
-   *     ...
-   *   ]
-   * }
-   * ```
+   * See {@link TransferSpecs}
    * @param {Callbacks} callbacks `success` and `error` functions to receive results.
    *   This call is successful if Connect is able to start the
    *   transfer. Note that an error could still occur after the transfer starts,
@@ -1541,7 +1550,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    *   This call fails if validation fails or the user rejects the transfer.
    *
    * Object returned to success callback:
-   * `{}`
+   * {@link TransferSpecs}
    *
    * @returns {Object|Error}
    */
@@ -1868,6 +1877,24 @@ export default ConnectClient;
  *       "transport": "fasp",
  *       "uuid": "add433a8-c99b-4e3a-8fc0-4c7a24284ada",
  *     }
+ */
+
+/**
+ * The response returned to the {@link AW4.Connect#startTransfer} success callback.
+ *
+ * @typedef {Object} TransferSpecs
+ * @property {Array} transfer_specs An array that contains {@link TransferSpec} and
+ *   {@link ConnectSpec} objects.
+ *
+ * @example
+ * {
+ *  "transfer_specs": [
+ *     {
+ *        "transfer_spec": {@link TransferSpec},
+ *        "aspera_connect_settings": {@link ConnectSpec}
+ *     }
+ *   ]
+ * }
  */
 
 /**
