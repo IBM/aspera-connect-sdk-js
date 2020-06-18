@@ -15,6 +15,11 @@ class NativeHostStrategy extends BaseExtensionStrategy {
    */
   handleDisconnect = async (evt: any) => {
     Logger.log('Native host disconnected. Detail: ' + evt.detail);
+    /** Disconnect is expected if Connect is outdated */
+    if (this.connectStatus === STATUS.OUTDATED) {
+      return;
+    }
+
     if (evt && evt.detail) {
       let installIssueDetected = false;
       [
