@@ -87,9 +87,19 @@ class RequestHandler implements types.RequestHandler {
   changeConnectStatus = (newConnectStatus: string) => {
     /**
      * Make sure we check the Connect version before going to running. Happens
-     * during normal install sequence.
+     * during normal install sequence after initial timeout.
      */
     if (!this.versionChecked && newConnectStatus === STATUS.RUNNING) {
+      return this.checkVersion();
+    }
+
+    // Workaround for weird safari extension detector logic. We don't want to go to
+    // running from outdated unless it's from a version check. ASCN-2271.
+    if (
+      Utils.BROWSER.SAFARI &&
+      this.connectStatus === STATUS.OUTDATED &&
+      newConnectStatus === STATUS.RUNNING
+    ) {
       return this.checkVersion();
     }
 
@@ -134,7 +144,12 @@ class RequestHandler implements types.RequestHandler {
         ConnectGlobals.connectVersion = parsedResponse.version;
       }
     } else if (response.status === 0) {
-      Logger.debug('Bad check version response.');
+      Logger.debug('Bad check version response. Retrying...');
+      /** Keep trying to check version until connection to the server resumes */
+      this.versionChecked = false;
+      setTimeout(() => {
+        void this.checkVersion();
+      }, 500);
       return;
     }
 
@@ -164,6 +179,10 @@ class RequestHandler implements types.RequestHandler {
         let attemptNumber = 1;
         let check = () => {
           Logger.debug('Checking for Connect upgrade. Attempt ' + attemptNumber);
+          if (Utils.BROWSER.SAFARI) {
+            Logger.debug('Safari upgrade requires a page refresh. Extension context becomes invalidated.');
+          }
+
           attemptNumber++;
           if (this.connectStatus !== STATUS.RUNNING && this._handlerStatus !== STATUS.STOPPED) {
             let endpoint = {

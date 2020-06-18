@@ -84,6 +84,7 @@ class SafariAppStrategy extends BaseExtensionStrategy {
                   window.postMessage('show_safari_mitigate', '*');
                   resolve(false);
                 } else {
+                  /** Go to running here if Connect was installed during loop after initial timeout */
                   this.changeConnectStatus(STATUS.RUNNING);
                   resolve(true);
                 }
