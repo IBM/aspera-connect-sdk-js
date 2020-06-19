@@ -59,7 +59,8 @@ def bundle_installers(output_dir)
     fips_installer_src = "#{imports_dir}/dist/sdk"
 
     windows_fips_msi_name = nil
-    entries = Dir.glob("#{fips_installer_src}/IBMAsperaConnect-ML-FIPS-#{override_version}*.msi").sort
+    # TODO: This is a one-off for beta sdk. Revert to #{override_version} when fips builds are stable in 3.10.
+    entries = Dir.glob("#{fips_installer_src}/IBMAsperaConnect-ML-FIPS-*.msi").sort
     if entries.length >= 1
       windows_fips_msi = entries.last
       FileUtils.cp_r windows_fips_msi, bin_dir
@@ -80,7 +81,7 @@ def bundle_installers(output_dir)
       end
 
       windows_fips_oneclick_name = nil
-      entries = Dir.glob("#{fips_installer_src}/*AsperaConnectSetup-ML-FIPS-#{override_version}*.exe").sort
+      entries = Dir.glob("#{fips_installer_src}/*AsperaConnectSetup-ML-FIPS-*.exe").sort
       if entries.length >= 1
         windows_fips_oneclick = entries.last
         FileUtils.cp_r windows_fips_oneclick, bin_dir
