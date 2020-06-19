@@ -118,7 +118,11 @@ class ThreeStepBanner extends Component<Props, State> {
   render() {
     let howTo;
 
-    let title = (Utils.BROWSER.SAFARI && this.props.currentState === 'install') ? dict.get('installOnSafari') : dict.get('bannerTitle');
+    let title = dict.get('bannerTitle');
+    if ((Utils.isWindows() && this.props.isOutdated) || (Utils.BROWSER.SAFARI && this.props.currentState === 'install')) {
+      title = dict.get('restartBanner');
+    }
+
     if (this.props.majorVersion) {
       title = title.replace(/{.*}/, this.props.majorVersion);
     }

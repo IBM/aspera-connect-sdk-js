@@ -83,7 +83,10 @@ class TwoStepBanner extends Component<Props> {
   render() {
     let howTo;
 
-    let title = Utils.BROWSER.SAFARI ? dict.get('installOnSafari') : dict.get('bannerTitle');
+    let title = dict.get('bannerTitle');
+    if ((Utils.isWindows() && this.props.isOutdated) || Utils.BROWSER.SAFARI) {
+      title = dict.get('restartBanner');
+    }
 
     if (this.props.majorVersion) {
       title = title.replace(/{.*}/, this.props.majorVersion);

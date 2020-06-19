@@ -1,6 +1,6 @@
 export const Dictionary = {
   launching        : 'IBM Aspera Connect 시작 중...',
-  installOnSafari  : 'IBM Aspera Connect가 설치되면 브라우저를 다시 시작하십시오.',
+  restartBanner  : 'IBM Aspera Connect가 설치되면 브라우저를 다시 시작하십시오.',
   retryButton      : '재시도',
   retry            : 'Connect에 연결할 수 없음',
   running          : 'IBM Aspera Connect가 실행 중입니다!',

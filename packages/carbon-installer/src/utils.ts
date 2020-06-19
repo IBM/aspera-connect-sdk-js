@@ -71,6 +71,36 @@ function getQueryString () {
   return querystring;
 };
 
+// Returns os platform. Modified from ConnectInstaller.
+function getOs () {
+  let os;
+  if (/Win/.test(navigator.platform)) {
+    os = 'windows'
+  } else if (/Mac OS X 10[._]6/.test(navigator.userAgent)) {
+    os = 'macos';
+  } else if (/Mac/.test(navigator.platform)) {
+    os = 'macos';
+  } else if (/Linux x86_64/.test(navigator.platform)) {
+    os = 'linux';
+  } else if (/Linux/.test(navigator.platform)) {
+    os = 'linux';
+  }
+
+  return os;
+};
+
+export function isLinux() {
+  return getOs() === 'linux';
+}
+
+export function isMac() {
+  return getOs() === 'macos';
+}
+
+export function isWindows() {
+  return getOs() === 'windows';
+}
+
 export function getTroubleshootUrl () {
   let url = 'https://test-connect.asperasoft.com';
   let querystring = getQueryString();

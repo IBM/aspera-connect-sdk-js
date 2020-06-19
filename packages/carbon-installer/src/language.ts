@@ -2,7 +2,7 @@ import Dictionary from './constants';
 
 interface DictionaryKeys {
   launching        : string;
-  installOnSafari  : string;
+  restartBanner    : string;
   retryButton      : string;
   retry            : string;
   running          : string;
