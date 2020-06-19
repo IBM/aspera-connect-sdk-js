@@ -13,6 +13,18 @@ pipeline {
   environment {
     PATH = "$WORKSPACE/atc/mac-10.13-64/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
   }
+  parameters {
+    string(
+      name: 'OVERRIDE_INSTALLERS',
+      defaultValue: '',
+      description: 'Get installers from a different source location, /aspera/process/test/connect/3.10/archive'
+    )
+    string(
+      name: 'REV_NUMBER',
+      defaultValue: '',
+      description: 'Full version of installer to use when overriding (ex: 3.9.1.171801)'
+    )
+  }
   stages {
     stage('Copy Installers') {
       steps {
