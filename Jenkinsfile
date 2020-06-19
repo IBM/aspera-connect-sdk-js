@@ -18,7 +18,7 @@ pipeline {
       steps {
         copyArtifacts filter: 'BUILD/mac-10.11-64-release/bin/IBMAsperaConnect*.dmg', fingerprintArtifacts: true, flatten: true, projectName: 'apps-trunk-build-mac-10.11-64', target: 'imports/dist/sdk'
         copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-trunk-build-win-v140-32', target: 'imports/dist/sdk'
-        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect-FIPS*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup-FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-trunk-build-win-v140-32-fips', target: 'imports/dist/sdk'
+        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect*FIPS*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-trunk-build-win-v140-32-fips', target: 'imports/dist/sdk'
         copyArtifacts filter: 'installer/BUILD/linux-g2.12-64-release/ibm-aspera-connect*.tar.gz', fingerprintArtifacts: true, flatten: true, projectName: 'apps-trunk-build-linux-64', target: 'imports/dist/sdk'
         sh 'env | sort'
       }
