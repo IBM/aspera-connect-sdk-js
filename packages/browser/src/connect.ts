@@ -96,16 +96,23 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   let MAX_ACTIVITY_OUTSTANDING = options.maxActivityOutstanding || 2;
   let SDK_LOCATION = Utils.getFullURI(options.sdkLocation) || '//d3gcli72yxqn2z.cloudfront.net/connect/v4';
   let EXTENSION_REQUEST_TIMEOUT = options.extensionRequestTimeout;
-  // Expose the requested version to the install banner
-  if (MINIMUM_VERSION) {
-    ConnectGlobals.minVersion = MINIMUM_VERSION;
-  }
 
+  // Evaluate local storage overrides
   if (typeof(Storage) !== 'undefined') {
     let overrideMethod = Utils.getLocalStorage('aspera-connect-method');
     if (overrideMethod) {
       CONNECT_METHOD = overrideMethod;
     }
+
+    let overrideMinVersion = Utils.getLocalStorage('aspera-min-version');
+    if (overrideMinVersion) {
+      MINIMUM_VERSION = overrideMinVersion;
+    }
+  }
+
+  // Expose the requested version to the install banner
+  if (MINIMUM_VERSION) {
+    ConnectGlobals.minVersion = MINIMUM_VERSION;
   }
 
   let transferListeners: types.EventListener[] = [];
