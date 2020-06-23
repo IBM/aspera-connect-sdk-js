@@ -151,7 +151,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   }
 
   function connectReady () {
-    Logger.log('Connect API is ready.');
+    Logger.debug('Connect API is ready.');
     apiReady = true;
     initDragDrop();
   }
@@ -1407,11 +1407,11 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     /** Initialize request handler and launch Connect */
     requestHandler.init().then(
       () => {
-        Logger.log(`Initialization finished. Connect status: ${connectStatus}`);
+        Logger.debug(`Initialization finished. Connect status: ${connectStatus}`);
         if (connectStatus === STATUS.RUNNING) {
           connectReady();
         } else {
-          Logger.log('Connect API is not ready.');
+          Logger.debug('Connect API is not ready.');
         }
 
         initFinished = true;

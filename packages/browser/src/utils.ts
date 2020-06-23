@@ -178,7 +178,7 @@ export function checkVersionException (): boolean {
   if (prevContinuedSeconds !== undefined && prevContinuedSeconds !== null) {
     let currentTimeSeconds = Math.round(new Date().getTime() / 1000);
     if ((currentTimeSeconds - Number(prevContinuedSeconds)) < 60 * 24) {
-      Logger.log('User opted out of update');
+      Logger.debug('User opted out of update');
       return true;
     }
   }
@@ -261,7 +261,7 @@ export function launchConnect (userCallback?: (t: boolean) => any) {
   };
 
   let launchUri = getInitUrl();
-  Logger.log('Starting Connect session: ' + launchUri);
+  Logger.debug('Starting Connect session: ' + launchUri);
   if (BROWSER.CHROME || BROWSER.OPERA) {
     document.body.focus();
     document.body.onblur = function () {

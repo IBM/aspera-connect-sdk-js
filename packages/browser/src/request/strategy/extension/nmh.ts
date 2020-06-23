@@ -14,7 +14,7 @@ class NativeHostStrategy extends BaseExtensionStrategy {
    * Handles disconnect messages from the extension.
    */
   handleDisconnect = async (evt: any) => {
-    Logger.log('Native host disconnected. Detail: ' + evt.detail);
+    Logger.debug('Native host disconnected. Detail: ' + evt.detail);
     /** Disconnect is expected if Connect is outdated */
     if (this.connectStatus === STATUS.OUTDATED) {
       return;
@@ -189,7 +189,7 @@ class NativeHostStrategy extends BaseExtensionStrategy {
           if (evt.type === 'message' && typeof evt.data === 'object' && 'type' in evt.data
                 && evt.data.type === 'AsperaConnectCheckResponse') {
             window.removeEventListener('message', versionResponse);
-            Logger.log('Extension detected: ' + JSON.stringify(evt.data));
+            Logger.debug('Extension detected: ' + JSON.stringify(evt.data));
             this._extensionDetected = true;
             clearInterval(this._detectionRetry);
             resolve(true);

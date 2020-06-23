@@ -105,7 +105,7 @@ class SafariAppStrategy extends BaseExtensionStrategy {
         let versionResponse = (evt: any) => {
           if (evt.type === 'AsperaConnectCheckResponse' && 'detail' in evt && typeof evt.detail === 'object') {
             document.removeEventListener('AsperaConnectCheckResponse', versionResponse);
-            Logger.log('Got response from Connect: ' + JSON.stringify(evt.detail));
+            Logger.debug('Got response from Connect: ' + JSON.stringify(evt.detail));
             clearInterval(this.detectionRetry);
             this.extensionDetected = true;
             resolve(true);

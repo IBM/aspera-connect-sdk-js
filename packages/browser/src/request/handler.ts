@@ -376,7 +376,7 @@ class RequestHandler implements types.RequestHandler {
     }
 
     if (this.connectStatus !== STATUS.RUNNING && this.connectStatus !== STATUS.OUTDATED && this.connectStatus !== STATUS.EXTENSION_INSTALL) {
-      Logger.log(`Connect detection timed out after: ${this._options.connectLaunchWaitTimeoutMs}ms`);
+      Logger.debug(`Connect detection timed out after: ${this._options.connectLaunchWaitTimeoutMs}ms`);
       if (this._strategy.name === 'http' || this._strategy.name === 'safari' || this._strategy.name === 'npapi' || this._strategy.name === 'nmh') {
         this.changeConnectStatus(STATUS.FAILED);
       }
@@ -407,7 +407,7 @@ class RequestHandler implements types.RequestHandler {
 
     /** Connect is detected but outdated. */
     if (this.connectStatus === STATUS.OUTDATED) {
-      Logger.log('Connect detected but is outdated.');
+      Logger.debug('Connect detected but is outdated.');
       return;
     }
   }
@@ -438,7 +438,7 @@ class RequestHandler implements types.RequestHandler {
       return this.handleTimeout(timeout);
     }
 
-    Logger.log('Connect initialized. Checking version now.');
+    Logger.debug('Connect initialized. Checking version now.');
     /** Ensure Connect meets version requirements */
     await this.checkVersion();
   }

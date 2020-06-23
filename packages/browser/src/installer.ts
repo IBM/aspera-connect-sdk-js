@@ -455,7 +455,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     // @ts-ignore
     let extReqImpl: types.RequestStrategy = Utils.BROWSER.SAFARI_NO_NPAPI ? new SafariAppStrategy() : new NativeHostStrategy();
     if (!supportsExtensions()) {
-      Logger.log('This browser does not use extensions.');
+      Logger.debug('This browser does not use extensions.');
       return;
     }
 
@@ -503,7 +503,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       return 'https://chrome.google.com/webstore/detail/ibm-aspera-connect/kpoecbkildamnnchnlgoboipnblgikpn';
     }
 
-    Logger.log('This browser does not use extensions.');
+    Logger.debug('This browser does not use extensions.');
     return '';
   };
 
