@@ -112,29 +112,40 @@ class TwoStepBanner extends Component<Props> {
 
     Utils.sendResizeEvent();
 
+    // Don't show extension enable step during Safari upgrades (ASCN-2277)
+    const isSafariUpgrade = Utils.BROWSER.SAFARI && this.props.isOutdated;
+
     return (
       <div id='three-step' className={styles.banner}>
         <div className={styles.required}>{dict.get('required')}</div>
         <div className={styles.title}>{title}</div>
         <div id='step-one' className={styles.stepOne}>
           <Checkmark isVisible={this.shouldActivateCheckmark('one')}/>
-          <div className={styles.step}>
-            {Utils.EXTENSION ? (newText) : null}
-            <span className={Utils.EXTENSION ? styles.stepNewText : styles.stepText}>{dict.get('stepOne')}</span>
-          </div>
+          {
+            isSafariUpgrade
+              ? null
+              : <div className={styles.step}>
+                  {Utils.EXTENSION ? (newText) : null}
+                  <span className={Utils.EXTENSION ? styles.stepNewText : styles.stepText}>{dict.get('stepOne')}</span>
+                </div>
+          }
           <Pictogram step='one'/>
           {stepOneButton}
         </div>
-        <div id='step-two' className={styles.stepContainer}>
-          <Checkmark isVisible={this.shouldActivateCheckmark('two')}/>
-          <div className={styles.step}>
-            {Utils.BROWSER.SAFARI ? (newText) : null}
-            <span className={Utils.BROWSER.SAFARI ? styles.stepNewText : styles.stepText}>{dict.get('stepTwo')}</span>
-          </div>
-          <Pictogram step='two'/>
-          {stepTwoButton}
-          {howTo}
-        </div>
+        {
+          isSafariUpgrade
+            ? null
+            : <div id='step-two' className={styles.stepContainer}>
+                <Checkmark isVisible={this.shouldActivateCheckmark('two')}/>
+                <div className={styles.step}>
+                  {Utils.BROWSER.SAFARI ? (newText) : null}
+                  <span className={Utils.BROWSER.SAFARI ? styles.stepNewText : styles.stepText}>{dict.get('stepTwo')}</span>
+                </div>
+                <Pictogram step='two'/>
+                {stepTwoButton}
+                {howTo}
+              </div>
+        }
         <Footer isOutdated={this.props.isOutdated}/>
       </div>
     );

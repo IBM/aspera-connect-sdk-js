@@ -1,6 +1,7 @@
 export const Dictionary = {
   launching        : 'Iniciando IBM Aspera Connect...',
-  restartBanner  : 'Una vez que IBM Aspera Connect esté instalada, reinicie el navegador.',
+  restartBanner    : 'Una vez que IBM Aspera Connect esté instalada, reinicie el navegador.',
+  restartFooter    : 'Restart the browser once the upgrade is complete.',
   retryButton      : 'Reintentar',
   retry            : 'No se puede acceder a Connect',
   running          : 'IBM Aspera Connect se está ejecutando',

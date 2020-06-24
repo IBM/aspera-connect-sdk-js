@@ -1,6 +1,7 @@
 export const Dictionary = {
   launching        : 'IBM Aspera Connect wordt gestart ...',
-  restartBanner  : 'Start de browser opnieuw zodra IBM Aspera Connect geïnstalleerd is.',
+  restartBanner    : 'Start de browser opnieuw zodra IBM Aspera Connect geïnstalleerd is.',
+  restartFooter    : 'Restart the browser once the upgrade is complete.',
   retryButton      : 'Opnieuw proberen',
   retry            : 'Connect is niet bereikbaar',
   running          : 'IBM Aspera Connect is actief!',

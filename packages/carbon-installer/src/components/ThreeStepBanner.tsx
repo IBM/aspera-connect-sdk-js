@@ -146,6 +146,9 @@ class ThreeStepBanner extends Component<Props, State> {
 
     Utils.sendResizeEvent();
 
+    // Don't show extension enable step during Safari upgrades (ASCN-2277)
+    const isSafariUpgrade = Utils.BROWSER.SAFARI && this.props.isOutdated;
+
     return (
       <div id='three-step' className={styles.banner}>
         <div className={styles.required}>{dict.get('required')}</div>
@@ -165,16 +168,20 @@ class ThreeStepBanner extends Component<Props, State> {
           <Pictogram step='two'/>
           {stepTwoButton}
         </div>
-        <div id='step-three' className={styles.stepContainer}>
-          <Checkmark currentState={this.props.currentState} step='three'/>
-          <div className={styles.step}>
-            {Utils.BROWSER.SAFARI ? (newText) : null}
-            <span className={Utils.BROWSER.SAFARI ? styles.stepNewText : styles.stepText}>{dict.get('stepThree')}</span>
-          </div>
-          <Pictogram step='three'/>
-          {stepThreeButton}
-          {howTo}
-        </div>
+        {
+          isSafariUpgrade
+            ? null
+            : <div id='step-three' className={styles.stepContainer}>
+                <Checkmark currentState={this.props.currentState} step='three'/>
+                <div className={styles.step}>
+                  {Utils.BROWSER.SAFARI ? (newText) : null}
+                  <span className={Utils.BROWSER.SAFARI ? styles.stepNewText : styles.stepText}>{dict.get('stepThree')}</span>
+                </div>
+                <Pictogram step='three'/>
+                {stepThreeButton}
+                {howTo}
+              </div>
+        }
         <Footer isOutdated={this.props.isOutdated}/>
         {this.renderIndicator()}
       </div>
