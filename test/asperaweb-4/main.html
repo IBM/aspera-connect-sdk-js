@@ -649,7 +649,7 @@ li {
 
     tests.resumeTransfer = function(transferId) {
         log("Invoking resumeTransfer.", transferId);
-        log("resumeTransfer returned.", plugin.resumeTransfer(transferId, gCallbacks));
+        log("resumeTransfer returned.", plugin.resumeTransfer(transferId, null, gCallbacks));
     };
 
     tests.setDragDropTargets = function() {
