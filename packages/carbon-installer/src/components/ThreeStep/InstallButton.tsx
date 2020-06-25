@@ -15,11 +15,21 @@ export const InstallButton: FunctionComponent<Props> = ({ isActive = false, isOu
   let indicatorCallback = onClick;
 
   const handleClick = () => {
-    Utils.sendInstallAppEvent();
     indicatorCallback('install');
 
     if (isActive && setState && Utils.NO_EXTENSION) {
-      setState('extension_install', 4000);
+      let timeoutMs = 4000;
+      // Special timeout conditions for Safari (ASCN-2277)
+      if (Utils.BROWSER.SAFARI) {
+        if (isOutdated) {
+          // Don't transition since extension is already enabled
+          return;
+        }
+
+        timeoutMs = 30000;
+      }
+
+      setState('extension_install', timeoutMs);
     }
   };
 

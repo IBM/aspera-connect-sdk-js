@@ -13,7 +13,14 @@ export const Footer: FunctionComponent<Props> = ({ isOutdated }) => {
   let separator;
 
   if (Utils.BROWSER.SAFARI) {
-    restart = <div>{dict.get('tryRestarting')}</div>;
+    let message = dict.get('tryRestarting');
+    if (isOutdated) {
+      message = dict.get('restartFooter');
+    }
+
+    restart = <div>{message}</div>;
+  } else if (Utils.isWindows() && isOutdated) {
+    restart = <div>{dict.get('restartFooter')}</div>;
   }
 
   if (!isOutdated) {

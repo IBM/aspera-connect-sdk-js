@@ -3,6 +3,7 @@ import Dictionary from './constants';
 interface DictionaryKeys {
   launching        : string;
   restartBanner    : string;
+  restartFooter    : string;
   retryButton      : string;
   retry            : string;
   running          : string;

@@ -1,6 +1,7 @@
 export const Dictionary = {
   launching        : 'IBM Aspera Connect を起動しています...',
-  restartBanner  : 'IBM Aspera Connect がインストールされたら、ブラウザーを再始動してください。',
+  restartBanner    : 'IBM Aspera Connect がインストールされたら、ブラウザーを再始動してください。',
+  restartFooter    : 'Restart the browser once the upgrade is complete.',
   retryButton      : 'リトライ',
   retry            : 'Connect に到達できません',
   running          : 'IBM Aspera Connect は実行中です!',
