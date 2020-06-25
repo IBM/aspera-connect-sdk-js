@@ -48,6 +48,7 @@ def bundle_installers(output_dir)
     windows_msi_name = nil
     entries = Dir.glob("#{installer_src}/IBMAsperaConnect-ML-#{override_version}*.msi").sort
     if entries.length >= 1
+      entries -= Dir.glob("#{installer_src}/*FIPS*.msi").sort
       windows_msi = entries.last
       FileUtils.cp_r windows_msi, bin_dir
       windows_msi_name = File.basename(windows_msi)
@@ -73,6 +74,7 @@ def bundle_installers(output_dir)
       windows_oneclick_name = nil
       entries = Dir.glob("#{installer_src}/*AsperaConnectSetup-ML-#{override_version}*.exe").sort
       if entries.length >= 1
+        entries -= Dir.glob("#{installer_src}/*FIPS*.exe").sort
         windows_oneclick = entries.last
         FileUtils.cp_r windows_oneclick, bin_dir
         windows_oneclick_name = File.basename(windows_oneclick)
