@@ -390,7 +390,7 @@ class RequestHandler implements types.RequestHandler {
           if (response && Utils.versionLessThan(response.version, '3.9')) {
             return Promise.reject(new Error('Reason: Incompatible version of Connect detected. You must upgrade to 3.9+.'));
           } else if (response && !Utils.versionLessThan(response.version, '3.9')) {
-            return Promise.reject(new Error('Reason: Connect 3.9+ detected. Try removing existing Connect installation and re-installing.'));
+            return Promise.reject(new Error('Reason: Connect 3.9+ was detected and is responding to http requests, but not to extension requests. Check native message host registration.'));
           } else {
             return Promise.reject(new Error('Reason: Check that Connect 3.9+ is installed.'));
           }
