@@ -93,7 +93,8 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   connectOptions.sdkLocation = (Utils.isNullOrUndefinedOrEmpty(options.sdkLocation)) ? DEFAULT_SDK_LOCATION : Utils.getFullURI(options.sdkLocation) ;
   connectOptions.stylesheetLocation = Utils.getFullURI(options.stylesheetLocation);
   connectOptions.correlationId = options.correlationId;
-  connectOptions.style = 'carbon';
+  // Allow 'none' but default to 'carbon'
+  connectOptions.style = options.style === 'none' ? 'none' : 'carbon';
 
   if (typeof(Storage) !== 'undefined') {
     let overrideStyle = Utils.getLocalStorage('aspera-connect-install-style');
@@ -706,13 +707,18 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     };
 
     if (!iframe) {
-            // Set iframe styling
+      if (connectOptions.style === 'none') {
+        Logger.debug('style=none specified, will not load banner.');
+        return;
+      }
+
+      // Set iframe styling
       if (connectOptions.style === 'carbon') {
         addStyleString('.' + connectOptions.iframeId + '{width: 100%;max-width: 600px;height: 80px;margin: 0 auto;position: fixed;top: 0;right: 0;left: 0;z-index: 9999;box-shadow: 0 12px 24px 0 rgba(0, 0, 0, 0.1)}');
       } else if (connectOptions.style === 'blue') {
         addStyleString('.' + connectOptions.iframeId + '{position: absolute;width: 100%;height: 80px;margin: 0px;padding: 0px;border: none;outline: none;overflow: hidden;top: 0px;left: 0px;z-index: 999999999}');
       }
-            // Build and insert the iframe.
+      // Build and insert the iframe.
       iframe = document.createElement('iframe');
       iframe.id = connectOptions.iframeId;
       iframe.className = connectOptions.iframeId;
@@ -726,12 +732,12 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       }
 
       document.body.appendChild(iframe);
-            // Check for tight security policies
+      // Check for tight security policies
       if (!iframe.contentWindow!.postMessage) {
         return;
       }
 
-            // Set listener for messages from the iframe installer.
+      // Set listener for messages from the iframe installer.
       if (window.attachEvent) {
         window.attachEvent('onmessage', handleMessage);
       } else {
