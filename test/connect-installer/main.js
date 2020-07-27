@@ -1,7 +1,10 @@
 var initialize = function() {
     var CONNECT_INSTALLER =  "../../dist/v4";
-    var asperaWeb = new AW4.Connect({minVersion: "3.10.0", connectMethod: "extension"});
-    var asperaInstaller = new AW4.ConnectInstaller({sdkLocation: CONNECT_INSTALLER, style: "carbon", correlationId: 'test', useFips: true, oneClick: false});
+    let connectOptions = { minVersion: "3.10.0", connectMethod: "extension" };
+    var asperaWeb = new AW4.Connect(connectOptions);
+
+    let installerOptions = { sdkLocation: CONNECT_INSTALLER, style: "carbon", correlationId: 'test', useFips: true, oneClick: false };
+    var asperaInstaller = new AW4.ConnectInstaller(installerOptions);
     asperaInstaller.addEventListener((event) => {
       console.log(event);
     });
