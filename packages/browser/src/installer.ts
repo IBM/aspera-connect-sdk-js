@@ -38,7 +38,8 @@ import * as types from './core/types';
  *
  *   Format:
  *   `//domain/path/to/connect/sdk`
- * @param {"carbon"} [style="carbon"] Style of the Connect bar design.
+ * @param {"carbon"|"none"} [style="carbon"] Style of the Connect bar design. Specify "none" if you have
+ *   a custom Connect install experience.
  * @param {String} [stylesheetLocation] URL to a stylesheet. Needs to be served
  *   in the same level of security as the web page (HTTP/HTTPS).
  *
