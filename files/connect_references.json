@@ -58,11 +58,10 @@
                     "hreflang": "en",
                     "rel": "documentation"
                 },
-#WIN_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
+                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -130,11 +129,10 @@
                     "hreflang": "en",
                     "rel": "documentation"
                 },
-#WIN_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
+                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -195,11 +193,10 @@
                     "hreflang": "en",
                     "rel": "documentation"
                 },
-#WIN_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
+                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -260,11 +257,10 @@
                     "hreflang": "en",
                     "rel": "documentation"
                 },
-#WIN_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
+                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -312,11 +308,10 @@
                     "hreflang": "en",
                     "rel": "documentation"
                 },
-#MAC_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect for Mac Release Notes",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
+                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
                     "hreflang": "en",
                     "rel": "release-notes"
                 }
@@ -356,11 +351,10 @@
                     "hreflang": "en",
                     "rel": "documentation"
                 },
-#LINUX_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect for Linux Release Notes",
                     "type": "text/html",
-                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_659",
+                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
                     "hreflang": "en",
                     "rel": "release-notes"
                 }

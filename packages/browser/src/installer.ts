@@ -320,56 +320,21 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
      *     "navigator": {
      *         "platform": "Win32"
      *     },
-     *     "version": "3.6.0.105660",
+     *     "version": "3.10.0.105660",
      *     "id": "urn:uuid:589F9EE5-0489-4F73-9982-A612FAC70C4E",
      *     "updated": "2012-10-30T10:16:00+07:00",
      *     "links": [
      *         {
      *             "title": "Windows Installer",
      *             "type": "application/octet-stream",
-     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/bin/AsperaConnect-ML-3.6.0.105660.msi",
+     *             "href": "bin/AsperaConnect-ML-3.10.0.105660.msi",
      *             "hreflang": "en",
      *             "rel": "enclosure"
      *         },
      *         {
-     *             "title": "Aspera Connect PDF Documentation for Windows",
-     *             "type": "application/pdf",
-     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/zh-cn/pdf/Connect_3.6.0_Windows_User_Guide_SimplifiedChinese.pdf",
-     *             "hreflang": "zh-cn",
-     *             "rel": "documentation"
-     *         },
-     *         {
-     *             "title": "Aspera Connect PDF Documentation for Windows",
-     *             "type": "application/pdf",
-     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/ja-jp/pdf/Connect_3.6.0_Windows_User_Guide_Japanese.pdf",
-     *             "hreflang": "ja-jp",
-     *             "rel": "documentation"
-     *         },
-     *         {
-     *             "title": "Aspera Connect PDF Documentation for Windows",
-     *             "type": "application/pdf",
-     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/en/pdf/Connect_3.6.0_Windows_User_Guide_English.pdf",
-     *             "hreflang": "en",
-     *             "rel": "documentation"
-     *         },
-     *         {
-     *             "title": "Aspera Connect PDF Documentation for Windows",
-     *             "type": "application/pdf",
-     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/es/pdf/Connect_3.6.0_Windows_User_Guide_Spanish.pdf",
-     *             "hreflang": "es",
-     *             "rel": "documentation"
-     *         },
-     *         {
-     *             "title": "Aspera Connect PDF Documentation for Windows",
-     *             "type": "application/pdf",
-     *             "href": "//d3gcli72yxqn2z.cloudfront.net/connect/v4/docs/user/win/fr/pdf/Connect_3.6.0_Windows_User_Guide_French.pdf",
-     *             "hreflang": "fr",
-     *             "rel": "documentation"
-     *         },
-     *         {
      *             "title": "Aspera Connect Release Notes for Windows",
      *             "type": "text/html",
-     *             "href": "http://www.asperasoft.com/en/release_notes/default_1/release_notes_55",
+     *             "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.9.9/relnote/connect_relnotes.html",
      *             "hreflang": "en",
      *             "rel": "release-notes"
      *         }
