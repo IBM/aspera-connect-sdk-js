@@ -465,7 +465,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     } else if (Utils.BROWSER.EDGE_WITH_EXTENSION === true) {
       return 'ms-windows-store://pdp/?productid=9N6XL57H8BMG';
     } else if (Utils.BROWSER.EDGE_CHROMIUM === true) {
-      return 'https://chrome.google.com/webstore/detail/ibm-aspera-connect/kpoecbkildamnnchnlgoboipnblgikpn';
+      return 'https://microsoftedge.microsoft.com/addons/detail/ibm-aspera-connect/kbffkbiljjejklcpnfmoiaehplhcifki';
     } else if (Utils.BROWSER.CHROME === true) {
       return 'https://chrome.google.com/webstore/detail/ibm-aspera-connect/kpoecbkildamnnchnlgoboipnblgikpn';
     }
