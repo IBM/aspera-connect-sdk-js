@@ -99,6 +99,11 @@ def bundle_installers(output_dir)
 
       mac_oneclick_name = nil
       entries = Dir.glob("#{installer_src}/IBMAsperaConnectInstallerOneClick-#{override_version}*.dmg").sort
+      # Get latest Mac dmg from a different source directory
+      if ENV["OVERRIDE_MAC_INSTALLERS"]
+        entries = Dir.glob("#{ENV["OVERRIDE_MAC_INSTALLERS"]}/IBMAsperaConnectInstallerOneClick-*.dmg").sort
+      end
+
       if entries.length >= 1
         mac_oneclick = entries.last
         FileUtils.cp_r mac_oneclick, bin_dir
@@ -110,6 +115,11 @@ def bundle_installers(output_dir)
 
     mac_pkg_name = nil
     entries = Dir.glob("#{installer_src}/IBMAsperaConnectInstaller-#{override_version}*.dmg").sort
+    # Get latest Mac dmg from a different source directory
+    if ENV["OVERRIDE_MAC_INSTALLERS"]
+      entries = Dir.glob("#{ENV["OVERRIDE_MAC_INSTALLERS"]}/IBMAsperaConnectInstaller-*.dmg").sort
+    end
+
     if entries.length >= 1
       mac_pkg = entries.last
       FileUtils.cp_r mac_pkg, bin_dir
@@ -120,6 +130,11 @@ def bundle_installers(output_dir)
 
     linux64_targz_name = nil
     entries = Dir.glob("#{installer_src}/ibm-aspera-connect-#{override_version}*.tar.gz").sort
+    # Get latest Linux tar.gz from a different source directory
+    if ENV["OVERRIDE_LINUX_INSTALLERS"]
+      entries = Dir.glob("#{ENV["OVERRIDE_LINUX_INSTALLERS"]}/ibm-aspera-connect-*.tar.gz").sort
+    end
+
     if entries.length >= 1
       linux64_targz = entries.last
       FileUtils.cp_r linux64_targz, bin_dir

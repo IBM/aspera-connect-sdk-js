@@ -17,12 +17,22 @@ pipeline {
     string(
       name: 'OVERRIDE_INSTALLERS',
       defaultValue: '',
-      description: 'Get installers from a different source location, /aspera/process/test/connect/3.10/archive'
+      description: 'Get all installers from a different source location, /aspera/process/test/connect/3.10/archive'
     )
     string(
       name: 'OVERRIDE_WIN_INSTALLERS',
       defaultValue: '',
-      description: 'Get latest Windows installers from a different source location (i.e. Jenkins)'
+      description: 'Optional: Get latest Windows installers (non-fips) from a different source location (i.e. Jenkins)'
+    )
+    string(
+      name: 'OVERRIDE_MAC_INSTALLERS',
+      defaultValue: '',
+      description: 'Optional: Get latest Mac installers from a different source location (i.e. Jenkins)'
+    )
+    string(
+      name: 'OVERRIDE_LINUX_INSTALLERS',
+      defaultValue: '',
+      description: 'Optional: Get latest Linux installers from a different source location (i.e. Jenkins)'
     )
     string(
       name: 'REV_NUMBER',
