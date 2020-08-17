@@ -61,12 +61,8 @@ def bundle_installers(output_dir)
       raise "Expected 1 IBMAsperaConnect-ML-*.msi. To skip installers, export SKIP_INSTALLERS=1"
     end
 
-    # TODO: This is a one-off for beta sdk. Revert to #{installer_src} when fips builds are stable in 3.10.
-    fips_installer_src = "#{imports_dir}/dist/sdk"
-
     windows_fips_msi_name = nil
-    # TODO: This is a one-off for beta sdk. Revert to #{override_version} when fips builds are stable in 3.10.
-    entries = Dir.glob("#{fips_installer_src}/IBMAsperaConnect-ML-FIPS-*.msi").sort
+    entries = Dir.glob("#{installer_src}/IBMAsperaConnect-ML-FIPS-#{override_version}*.msi").sort
     if entries.length >= 1
       windows_fips_msi = entries.last
       FileUtils.cp_r windows_fips_msi, bin_dir
@@ -92,7 +88,7 @@ def bundle_installers(output_dir)
       end
 
       windows_fips_oneclick_name = nil
-      entries = Dir.glob("#{fips_installer_src}/*AsperaConnectSetup-ML-FIPS-*.exe").sort
+      entries = Dir.glob("#{installer_src}/*AsperaConnectSetup-ML-FIPS-#{override_version}*.exe").sort
       if entries.length >= 1
         windows_fips_oneclick = entries.last
         FileUtils.cp_r windows_fips_oneclick, bin_dir
