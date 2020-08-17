@@ -26,7 +26,6 @@ def bundle_banners(output_dir)
   localize_contents = localize_contents.gsub(/#LOCALE_JA_JP#/, File.read("#{localize_location}/localize-ja-JP.js"))
   localize_contents = localize_contents.gsub(/#LOCALE_ZH_CN#/, File.read("#{localize_location}/localize-zh-CN.js"))
   localize_contents = localize_contents.gsub(/#LOCALE_KO_KR#/, File.read("#{localize_location}/localize-ko-KR.js"))
-  localize_contents = localize_contents.gsub(/#LOCALE_NL_NL#/, File.read("#{localize_location}/localize-nl-NL.js"))
 
   # Build auto-topbar index.html and minify it
   topbar_location = "#{$scriptdir}/../packages/legacy-install/auto-topbar"

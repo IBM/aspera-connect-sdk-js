@@ -6,8 +6,7 @@
   "rules": {
     "semicolon": [true, "always"],
     "strict-type-predicates": false,
-    "no-empty": false,
-    "no-null-keyword": true
+    "no-empty": false
   },
   "rulesDirectory": []
 }

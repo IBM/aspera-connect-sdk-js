@@ -4,15 +4,14 @@ variables:
 stages:
   - build
   - test
-  - docs
-
+  
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - node_modules/
     - packages/browser/node_modules/
     - packages/carbon-installer/node_modules/
-
+    
 before_script:
   - npm install
   - npm --prefix packages/browser install
@@ -24,13 +23,12 @@ build:
   artifacts:
     paths:
       - packages/browser/build/
-      - packages/browser/docs/
     expire_in: 30 days
   script:
     - export SKIP_INSTALLERS=1
     - npm run build:browser
     - ls
-
+    
 test:carbon:
   stage: test
   image: ${BUILD_IMAGE}
@@ -42,7 +40,7 @@ test:lint:
   image: ${BUILD_IMAGE}
   script:
     - npm --prefix packages/browser run lint
-
+    
 test:karma:
   stage: test
   image: ${BUILD_IMAGE}
@@ -52,14 +50,3 @@ test:karma:
     - ls packages/browser/
     - ls packages/browser/build/
     - npm run test:browser
-
-pages:
-  stage: docs
-  image: ${BUILD_IMAGE}
-  before_script: []
-  cache:
-  script:
-  - cp -R packages/browser/docs/ public/
-  artifacts:
-    paths:
-    - public

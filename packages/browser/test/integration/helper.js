@@ -12,7 +12,6 @@ var wampCallback = {
   onClose: function(close) {console.log(close)}
 };
 
-// TODO: Find workaround for encrypted requests
 var decryptRequest = function(body) {
   byteArray = AW4.Utils.decrypt(body);
   decryptedRequest = AW4.crypt.aesjs.utils.utf8.fromBytes(byteArray);

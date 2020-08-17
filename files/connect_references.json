@@ -1,7 +1,7 @@
 {
     "title": "Aspera Connect - Latest Version",
     "id": "https://asperasoft.com/download/sw/connect/auto/connectversions.js",
-    "updated": "#TIMESTAMP#",
+    "updated": "2012-10-30T10:16:00+07:00",
     "entries": [
         {
             "title": "Aspera Connect for Windows",
@@ -14,7 +14,7 @@
             },
             "version": "#WIN_CONNECT_VERSION#",
             "id": "urn:uuid:589F9EE5-0489-4F73-9982-A612FAC70C4E",
-            "updated": "#TIMESTAMP#",
+            "updated": "2012-10-30T10:16:00+07:00",
             "links": [
                 {
                     "title": "Windows Vista Auto Installer",
@@ -31,20 +31,6 @@
                     "rel": "enclosure-one-click"
                 },
                 {
-                    "title": "Windows Vista Auto Installer",
-                    "type": "application/octet-stream",
-                    "href": "bin/#WIN_FIPS_INSTALLER#",
-                    "hreflang": "en",
-                    "rel": "enclosure-fips"
-                },
-                {
-                    "title": "Windows Vista Auto Installer",
-                    "type": "application/octet-stream",
-                    "href": "bin/#WIN_FIPS_ONE_CLICK_INSTALLER#",
-                    "hreflang": "en",
-                    "rel": "enclosure-one-click-fips"
-                },
-                {
                     "title": "Windows Installer",
                     "type": "application/octet-stream",
                     "href": "bin/#WIN_INSTALLER#",
@@ -58,10 +44,11 @@
                     "hreflang": "en",
                     "rel": "documentation"
                 },
+#WIN_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -85,7 +72,7 @@
             },
             "version": "#WIN_CONNECT_VERSION#",
             "id": "urn:uuid:A3820D20-083E-11E2-892E-0800200C9A66",
-            "updated": "#TIMESTAMP#",
+            "updated": "2012-10-30T10:16:00+07:00",
             "links": [
                 {
                     "title": "Windows Vista Auto Installer",
@@ -102,20 +89,6 @@
                     "rel": "enclosure-one-click"
                 },
                 {
-                    "title": "Windows Vista Auto Installer",
-                    "type": "application/octet-stream",
-                    "href": "bin/#WIN_FIPS_INSTALLER#",
-                    "hreflang": "en",
-                    "rel": "enclosure-fips"
-                },
-                {
-                    "title": "Windows Vista Auto Installer",
-                    "type": "application/octet-stream",
-                    "href": "bin/#WIN_FIPS_ONE_CLICK_INSTALLER#",
-                    "hreflang": "en",
-                    "rel": "enclosure-one-click-fips"
-                },
-                {
                     "title": "Windows Installer",
                     "type": "application/octet-stream",
                     "href": "bin/#WIN_INSTALLER#",
@@ -129,10 +102,11 @@
                     "hreflang": "en",
                     "rel": "documentation"
                 },
+#WIN_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -156,7 +130,7 @@
             },
             "version": "#WIN_CONNECT_VERSION#",
             "id": "urn:uuid:589F9EE5-0489-4F73-9982-A612FAC70C4E",
-            "updated": "#TIMESTAMP#",
+            "updated": "2012-10-30T10:16:00+07:00",
             "links": [
                 {
                     "title": "Windows Installer",
@@ -173,30 +147,17 @@
                     "rel": "enclosure-one-click"
                 },
                 {
-                    "title": "Windows Installer",
-                    "type": "application/octet-stream",
-                    "href": "bin/#WIN_FIPS_INSTALLER#",
-                    "hreflang": "en",
-                    "rel": "enclosure-fips"
-                },
-                {
-                    "title": "Windows Installer",
-                    "type": "application/octet-stream",
-                    "href": "bin/#WIN_FIPS_ONE_CLICK_INSTALLER#",
-                    "hreflang": "en",
-                    "rel": "enclosure-one-click-fips"
-                },
-                {
                     "title": "Aspera Connect HTML Documentation for Windows",
                     "type": "text/html",
                     "href": #WIN_DOCS_HTML_ENTRIES#,
                     "hreflang": "en",
                     "rel": "documentation"
                 },
+#WIN_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -220,7 +181,7 @@
             },
             "version": "#WIN_CONNECT_VERSION#",
             "id": "urn:uuid:55425020-083E-11E2-892E-0800200C9A66",
-            "updated": "#TIMESTAMP#",
+            "updated": "2012-10-30T10:16:00+07:00",
             "links": [
                 {
                     "title": "Windows Installer",
@@ -237,30 +198,17 @@
                     "rel": "enclosure-one-click"
                 },
                 {
-                    "title": "Windows Installer",
-                    "type": "application/octet-stream",
-                    "href": "bin/#WIN_FIPS_INSTALLER#",
-                    "hreflang": "en",
-                    "rel": "enclosure-fips"
-                },
-                {
-                    "title": "Windows Installer",
-                    "type": "application/octet-stream",
-                    "href": "bin/#WIN_FIPS_ONE_CLICK_INSTALLER#",
-                    "hreflang": "en",
-                    "rel": "enclosure-one-click-fips"
-                },
-                {
                     "title": "Aspera Connect HTML Documentation for Windows",
                     "type": "text/html",
                     "href": #WIN_DOCS_HTML_ENTRIES#,
                     "hreflang": "en",
                     "rel": "documentation"
                 },
+#WIN_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -285,7 +233,7 @@
             },
             "version": "#MAC_CONNECT_VERSION#",
             "id": "urn:uuid:D8629AD2-6898-4811-A46F-2AF386531BFF",
-            "updated": "#TIMESTAMP#",
+            "updated": "2012-10-30T10:16:00+07:00",
             "links": [
                 {
                     "title": "Mac Intel Installer",
@@ -308,10 +256,11 @@
                     "hreflang": "en",
                     "rel": "documentation"
                 },
+#MAC_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect for Mac Release Notes",
                     "type": "text/html",
-                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
                     "hreflang": "en",
                     "rel": "release-notes"
                 }
@@ -328,7 +277,7 @@
             },
             "version": "#LINUX64_CONNECT_VERSION#",
             "id": "urn:uuid:97F94DF0-22B1-11E2-81C1-0800200C9A66",
-            "updated": "#TIMESTAMP#",
+            "updated": "2012-10-30T10:16:00+07:00",
             "links": [
                 {
                     "title": "Linux 64-bit Installer",
@@ -338,23 +287,17 @@
                     "rel": "enclosure"
                 },
                 {
-                    "title": "Linux 64-bit Installer",
-                    "type": "application/octet-stream",
-                    "href": "bin/#LINUX64_CONNECT_INSTALLER#",
-                    "hreflang": "en",
-                    "rel": "enclosure-one-click"
-                },
-                {
                     "title": "Aspera Connect for Linux HTML Documentation",
                     "type": "text/html",
                     "href": #LINUX_DOCS_HTML_ENTRIES#,
                     "hreflang": "en",
                     "rel": "documentation"
                 },
+#LINUX_DOCS_PDF_ENTRIES#
                 {
                     "title": "Aspera Connect for Linux Release Notes",
                     "type": "text/html",
-                    "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.10.0/relnote/connect_relnotes.html",
+                    "href": "https://downloads.asperasoft.com/en/release_notes/default_1/release_notes_635",
                     "hreflang": "en",
                     "rel": "release-notes"
                 }

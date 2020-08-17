@@ -108,7 +108,6 @@ var testRemoveEventListener = function() {
   
   afterEach(function() {
     this.listener.restore();
-    this.asperaWeb.removeEventListener();
   });
   
   it('should remove all event listeners if no type given', function() {
