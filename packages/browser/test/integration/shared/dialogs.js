@@ -4,10 +4,10 @@ var testShowAbout = function() {
     if (this.useExtensions) {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/about');
     } else {
-      expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/windows/about');
+      expect(this.server.lastRequest.url).to.equal('http://127.0.0.1:33003/v5/connect/windows/about');
     }
   });
-  
+
   it('should use method GET', function() {
     this.asperaWeb.showAbout(callback);
     if (this.useExtensions) {
@@ -16,53 +16,56 @@ var testShowAbout = function() {
       expect(this.server.lastRequest.method).to.equal('GET');
     }
   });
-  
+
   it('should call success callback when request succeeds', function() {
     this.asperaWeb.showAbout(callback);
     expect(callback.success.callCount).to.equal(1);
   });
-  
-  it('should call error callback when request fails', function() {
+
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
-    this.server.respondWith('GET', /v6\/connect\/windows\/about/, [500, { 'Content-Type': 'application/json' }, '{}']);
+    this.server.respondWith('GET', /v5\/connect\/windows\/about/, [500, { 'Content-Type': 'application/json' }, '{}']);
     this.asperaWeb.showAbout(callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 
 var testShowAboutExtensions = function() {
   it('should call /v6/connect/windows/about', function(done) {
     this.asperaWeb.showAbout(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/about');
       done();
     }, 50);
   });
-  
+
   it('should use method GET', function(done) {
     this.asperaWeb.showAbout(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().method).to.equal('GET');
       done();
     }, 50);
   });
-  
+
   it('should call success callback when request succeeds', function(done) {
     this.asperaWeb.showAbout(callback);
-    
+
     setTimeout(() => {
       expect(callback.success.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/about/, [500, { 'Content-Type': 'application/json' }, '{}']);
     this.asperaWeb.showAbout(callback);
-    
+
     setTimeout(() => {
       expect(callback.error.callCount).to.equal(1);
       done();
@@ -76,10 +79,10 @@ var testShowDirectory = function() {
     if (this.useExtensions) {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/finder/123456');
     } else {
-      expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/windows/finder/123456');
+      expect(this.server.lastRequest.url).to.equal('http://127.0.0.1:33003/v5/connect/windows/finder/123456');
     }
   });
-  
+
   it('should use method GET', function() {
     this.asperaWeb.showDirectory('123456', callback);
     if (this.useExtensions) {
@@ -88,55 +91,58 @@ var testShowDirectory = function() {
       expect(this.server.lastRequest.method).to.equal('GET');
     }
   });
-    
+
   it('should call success callback when request succeeds', function() {
     this.asperaWeb.showDirectory('123456', callback);
     expect(callback.success.callCount).to.equal(1);
   });
-   
-  it('should call error callback when request fails', function() {
+
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
-    this.server.respondWith('GET', /v6\/connect\/windows\/finder\/123456/, [500, { 'Content-Type': 'application/json' }, '{}']);
-    
+    this.server.respondWith('GET', /v5\/connect\/windows\/finder\/123456/, [500, { 'Content-Type': 'application/json' }, '{}']);
+
     this.asperaWeb.showDirectory('123456', callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 
 var testShowDirectoryExtensions = function() {
   it('should call /connect/windows/finder/:id', function(done) {
     this.asperaWeb.showDirectory('123456', callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/finder/123456');
       done();
     }, 50);
   });
-  
+
   it('should use method GET', function(done) {
     this.asperaWeb.showDirectory('123456', callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().method).to.equal('GET');
       done();
     }, 50);
   });
-    
+
   it('should call success callback when request succeeds', function(done) {
     this.asperaWeb.showDirectory('123456', callback);
-    
+
     setTimeout(() => {
       expect(callback.success.callCount).to.equal(1);
       done();
     }, 50);
   });
-   
+
   it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/finder\/123456/, [500, { 'Content-Type': 'application/json' }, '{}']);
-    
+
     this.asperaWeb.showDirectory('123456', callback);
-    
+
     setTimeout(() => {
       expect(callback.error.callCount).to.equal(1);
       done();
@@ -150,10 +156,10 @@ var testShowPreferences = function() {
     if (this.useExtensions) {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/preferences');
     } else {
-      expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/windows/preferences');
+      expect(this.server.lastRequest.url).to.equal('http://127.0.0.1:33003/v5/connect/windows/preferences');
     }
   });
-  
+
   it('should use method GET', function() {
     this.asperaWeb.showPreferences( callback);
     if (this.useExtensions) {
@@ -162,55 +168,58 @@ var testShowPreferences = function() {
       expect(this.server.lastRequest.method).to.equal('GET');
     }
   });
-  
+
   it('should call success callback when request succeeds', function() {
     this.asperaWeb.showPreferences(callback);
     expect(callback.success.callCount).to.equal(1);
   });
-  
-  it('should call error callback when request fails', function() {
+
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
-    this.server.respondWith('GET', /v6\/connect\/windows\/preferences/, [500, { 'Content-Type': 'application/json' }, '{}']);
-    
+    this.server.respondWith('GET', /v5\/connect\/windows\/preferences/, [500, { 'Content-Type': 'application/json' }, '{}']);
+
     this.asperaWeb.showPreferences(callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 
 var testShowPreferencesExtensions = function() {
   it('should call /connect/windows/preferences', function(done) {
     this.asperaWeb.showPreferences(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/preferences');
       done();
     }, 50);
   });
-  
+
   xit('should use method GET', function(done) {
     this.asperaWeb.showPreferences(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().method).to.equal('GET');
       done();
     }, 50);
   });
-  
+
   it('should call success callback when request succeeds', function(done) {
     this.asperaWeb.showPreferences(callback);
-    
+
     setTimeout(() => {
       expect(callback.success.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/preferences/, [500, { 'Content-Type': 'application/json' }, '{}']);
-    
+
     this.asperaWeb.showPreferences(callback);
-    
+
     setTimeout(() => {
       expect(callback.error.callCount).to.equal(1);
       done();
@@ -227,7 +236,7 @@ var testShowSaveFileDialog = function() {
       expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/windows/select-save-file-dialog/');
     }
   });
-  
+
   it('should use method POST', function() {
     this.asperaWeb.showSaveFileDialog(callback);
     if (this.useExtensions) {
@@ -236,20 +245,20 @@ var testShowSaveFileDialog = function() {
       expect(this.server.lastRequest.method).to.equal('POST');
     }
   });
-  
+
   it('should call success callback when request succeeds', function() {
     this.asperaWeb.showSaveFileDialog(callback);
     expect(callback.success.callCount).to.equal(1);
   });
-  
+
   it('should call error callback when request fails', function() {
     extensionResponse(500, '{}');
     this.server.respondWith('POST', /v6\/connect\/windows\/select-save-file-dialog/, [500, { 'Content-Type': 'application/json' }, '{}']);
-    
+
     this.asperaWeb.showSaveFileDialog(callback);
     expect(callback.error.callCount).to.equal(1);
   });
-  
+
   it('should include title', function() {
     var options = {
       'title':'wow-what-a-title'
@@ -261,7 +270,7 @@ var testShowSaveFileDialog = function() {
       expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"title":"wow-what-a-title"/);
     }
   });
-  
+
   it('should include suggestedName', function() {
     var options = {
       'suggestedName':'save.txt'
@@ -278,61 +287,61 @@ var testShowSaveFileDialog = function() {
 var testShowSaveFileDialogExtensions = function() {
   it('should call /connect/windows/select-save-file-dialog when no options given', function(done) {
     this.asperaWeb.showSaveFileDialog(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/select-save-file-dialog/');
       done();
     }, 50);
   });
-  
+
   it('should use method POST', function(done) {
     this.asperaWeb.showSaveFileDialog(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().method).to.equal('POST');
       done();
     }, 50);
   });
-  
+
   it('should call success callback when request succeeds', function(done) {
     this.asperaWeb.showSaveFileDialog(callback);
-    
+
     setTimeout(() => {
       expect(callback.success.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('POST', /v6\/connect\/windows\/select-save-file-dialog/, [500, { 'Content-Type': 'application/json' }, '{}']);
-    
+
     this.asperaWeb.showSaveFileDialog(callback);
-    
+
     setTimeout(() => {
       expect(callback.error.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should include title', function(done) {
     var options = {
       'title':'wow-what-a-title'
     };
     this.asperaWeb.showSaveFileDialog(callback, options);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().body).to.match(/"title":"wow-what-a-title"/);
       done();
     }, 50);
   });
-  
+
   it('should include suggestedName', function(done) {
     var options = {
       'suggestedName':'save.txt'
     };
     this.asperaWeb.showSaveFileDialog(callback, options);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().body).to.match(/"suggestedName":"save.txt"/);
       done();
@@ -349,7 +358,7 @@ var testShowSelectFileDialog = function() {
       expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/windows/select-open-file-dialog/');
     }
   });
-  
+
   it('should use method POST', function() {
     this.asperaWeb.showSelectFileDialog(callback);
     if (this.useExtensions) {
@@ -358,20 +367,20 @@ var testShowSelectFileDialog = function() {
       expect(this.server.lastRequest.method).to.equal('POST');
     }
   });
-  
+
   it('should call success callback when request succeeds', function() {
     this.asperaWeb.showSelectFileDialog(callback);
     expect(callback.success.callCount).to.equal(1);
   });
-  
+
   it('should call error callback when request fails', function() {
     extensionResponse(500, '{}');
     this.server.respondWith('POST', /v6\/connect\/windows\/select-open-file-dialog/, [500, { "Content-Type": "application/json" }, '{}']);
-    
+
     this.asperaWeb.showSelectFileDialog(callback);
     expect(callback.error.callCount).to.equal(1);
   });
-  
+
   it('should include title', function() {
     var options = {
       'title':'wow-what-a-title'
@@ -383,7 +392,7 @@ var testShowSelectFileDialog = function() {
       expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"title":"wow-what-a-title"/);
     }
   });
-  
+
   it('should include allowMultipleSelection = true as default', function() {
     this.asperaWeb.showSelectFileDialog(callback);
     if (this.useExtensions) {
@@ -392,7 +401,7 @@ var testShowSelectFileDialog = function() {
       expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"allowMultipleSelection":true/);
     }
   });
-  
+
   it('should include allowMultipleSelection', function() {
     var options = {
       'allowMultipleSelection':false
@@ -409,70 +418,70 @@ var testShowSelectFileDialog = function() {
 var testShowSelectFileDialogExtensions = function() {
   it('should call /connect/windows/select-open-file-dialog when no options given', function(done) {
     this.asperaWeb.showSelectFileDialog(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/select-open-file-dialog/');
       done();
     }, 50);
   });
-  
+
   it('should use method POST', function(done) {
     this.asperaWeb.showSelectFileDialog(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().method).to.equal('POST');
       done();
     }, 50);
   });
-  
+
   it('should call success callback when request succeeds', function(done) {
     this.asperaWeb.showSelectFileDialog(callback);
-    
+
     setTimeout(() => {
       expect(callback.success.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('POST', /v6\/connect\/windows\/select-open-file-dialog/, [500, { "Content-Type": "application/json" }, '{}']);
-    
+
     this.asperaWeb.showSelectFileDialog(callback);
-    
+
     setTimeout(() => {
       expect(callback.error.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should include title', function(done) {
     var options = {
       'title':'wow-what-a-title'
     };
     this.asperaWeb.showSelectFileDialog(callback, options);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().body).to.match(/"title":"wow-what-a-title"/);
       done();
     }, 50);
   });
-  
+
   it('should include allowMultipleSelection = true as default', function(done) {
     this.asperaWeb.showSelectFileDialog(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().body).to.match(/"allowMultipleSelection":true/);
       done();
     }, 50);
   });
-  
+
   it('should include allowMultipleSelection', function(done) {
     var options = {
       'allowMultipleSelection':false
     };
     this.asperaWeb.showSelectFileDialog(callback, options);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().body).to.match(/"allowMultipleSelection":false/);
       done();
@@ -489,7 +498,7 @@ var testShowSelectFolderDialog = function() {
       expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/windows/select-open-folder-dialog/');
     }
   });
-  
+
   it('should use method POST', function() {
     this.asperaWeb.showSelectFolderDialog(callback);
     if (this.useExtensions) {
@@ -498,20 +507,20 @@ var testShowSelectFolderDialog = function() {
       expect(this.server.lastRequest.method).to.equal('POST');
     }
   });
-  
+
   it('should call success callback when request succeeds', function() {
     this.asperaWeb.showSelectFolderDialog(callback);
     expect(callback.success.callCount).to.equal(1);
   });
-  
+
   it('should call error callback when request fails', function() {
     extensionResponse(500, '{}');
     this.server.respondWith('POST', /v6\/connect\/windows\/select-open-folder-dialog/, [500, { "Content-Type": "application/json" }, '{}']);
-    
+
     this.asperaWeb.showSelectFolderDialog(callback);
     expect(callback.error.callCount).to.equal(1);
   });
-  
+
   it('should include title', function() {
     var options = {
       'title':'wow-what-a-title'
@@ -523,7 +532,7 @@ var testShowSelectFolderDialog = function() {
       expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"title":"wow-what-a-title"/);
     }
   });
-  
+
   it('should include allowMultipleSelection=true as default', function() {
     this.asperaWeb.showSelectFolderDialog(callback);
     if (this.useExtensions) {
@@ -532,7 +541,7 @@ var testShowSelectFolderDialog = function() {
       expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"allowMultipleSelection":true/);
     }
   });
-  
+
   it('should include allowMultipleSelection', function() {
     var options = {
       'allowMultipleSelection':false
@@ -549,58 +558,58 @@ var testShowSelectFolderDialog = function() {
 var testShowSelectFolderDialogExtensions = function() {
   it('should call /connect/windows/select-open-folder-dialog when no options given', function(done) {
     this.asperaWeb.showSelectFolderDialog(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/select-open-folder-dialog/');
       done();
     }, 50);
   });
-  
+
   it('should use method POST', function(done) {
     this.asperaWeb.showSelectFolderDialog(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().method).to.equal('POST');
       done();
     }, 50);
   });
-  
+
   it('should call success callback when request succeeds', function(done) {
     this.asperaWeb.showSelectFolderDialog(callback);
-    
+
     setTimeout(() => {
       expect(callback.success.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('POST', /v6\/connect\/windows\/select-open-folder-dialog/, [500, { "Content-Type": "application/json" }, '{}']);
-    
+
     this.asperaWeb.showSelectFolderDialog(callback);
-    
+
     setTimeout(() => {
       expect(callback.error.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should include title', function(done) {
     var options = {
       'title':'wow-what-a-title'
     };
     this.asperaWeb.showSelectFolderDialog(callback, options);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().body).to.match(/"title":"wow-what-a-title"/);
       done();
     }, 50);
   });
-  
+
   it('should include allowMultipleSelection=true as default', function(done) {
     this.asperaWeb.showSelectFolderDialog(callback);
-    
+
     setTimeout(() => {
       expect(callback.success.callCount).to.equal(1);
       done();
@@ -611,13 +620,13 @@ var testShowSelectFolderDialogExtensions = function() {
       expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"allowMultipleSelection":true/);
     }
   });
-  
+
   it('should include allowMultipleSelection', function(done) {
     var options = {
       'allowMultipleSelection':false
     };
     this.asperaWeb.showSelectFolderDialog(callback, options);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().body).to.match(/"allowMultipleSelection":false/);
       done();
@@ -626,15 +635,15 @@ var testShowSelectFolderDialogExtensions = function() {
 };
 
 var testShowTransferManager = function() {
-  it('should call /v6/connect/windows/transfer-manager', function() {
+  it('should call /v5/connect/windows/transfer-manager', function() {
     this.asperaWeb.showTransferManager(callback);
     if (this.useExtensions) {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/transfer-manager');
     } else {
-      expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/windows/transfer-manager');
+      expect(this.server.lastRequest.url).to.equal('http://127.0.0.1:33003/v5/connect/windows/transfer-manager');
     }
   });
-  
+
   it('should use method GET', function() {
     this.asperaWeb.showTransferManager(callback);
     if (this.useExtensions) {
@@ -643,55 +652,58 @@ var testShowTransferManager = function() {
       expect(this.server.lastRequest.method).to.equal('GET');
     }
   });
-  
+
   it('should call success callback when request succeeds', function() {
     this.asperaWeb.showTransferManager(callback);
     expect(callback.success.callCount).to.equal(1);
   });
-  
-  it('should call error callback when request fails', function() {
+
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
-    this.server.respondWith('GET', /v6\/connect\/windows\/transfer-manager/, [500, { "Content-Type": "application/json" }, '{}']);
-    
+    this.server.respondWith('GET', /v5\/connect\/windows\/transfer-manager/, [500, { "Content-Type": "application/json" }, '{}']);
+
     this.asperaWeb.showTransferManager(callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 
 var testShowTransferManagerExtensions = function() {
   it('should call /v6/connect/windows/transfer-manager', function(done) {
     this.asperaWeb.showTransferManager(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/transfer-manager');
       done();
     }, 50);
   });
-  
+
   it('should use method GET', function(done) {
     this.asperaWeb.showTransferManager(callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().method).to.equal('GET');
       done();
     }, 50);
   });
-  
+
   it('should call success callback when request succeeds', function(done) {
     this.asperaWeb.showTransferManager(callback);
-    
+
     setTimeout(() => {
       expect(callback.success.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/transfer-manager/, [500, { "Content-Type": "application/json" }, '{}']);
-    
+
     this.asperaWeb.showTransferManager(callback);
-    
+
     setTimeout(() => {
       expect(callback.error.callCount).to.equal(1);
       done();
@@ -705,10 +717,10 @@ var testShowTransferMonitor = function() {
     if (this.useExtensions) {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/transfer-monitor/123456');
     } else {
-      expect(this.server.lastRequest.url).to.equal('https://local.connectme.us:43003/v6/connect/windows/transfer-monitor/123456');
+      expect(this.server.lastRequest.url).to.equal('http://127.0.0.1:33003/v5/connect/windows/transfer-monitor/123456');
     }
   });
-  
+
   it('should use method GET', function() {
     this.asperaWeb.showTransferMonitor('123456', callback);
     if (this.useExtensions) {
@@ -717,55 +729,58 @@ var testShowTransferMonitor = function() {
       expect(this.server.lastRequest.method).to.equal('GET');
     }
   });
-  
+
   it('should call success callback when request succeeds', function() {
     this.asperaWeb.showTransferMonitor('123456', callback);
     expect(callback.success.callCount).to.equal(1);
   });
-  
-  it('should call error callback when request fails', function() {
+
+  it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
-    this.server.respondWith('GET', /v6\/connect\/windows\/transfer-monitor\/123456/, [500, { "Content-Type": "application/json" }, '{}']);
-    
+    this.server.respondWith('GET', /v5\/connect\/windows\/transfer-monitor\/123456/, [500, { "Content-Type": "application/json" }, '{}']);
+
     this.asperaWeb.showTransferMonitor('123456', callback);
-    expect(callback.error.callCount).to.equal(1);
+    setTimeout(() => {
+      expect(callback.error.callCount).to.equal(1);
+      done();
+    }, 50);
   });
 };
 
 var testShowTransferMonitorExtensions = function() {
   it('should call /connect/windows/transfer-manager/:id', function(done) {
     this.asperaWeb.showTransferMonitor('123456', callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().uri_reference).to.equal('/connect/windows/transfer-monitor/123456');
       done();
     }, 50);
   });
-  
+
   it('should use method GET', function(done) {
     this.asperaWeb.showTransferMonitor('123456', callback);
-    
+
     setTimeout(() => {
       expect(extensionRequests.last().method).to.equal('GET');
       done();
     }, 50);
   });
-  
+
   it('should call success callback when request succeeds', function(done) {
     this.asperaWeb.showTransferMonitor('123456', callback);
-    
+
     setTimeout(() => {
       expect(callback.success.callCount).to.equal(1);
       done();
     }, 50);
   });
-  
+
   it('should call error callback when request fails', function(done) {
     extensionResponse(500, '{}');
     this.server.respondWith('GET', /v6\/connect\/windows\/transfer-monitor\/123456/, [500, { "Content-Type": "application/json" }, '{}']);
-    
+
     this.asperaWeb.showTransferMonitor('123456', callback);
-    
+
     setTimeout(() => {
       expect(callback.error.callCount).to.equal(1);
       done();

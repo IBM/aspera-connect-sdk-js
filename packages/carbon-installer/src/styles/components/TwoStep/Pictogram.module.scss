@@ -1,0 +1,22 @@
+.pictograms {
+  height: 32px;
+  width: 32px;
+  position: relative;
+  margin-left: 18px;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.downloadBox {
+  display: inline;
+  width: 32px;
+  height: 32px;
+  background-image: url('../../../assets/pictogram_download.svg');
+}
+
+.puzzle {
+  display: inline;
+  width: 32px;
+  height: 32px;
+  background-image: url('../../../assets/pictogram_puzzle.svg');
+}

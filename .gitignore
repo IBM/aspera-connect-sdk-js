@@ -7,5 +7,10 @@ docs/
 out/
 *ConnectSDK*
 *.zip
-packages/browser/test/coverage/
 results/
+.svn/
+coverage/
+
+# symbolic links for quick testing
+connect
+connect_beta

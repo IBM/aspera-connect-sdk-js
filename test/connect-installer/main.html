@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<meta charset="utf-8"/>
+<html>
+    <head>
+        <title>Connect bar test</title>
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+        <script src="../../dist/v4/asperaweb-4.js"></script>
+        <script src="../../dist/v4/connectinstaller-4.js"></script>
+    </head>
+    <body onload="myInit();">
+        <div id="connect_installer" style="display: none; align:center"></div>
+        <h1 style="text-align:center; margin-bottom: 50px;">Connect bar test page</h1>
+        <div>
+            <button id="state_init">Initializing</button>
+            <button id="state_failed">Failed</button>
+            <button id="state_outdated">Outdated</button>
+            <button id="state_retrying">Retrying</button>
+            <button id="state_running">Running</button>
+            <button id="state_extension_install">Extension Install</button>
+            <button id="state_downloading_installer">Downloading Installer</button>
+            <button id="state_install_connect">Install Connect</button>
+            <button id="state_unsupported_browser">Unsupported Browser</button>
+            <button id="state_safari_mitigate">Safari Mitigate</button>
+        </div>
+        <div>
+            <p>Simulate a request to the Connect API</p>
+            <button id="connect_action">Connect action</button>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>
