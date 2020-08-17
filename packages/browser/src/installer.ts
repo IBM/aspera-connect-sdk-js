@@ -413,11 +413,11 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
      * @name AW4.ConnectInstaller#isExtensionInstalled
      * @param {Number} timeout Timeout (in milliseconds) to wait before the extension
      *   is considered not to be installed.
-     * @param {Callbacks} callbacks `success` and `error` functions to receive
+     * @param {Callbacks} callbacks `success` and `timedout` functions to receive
      *   results.
      * @return {null}
      */
-  this.isExtensionInstalled = function (timeout: number) {
+  this.isExtensionInstalled = function (timeout: number, callbacks?: types.DetectionCallbacks) {
     // Prereq: asperaweb-4 needs to be loaded first
     // @ts-ignore
     let extReqImpl: types.RequestStrategy = Utils.BROWSER.SAFARI_NO_NPAPI ? new SafariAppStrategy() : new NativeHostStrategy();
@@ -426,7 +426,28 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       return;
     }
 
-    return extReqImpl.detectExtension!(timeout);
+    if (callbacks) {
+      extReqImpl.detectExtension!(timeout).then(
+        (success: boolean) => {
+          if (success && typeof callbacks.success === 'function') {
+            callbacks.success();
+          }
+
+          if (!success && typeof callbacks.timedout === 'function') {
+            callbacks.timedout();
+          }
+        }
+      ).catch(
+        (err: any) => {
+          Logger.debug('Error trying to detect extension:', err);
+          if (typeof callbacks.timedout === 'function') {
+            callbacks.timedout();
+          }
+        }
+      );
+    } else {
+      return extReqImpl.detectExtension!(timeout);
+    }
   };
 
     /**
