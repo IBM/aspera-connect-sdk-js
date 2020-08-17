@@ -4,28 +4,29 @@
  * @module Logger
  */
 
-import { LS_LOG_KEY } from './shared/constants';
+import { LS_LOG_KEY } from './constants';
+import { LogLevels } from './core/types';
 
-const LEVEL = {
+const LEVEL: LogLevels = {
   INFO : 0,
   DEBUG : 1,
   TRACE : 2
 };
 
-let LogLevel: any = LEVEL.INFO;
+let LogLevel: number = LEVEL.INFO;
 if (typeof localStorage !== 'undefined' && localStorage.hasOwnProperty(LS_LOG_KEY)) {
-  LogLevel = localStorage.getItem(LS_LOG_KEY);
+  LogLevel = Number(localStorage.getItem(LS_LOG_KEY));
 }
 
-export function trace (message: string) {
-  if (LogLevel >= LEVEL.TRACE && typeof window.console !== 'undefined') {
-    console.log(message);
+export function trace (...args: any[]) {
+  if (LogLevel >= LEVEL.TRACE) {
+    print('log', args);
   }
 }
 
-export function debug (message: string) {
-  if (LogLevel >= LEVEL.DEBUG && typeof window.console !== 'undefined') {
-    console.log(message);
+export function debug (...args: any[]) {
+  if (LogLevel >= LEVEL.DEBUG) {
+    print('log', args);
   }
 }
 
@@ -34,13 +35,9 @@ export function debug (message: string) {
  * -message (String): A check for if window.console is defined is performed,
  * and if window.console is defined, then message will be sent to
  * console.log.
- *
- * TODO: Support multiple arguments
  */
-export function log (message: string) {
-  if (typeof window.console !== 'undefined') {
-    console.log(message);
-  }
+export function log (...args: any[]) {
+  print('log', args);
 }
 
 /**
@@ -48,13 +45,9 @@ export function log (message: string) {
  * -message (String): A check for if window.console is defined is performed,
  * and if window.console is defined, then message will be sent to
  * console.warn.
- *
- * TODO: Support multiple arguments
  */
-export function warn (message: string) {
-  if (typeof window.console !== 'undefined') {
-    console.warn(message);
-  }
+export function warn (...args: any[]) {
+  print('warn', args);
 }
 
 /**
@@ -62,12 +55,14 @@ export function warn (message: string) {
  * -message (String): A check for if window.console is defined is performed,
  * and if window.console is defined, then message will be sent to
  * console.error.
- *
- *  TODO: Support multiple arguments
  */
-export function error (message: string) {
+export function error (...args: any[]) {
+  print('error', args);
+}
+
+function print (level: 'error' | 'warn' | 'log', message: any[]) {
   if (typeof window.console !== 'undefined') {
-    console.error(message);
+    (console)[level].apply(console, message);
   }
 }
 
