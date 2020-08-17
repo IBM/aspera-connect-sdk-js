@@ -109,15 +109,18 @@ describe('AW4', function() {
         testShowTransferMonitorExtensions();
       });
     });
-
-    // TODO: Fix decrypting requests
-    xcontext('using http', function() {
-      beforeEach(function() {
+    context('using http', function() {
+      beforeEach(function(done) {
+        this.clock.restore();
         this.asperaWeb = new AW4.Connect({connectMethod: 'http'});
         this.asperaWeb.initSession();
+
+        setTimeout(() => {
+          done();
+        }, 100);
       });
 
-      describe('#initSession', function() {
+      xdescribe('#initSession', function() {
         beforeEach(function() {
           this.clock.restore();
           // Reset Connect session
@@ -128,17 +131,14 @@ describe('AW4', function() {
       });
 
       describe('#version', function() {
-        beforeEach(function() {
-          this.clock.restore();
-        });
-        testVersion('https://local.connectme.us:43003/v5/connect/info/version');
+        testVersion('http://127.0.0.1:33003/v5/connect/info/version');
       });
 
       describe('#authenticate', function() {
         testAuthenticate();
       });
 
-      describe('#getAllTransfers', function() {
+      xdescribe('#getAllTransfers', function() {
         testGetAllTransfers();
       });
 
@@ -158,27 +158,27 @@ describe('AW4', function() {
         testStart();
       });
 
-      describe('#readAsArrayBuffer', function() {
+      xdescribe('#readAsArrayBuffer', function() {
         testReadAsArrayBuffer();
       });
 
-      describe('#readChunkAsArrayBuffer', function() {
+      xdescribe('#readChunkAsArrayBuffer', function() {
         testReadChunkAsArrayBuffer();
       });
 
-      describe('#startTransfer', function() {
+      xdescribe('#startTransfer', function() {
         testStartTransfer();
       });
 
-      describe('#modifyTransfer', function() {
+      xdescribe('#modifyTransfer', function() {
         testModifyTransfer();
       });
 
-      describe('#resumeTransfer', function() {
+      xdescribe('#resumeTransfer', function() {
         testResumeTransfer();
       });
 
-      describe('#addEventListener', function() {
+      xdescribe('#addEventListener', function() {
         testAddEventListener();
       });
 
@@ -198,15 +198,15 @@ describe('AW4', function() {
         testShowPreferences();
       });
 
-      describe('#showSaveFileDialog', function() {
+      xdescribe('#showSaveFileDialog', function() {
         testShowSaveFileDialog();
       });
 
-      describe('#showSelectFileDialog', function() {
+      xdescribe('#showSelectFileDialog', function() {
         testShowSelectFileDialog();
       });
 
-      describe('#showSelectFolderDialog', function() {
+      xdescribe('#showSelectFolderDialog', function() {
         testShowSelectFolderDialog();
       });
 
