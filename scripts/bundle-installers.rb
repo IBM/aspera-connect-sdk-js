@@ -164,7 +164,9 @@ def bundle_installers(output_dir)
   end
 
   refs_version = ENV["REV_NUMBER"] || $version
-  short_version = refs_version[/(\d*\.\d*\.\d*)/, 1]
+  #short_version = refs_version[/(\d*\.\d*\.\d*)/, 1]
+  # TODO: Use version from package.json
+  short_version = "3.10"
 
   puts("Mac installer : #{mac_pkg_name}")
   puts("Mac installer version  : #{mac_connect_version}")
@@ -175,7 +177,6 @@ def bundle_installers(output_dir)
 
   # use the docs hash to create entries in connect_references.json
   puts "creating v4 json entries"
-  "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.9.9/kc/connect_user_osx.html"
   base_url = 'https://www.ibm.com/support/knowledgecenter'
 
   p 'creating v4 html entries'
@@ -184,7 +185,7 @@ def bundle_installers(output_dir)
   # Build HTML documentation hash
   ['win', 'osx', 'linux'].each{|os|
     puts "\n#{os}\n"
-    link = "\"#{base_url}/SSXMX3_#{short_version}/kc/connect_user_#{os}.html\""
+    link = "\"#{base_url}/SSXMX3_#{short_version}/connect_user_#{os}/guide.html\""
     puts link
     html_entries[os] = link
   }
