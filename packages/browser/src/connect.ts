@@ -123,7 +123,6 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   let objectId = Utils.nextObjectId();
   let outstandingActivityReqs = 0; // Keep track of polling requests to avoid overfilling the queue
   let apiReady = false;
-  let initFinished = false;
   let requestHandler = new RequestHandler({
     id: PLUGIN_ID,
     containerId: PLUGIN_CONTAINER_ID,
@@ -253,15 +252,15 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return;
     }
 
+    Logger.debug('[' + objectId + '] Connect status changing from[' + connectStatus + '] to[' + newStatus + ']');
     /**
      * Handle case where Connect goes to running outside of normal init sequence.
      * For example, during upgrade.
      */
-    if (initFinished && newStatus === STATUS.RUNNING) {
+    if (newStatus === STATUS.RUNNING) {
       connectReady();
     }
 
-    Logger.debug('[' + objectId + '] Connect status changing from[' + connectStatus + '] to[' + newStatus + ']');
     connectStatus = newStatus;
   }
 
@@ -1408,18 +1407,18 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     requestHandler.init().then(
       () => {
         Logger.debug(`Initialization finished. Connect status: ${connectStatus}`);
-        if (connectStatus === STATUS.RUNNING) {
+        /** Make sure to mark Connect is ready if for some reason it's not already so we don't block requests */
+        if (!apiReady && connectStatus === STATUS.RUNNING) {
           connectReady();
-        } else {
-          Logger.debug('Connect API is not ready.');
         }
 
-        initFinished = true;
+        if (connectStatus !== STATUS.RUNNING) {
+          Logger.debug('Connect API is not ready.');
+        }
       }
     ).catch(
       (error) => {
         Logger.error('Initialization error:', error);
-        initFinished = true;
       }
     );
   };

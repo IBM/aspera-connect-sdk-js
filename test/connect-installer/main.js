@@ -18,6 +18,12 @@ var initialize = function() {
             asperaInstaller.showUpdate();
         } else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.RUNNING) {
             asperaInstaller.connected();
+            // Make sure we can use Connect API after we're told it's running.
+            let callback = {
+              success: (version) => { console.log('version returned:', version); },
+              error: () => { console.log('version error'); }
+            };
+            asperaWeb.version(callback);
         } else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.EXTENSION_INSTALL) {
             // Comment out to simulate customer not making changes to their integration
             //asperaInstaller.showExtensionInstall();

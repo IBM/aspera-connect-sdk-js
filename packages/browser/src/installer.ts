@@ -879,7 +879,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
      *   is dismissed..
      * @return {null}
      */
-  this.connected = function (timeout: number = 2000) {
+  this.connected = (timeout: number = 2000) => {
     clearTimeout(showInstallTimerID);
     let iframe = document.getElementById(connectOptions.iframeId);
     if (typeof iframe !== 'undefined' && iframe !== null) {
