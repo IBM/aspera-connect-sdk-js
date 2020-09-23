@@ -171,10 +171,10 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   }
 
   /**
-   * Initializes drag and drop if Connect is running and dragDropEnabled = true.
+   * Initializes drag and drop if dragDropEnabled = true.
    */
   function initDragDrop () {
-    if (connectStatus === STATUS.RUNNING && DRAGDROP_ENABLED) {
+    if (DRAGDROP_ENABLED) {
       const request =
         new Request()
           .setName('initDragDrop')
@@ -296,7 +296,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   function send<T> (request: InstanceType<typeof Request>): Promise<T>;
   function send<T> (request: InstanceType<typeof Request>, callbacks?: types.Callbacks<T>): Promise<T> | void {
     if (!apiReady) {
-      throw new Error('Connect API is not available.');
+      // Should wait for the RUNNING status event before using the Connect API
+      Logger.warn('Connect API is not yet available - wait for the running status event.');
     } else if (!api) {
       throw new Error('Must call #initSession before using the Connect API.');
     }
@@ -893,6 +894,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    *  * `dragOver` (Boolean) - `true` if drag over event should trigger the listener. Default: `false`.
    *  * `dragLeave` (Boolean) - `true` if drag leave event should trigger the listener. Default: `false`.
    *  * `drop` (Boolean) - `true` if drop event should trigger the listener. Default: `true`.
+   *  * `allowPropagation` (Boolean) - `true` allow further propagation of events. Default: `false`.
    * @param {Function} listener Function to be called when each of the events occurs.
    *
    *   Format:
@@ -911,31 +913,44 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return Utils.createError(-1, 'Drop is not enabled in the initialization ' +
         'options, please instantiate Connect again with the dragDropEnabled option set to true.');
     }
+
     if (typeof listener !== 'function') {
       return Utils.createError(-1, 'You must provide a valid listener');
     }
+
     if (Utils.isNullOrUndefinedOrEmpty(options)) {
       return Utils.createError(-1, 'You must provide a valid options object');
     }
+
     let elements = document.querySelectorAll(cssSelector);
     if (elements.length === 0) {
       return Utils.createError(-1, 'No valid elements for the selector given');
     }
+
     let dragListener = function (evt: any) {
-      evt.stopPropagation();
+      if (!options.allowPropagation) {
+        evt.stopPropagation();
+      }
+
       evt.preventDefault();
       listener({ event: evt });
     };
     // Needed for the Drop event to be called
     let dragOverListener = function (evt: any) {
-      evt.stopPropagation();
+      if (!options.allowPropagation) {
+        evt.stopPropagation();
+      }
+
       evt.preventDefault();
       if (options.dragOver === true) {
         listener({ event: evt });
       }
     };
     let dropListener = function (evt: any) {
-      evt.stopPropagation();
+      if (!options.allowPropagation) {
+        evt.stopPropagation();
+      }
+
       evt.preventDefault();
       // Prepare request and create a valid JSON object to be serialized
       let filesDropped = evt.dataTransfer.files;

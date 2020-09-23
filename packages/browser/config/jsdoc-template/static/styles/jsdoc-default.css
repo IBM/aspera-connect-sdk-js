@@ -153,13 +153,14 @@ h3.subsection-title {
 h4 {
     font-size: 16px;
     margin: 1em 0 0;
-    font-weight: bold;
+    font-weight: 600;
+    color: #000000
 }
 
 h4.name {
     font-size: 20px;
     margin-top: 0;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 h5 {
@@ -585,12 +586,14 @@ footer {
 
 .params thead tr, .props thead tr {
     background-color: #fff;
-    font-weight: bold;
+    font-weight: 500;
+    color: #999999
 }
 
 .params .params thead tr, .props .props thead tr {
     background-color: #fff;
     font-weight: bold;
+    color: #999999
 }
 
 .params td.description>p:first-child, .props td.description>p:first-child {

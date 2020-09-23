@@ -101,6 +101,21 @@ export function isWindows() {
   return getOs() === 'windows';
 }
 
+export function getLocalStorage (key: string) {
+  try {
+    if (typeof localStorage === 'undefined') {
+      return '';
+    }
+
+    return localStorage.getItem(key);
+  } catch (error) {
+    // Accessing local storage can be blocked by third party cookie settings or incognito mode
+    console.log('Access to localStorage is blocked. Check third party cookie settings.');
+    console.log(JSON.stringify(error));
+    return '';
+  }
+}
+
 export function getTroubleshootUrl () {
   let url = 'https://test-connect.asperasoft.com';
   let querystring = getQueryString();

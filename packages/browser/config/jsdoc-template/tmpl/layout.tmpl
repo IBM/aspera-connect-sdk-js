@@ -1,5 +1,6 @@
 <?js
 var templates = env.conf.templates;
+var version = env.conf.version;
 var usesSearch = Boolean(templates.search);
 var collapseMenu = templates.collapse;
 var resources = templates.resources;
@@ -96,7 +97,7 @@ var resources = templates.resources;
 
   <nav>
     <h3 class="reference-title">
-      <?js= templates.referenceTitle || 'Braintree SDK Client Reference' ?>
+      <?js= templates.referenceTitle + ' ' + version || 'Braintree SDK Client Reference' ?>
     </h3>
 
     <?js if (resources) { ?>

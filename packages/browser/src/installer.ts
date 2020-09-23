@@ -193,6 +193,9 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       } else {
         os = 'Win32';
       }
+    } else if (/CrOS/.test(navigator.userAgent)) {
+      // Chrome OS not supported
+      return os;
     } else if (/Mac OS X 10[._]6/.test(navigator.userAgent)) {
       os = 'MacIntel-10.6-legacy';
     } else if (/Mac/.test(navigator.platform)) {

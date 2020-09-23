@@ -75,8 +75,10 @@ class RequestHandler implements types.RequestHandler {
             }
           })
           .catch(error => {
-            /** TODO: Call requestInfo.reject here to reject 404 api responses for queued requests */
-            throw new Error(error);
+            // Note: queued activity requests will return 404 by Connect since app_id is empty
+            if (requestInfo && requestInfo.reject) {
+              requestInfo.reject(error);
+            }
           });
       }
     }
@@ -224,14 +226,19 @@ class RequestHandler implements types.RequestHandler {
   /**
    * Helper function to add request to internal cache for request tracking
    */
-  cacheRequest = (endpoint: types.HttpEndpoint, requestId: number, resolve?: Function) => {
+  cacheRequest = (endpoint: types.HttpEndpoint, requestId: number, promiseInfo?: types.PromiseInfo) => {
     let requestInfo: types.RequestInfo = {
       method: endpoint.method,
       path: endpoint.path,
       body: endpoint.body,
-      requestId: requestId,
-      resolve: resolve
+      requestId: requestId
     };
+
+    if (promiseInfo) {
+      requestInfo.resolve = promiseInfo.resolve;
+      requestInfo.reject = promiseInfo.reject;
+    }
+
     this._idRequestHash[requestId] = requestInfo;
 
     return requestInfo;
@@ -290,7 +297,6 @@ class RequestHandler implements types.RequestHandler {
       delete this._idRequestHash[response.requestId];
       // Reject if response has error fields or if status code is not 2xx
       if (Utils.isError(parsedResponse) || !Utils.isSuccessCode(response.status)) {
-        Logger.trace('rejecting response...');
         reject(parsedResponse);
       } else {
         resolve(parsedResponse);
@@ -309,7 +315,7 @@ class RequestHandler implements types.RequestHandler {
       }
 
       let requestId = this._nextId++;
-      let requestInfo = this.cacheRequest(endpoint, requestId, resolve);
+      let requestInfo = this.cacheRequest(endpoint, requestId, { resolve: resolve, reject: reject });
       /**
        * If Connect is not ready, queue the client request and resolve the
        * request when the queue is processed.

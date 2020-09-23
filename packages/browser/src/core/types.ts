@@ -48,6 +48,7 @@ export interface RequestInfo
   requestId: number;
   /** Resolve function to return the response */
   resolve?: Function;
+  reject?: Function;
 }
 
 export interface RequestInfoHash<T> {
@@ -150,6 +151,11 @@ type PageNames =
   'bandwidth' |
   'security';
 
+export interface PromiseInfo {
+  resolve: Function;
+  reject: Function;
+}
+
 export interface PreferencesOptions {
   page: PageNames;
 }
@@ -203,6 +209,7 @@ export interface DragDropOptions {
   dragOver?: boolean;
   dragLeave?: boolean;
   drop?: boolean;
+  allowPropagation?: boolean;
 }
 
 interface DragDropEvent {

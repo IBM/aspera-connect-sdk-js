@@ -148,7 +148,7 @@ class App extends Component<{}, State> {
 
   // Allow override for banner type
   useThreeStepBanner () {
-    let threeStepOverride = localStorage.getItem('aspera-banner-override');
+    let threeStepOverride = Utils.getLocalStorage('aspera-banner-override');
     return threeStepOverride === '3';
   }
 

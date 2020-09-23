@@ -25,7 +25,7 @@ if (version) {
   });
 
   // Change the version used by AW4.__VERSION__
-  files = ['packages/browser/src/version.ts'];
+  files = ['packages/browser/src/version.ts', 'packages/browser/config/jsdoc.config.js'];
   replace({
     files: files,
     from: /\d+\.\d+.\d+(?:-\w+(?:\.\w+)?)?/g,

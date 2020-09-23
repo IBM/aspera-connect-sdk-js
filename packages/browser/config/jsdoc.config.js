@@ -1,9 +1,10 @@
 module.exports = {
+    version: '3.10.0',
     opts: {
         destination: 'docs',
-        readme: 'README.md',
+        readme: 'GettingStarted.md',
         recurse: true,
-        template: "jsdoc-template",
+        template: "jsdoc-template"
     },
     plugins: ["plugins/markdown"],
     templates: {

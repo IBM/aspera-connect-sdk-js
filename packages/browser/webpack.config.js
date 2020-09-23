@@ -1,3 +1,4 @@
+const fs = require('fs-extra');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
@@ -22,6 +23,16 @@ let bannerText = `  Revision: ${version}-${branch !== 'master' ? (branch + '-') 
 
   http://www.asperasoft.com
   Copyright IBM Corp. 2008, ${new Date().getFullYear()}`
+
+// For backwards-compatibility keep connectinstaller-4.js files. Just put in version and description.
+const emptyFileText = `/*
+${bannerText}
+
+  NOTE: This file is expected to be empty. Functionality has been bundled into asperaweb-4.js and asperaweb-4.min.js.
+*/`;
+['connectinstaller-4.js', 'connectinstaller-4.min.js'].forEach(filename => {
+  fs.outputFile(path.join(__dirname, 'build', filename), emptyFileText);
+});
 
 const plugins = [
   new webpack.BannerPlugin({

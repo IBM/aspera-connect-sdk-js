@@ -9,10 +9,7 @@ mkdir dist/v4
 cp -R ./files/v2/* ./dist
 
 # Bundle built javascript
-cp ./packages/browser/build/asperaweb* ./dist/v4
-
-# For backwards compatibility
-touch ./dist/v4/connectinstaller-4.js ./dist/v4/connectinstaller-4.min.js
+cp ./packages/browser/build/*.js ./dist/v4
 
 # Bundle react carbon bar
 mkdir -p dist/v4/install/carbon-installer
