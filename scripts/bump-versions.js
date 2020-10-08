@@ -24,8 +24,8 @@ if (version) {
     console.log(`child process exited with code ${code}`);
   });
 
-  // Change the version used by AW4.__VERSION__
-  files = ['packages/browser/src/version.ts', 'packages/browser/config/jsdoc.config.js'];
+  // Change the version used by AW4.__VERSION__ and docs
+  files = ['packages/browser/src/version.ts', 'packages/browser/config/jsdoc.config.js', 'packages/browser/GettingStarted.md'];
   replace({
     files: files,
     from: /\d+\.\d+.\d+(?:-\w+(?:\.\w+)?)?/g,
