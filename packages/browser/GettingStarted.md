@@ -1,4 +1,4 @@
-## IBM Aspera Connect SDK 3.10.0
+## IBM Aspera Connect SDK 3.10.1
 <br>
 
 # API Reference
