@@ -2068,6 +2068,12 @@ export default ConnectClient;
  *   `full_checksum` - Resume if the files' attributes and full checksums match.
  *   Note that computing full checksums of large files takes time, and heavily
  *   utilizes the CPU.
+ * @property {"yes"|"no"} [save-before-overwrite="no"] If a transfer would result
+ *   in an existing file being overwritten, move that file to
+ *   `<filename>.yyyy.mm.dd.hh.mm.ss.index.<ext>` in the same directory before writing
+ *   the new file. File attributes are maintained in the renamed file.
+ *
+ *   Note: `resume` must be set to `"none"` for this to take effect.
  * @property {String} [source_root="/"] A path to prepend to the source paths specified
  *   in `paths`. If this is not specified, then `paths` should contain absolute
  *   paths.
