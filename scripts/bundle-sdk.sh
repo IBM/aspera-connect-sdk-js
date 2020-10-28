@@ -8,8 +8,9 @@ mkdir dist/v4
 # Bundle v2 of the SDK
 cp -R ./files/v2/* ./dist
 
-# Bundle built javascript
+# Bundle built javascript and source maps
 cp ./packages/browser/build/*.js ./dist/v4
+cp ./packages/browser/build/*.map ./dist/v4
 
 # Bundle react carbon bar
 mkdir -p dist/v4/install/carbon-installer
