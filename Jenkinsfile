@@ -63,6 +63,11 @@ pipeline {
             sh "npm --prefix packages/carbon-installer test -- --watchAll false"
           }
         }
+        stage('Karma') {
+          steps {
+            sh "npm run test:browser"
+          }
+        }
         stage('Lint') {
           steps {
             sh "npm --prefix packages/browser run lint"
