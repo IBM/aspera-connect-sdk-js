@@ -11,7 +11,7 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '30'))
   }
   environment {
-    PATH = "$WORKSPACE/atc/mac-10.13-64/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
+    PATH = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
   }
   parameters {
     string(
@@ -50,20 +50,38 @@ pipeline {
         sh 'env | sort'
       }
     }
-    stage('Build - SDK') {
+    stage('Build') {
       steps {
         sh "npm install"
-        sh "npm run clean"
         sh "npm run build"
       }
-      post {
-        success {
-          archiveArtifacts('ConnectSDK*.zip, carbon-banner*.zip')
+    }
+    stage('Test') {
+      parallel {
+        stage('Banner') {
+          steps {
+            sh "npm --prefix packages/carbon-installer test -- --watchAll false"
+          }
         }
-        cleanup {
-          deleteDir()
+        stage('Lint') {
+          steps {
+            sh "npm --prefix packages/browser run lint"
+          }
         }
       }
+    }
+    stage('Package') {
+      steps {
+        sh "npm run build:zip"
+      }
+    }
+  }
+  post {
+    success {
+      archiveArtifacts '*.zip'
+    }
+    cleanup {
+      cleanWs()
     }
   }
 }
