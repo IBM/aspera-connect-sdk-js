@@ -9,6 +9,10 @@ var initialize = function() {
       console.log(event);
     });
 
+    asperaInstaller.addActivityListener(AW4.ConnectInstaller.EVENT_TYPE.CONNECT_BAR_EVENT, data => {
+      console.log('received connect bar event:', data);
+    });
+
     var onStatusEvent = function (eventType, data) {
         if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.INITIALIZING) {
             asperaInstaller.showLaunching();
@@ -28,6 +32,10 @@ var initialize = function() {
             // Comment out to simulate customer not making changes to their integration
             //asperaInstaller.showExtensionInstall();
         }
+    };
+
+    var onActivityEvent = function(data) {
+      console.log("received connect bar event: ", data);
     };
 
     var initAsperaConnect  = function () {

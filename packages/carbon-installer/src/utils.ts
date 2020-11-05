@@ -22,6 +22,7 @@ const EVENT = {
     CLICKED_INSTALL_APP: 'clicked_install_app',
     CLICKED_INSTALL_EXTENSION: 'clicked_install_extension',
     CLICKED_TROUBLESHOOT: 'clicked_troubleshoot',
+    CONNECT_BAR_VISIBLE: 'connect_bar_visible',
     CONTINUE: 'continue',
     DOWNLOAD_CONNECT: 'downloadconnect',
     DOWNLOAD_INDICATOR_VISIBLE: 'download_indicator_visible',
@@ -145,6 +146,10 @@ export function openTab (url: string) {
 
 export function sendCloseEvent () {
   sendEvent(EVENT.REMOVE_IFRAME);
+};
+
+export function sendConnectBarVisible() {
+  sendEvent(EVENT.CONNECT_BAR_VISIBLE);
 };
 
 // function sendContinueEvent () {
