@@ -110,8 +110,11 @@ class TwoStepBanner extends Component<Props> {
 
     let newText = <span className={styles.newText}>{dict.get('new')}</span>;
 
-    Utils.sendResizeEvent();
-    Utils.sendConnectBarVisible();
+
+    if (!['running_with_green_checkmarks'].includes(this.props.currentState)) {
+      Utils.sendResizeEvent();
+      Utils.sendConnectBarVisible();
+    }
 
     // Don't show extension enable step during Safari upgrades (ASCN-2277)
     const isSafariUpgrade = Utils.BROWSER.SAFARI && this.props.isOutdated;
