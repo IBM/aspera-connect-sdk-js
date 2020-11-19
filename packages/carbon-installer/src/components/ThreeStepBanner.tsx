@@ -144,7 +144,7 @@ class ThreeStepBanner extends Component<Props, State> {
 
     let newText = <span className={styles.newText}>{dict.get('new')}</span>;
 
-    if (!['running_with_green_checkmarks'].includes(this.props.currentState)) {
+    if (this.props.currentState !== 'running_with_green_checkmarks') {
       Utils.sendResizeEvent();
       Utils.sendConnectBarVisible();
     }
