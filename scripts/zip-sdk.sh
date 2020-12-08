@@ -8,7 +8,7 @@ REVISION=$(node -p -e "require('./package.json').version")
 cd dist
 
 # Zip up the SDK and carbon banner
-if [[ $BRANCH == 'master' ]]; then
+if [[ $BRANCH == 'main' ]]; then
   zip -r ../ConnectSDK-$REVISION-$HASH.zip .
   cd ./v4/install && zip -r ../../../carbon-banner-$REVISION-$BRANCH-$HASH.zip ./carbon-installer && cd ../..
 else
