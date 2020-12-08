@@ -18,7 +18,7 @@ const terserInstance = new TerserPlugin({
   sourceMap: true
 })
 
-let bannerText = `  Revision: ${version}-${branch !== 'master' ? (branch + '-') : ''}${commitHash}
+let bannerText = `  Revision: ${version}-${branch !== 'main' ? (branch + '-') : ''}${commitHash}
   Date: ${new Date().toISOString().replace('T', ' ').substr(0, 19)}
 
   http://www.asperasoft.com

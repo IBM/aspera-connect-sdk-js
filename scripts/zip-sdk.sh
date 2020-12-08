@@ -10,7 +10,7 @@ cd dist
 # Zip up the SDK and carbon banner
 if [[ $BRANCH == 'main' ]]; then
   zip -r ../ConnectSDK-$REVISION-$HASH.zip .
-  cd ./v4/install && zip -r ../../../carbon-banner-$REVISION-$BRANCH-$HASH.zip ./carbon-installer && cd ../..
+  cd ./v4/install && zip -r ../../../carbon-banner-$REVISION-$HASH.zip ./carbon-installer && cd ../..
 else
   # Replace all forward slahes in the branch name with an underscore
   BRANCH_PATH=${BRANCH//\//_}
