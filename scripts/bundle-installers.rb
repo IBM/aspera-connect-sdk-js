@@ -6,12 +6,8 @@
 require 'fileutils'
 require 'pathname'
 require 'date'
+require 'json'
 $scriptdir = Pathname(__FILE__).realpath.dirname
-$version = '3.10.0.123456'
-
-#require "buildscriptenv.rb"
-# require "#{$scriptdir}/../../buildsystem/lib/Shell.rb"
-# require "#{$scriptdir}/../../buildsystem/lib/rcversion_helper"
 
 def bundle_installers(output_dir)
   # Set the encoding first, the user might have set it wrong
@@ -163,10 +159,10 @@ def bundle_installers(output_dir)
     linux64_connect_version = linux64_targz_name[/(\d*\.\d*\.\d*\.\d*)/, 1]
   end
 
-  refs_version = ENV["REV_NUMBER"] || $version
-  #short_version = refs_version[/(\d*\.\d*\.\d*)/, 1]
-  # TODO: Use version from package.json
-  short_version = "3.10"
+  package_json_contents = File.read('package.json')
+  package_json = JSON.parse(package_json_contents)
+  project_version = package_json['version']
+  short_version = project_version[/(\d*\.\d**)/, 1]
 
   puts("Mac installer : #{mac_pkg_name}")
   puts("Mac installer version  : #{mac_connect_version}")
@@ -190,6 +186,8 @@ def bundle_installers(output_dir)
     html_entries[os] = link
   }
 
+  release_notes_url = "\"#{base_url}/SSXMX3_#{short_version}/connect_relnotes/#{project_version}.html\""
+
   conver = "#{$scriptdir}/../files/connect_references.json"
   contents = File.read(conver)
   contents = contents.gsub(/#TIMESTAMP#/, DateTime.now.to_s)
@@ -212,6 +210,8 @@ def bundle_installers(output_dir)
   contents = contents.gsub(/#LINUX64_CONNECT_VERSION#/, linux64_connect_version)
   contents = contents.gsub(/#LINUX64_INSTALLER_REVISION#/, linux64_installer_revision)
   contents = contents.gsub(/#LINUX_DOCS_HTML_ENTRIES#/, html_entries["linux"])
+
+  contents = contents.gsub(/#RELEASE_NOTES_URL#/, release_notes_url)
 
   # write sub'ed versions to dest
   cr = File.open("#{output_dir}/connect_references.json", 'w')
