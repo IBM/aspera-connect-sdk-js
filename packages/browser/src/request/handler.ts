@@ -19,7 +19,8 @@ class RequestHandler implements types.RequestHandler {
   /** Implementation we are going to use to make the http requests */
   private _strategy!: types.RequestStrategy;
   private versionChecked = false;
-  private connectStatus: string = STATUS.INITIALIZING;
+  /** Initially set status to undefined as it gets set during init */
+  private connectStatus: string | undefined;
   /** Internal cache for active requests */
   private _idRequestHash: types.RequestInfoHash<types.RequestInfo> = {};
   /** Array in which we are going to store all the requests that cannot be processed at this time */
