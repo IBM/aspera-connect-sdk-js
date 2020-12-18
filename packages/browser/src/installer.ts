@@ -546,6 +546,15 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     return false;
   };
 
+  let setHideClass = function (hide: boolean) {
+    let iframe = document.getElementById(connectOptions.iframeId);
+    if (iframe) {
+      iframe.style.display = hide ? 'none' : '';
+      // TODO: remove redundant visibility style (required by Faspex GA)
+      iframe.style.visibility = hide ? 'hidden' : '';
+    }
+  };
+
   /*
    * AW4.ConnectInstaller#show(eventType) -> null
    * - eventType (String): the event type
@@ -734,8 +743,9 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         window.addEventListener('message', handleMessage, false);
       }
     }
+
     // if the iframe is hidden due to dismiss, reset the display style
-    iframe.style.display = '';
+    setHideClass(false);
 
     if (iframeLoadedFlag) {
       iframe.contentWindow!.postMessage(eventType, '*');
@@ -906,11 +916,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       clearTimeout(showInstallTimerID);
     }
 
-    let iframe = document.getElementById(connectOptions.iframeId);
-    if (typeof iframe !== 'undefined' && iframe !== null) {
-      iframe.style.display = 'none';
-    }
-
+    setHideClass(true);
     return;
   };
 };
