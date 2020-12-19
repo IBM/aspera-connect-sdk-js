@@ -16,7 +16,7 @@ const terserInstance = new TerserPlugin({
   cache: true,
   parallel: true,
   sourceMap: true
-})
+});
 
 let bannerText = `  Revision: ${version}-${branch !== 'main' ? (branch + '-') : ''}${commitHash}
   Date: ${new Date().toISOString().replace('T', ' ').substr(0, 19)}
@@ -53,8 +53,6 @@ const bundleConfig = {
   output: {
     library: ['AW4'],
     libraryTarget: "window",
-    umdNamedDefine: true,
-    globalObject: 'typeof self !== \'undefined\' ? self : this',
     path: path.join(__dirname, 'build'),
   },
   module: {
