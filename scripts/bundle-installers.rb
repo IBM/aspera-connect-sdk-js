@@ -186,7 +186,9 @@ def bundle_installers(output_dir)
     html_entries[os] = link
   }
 
-  release_notes_url = "\"#{base_url}/SSXMX3_#{short_version}/connect_relnotes/#{project_version}.html\""
+  # XXX 3.11.1 RN will be appended to 3.11.0 RN
+  pinned_version = '3.11.0'
+  release_notes_url = "\"#{base_url}/SSXMX3_#{short_version}/connect_relnotes/#{pinned_version}.html\""
 
   conver = "#{$scriptdir}/../files/connect_references.json"
   contents = File.read(conver)
