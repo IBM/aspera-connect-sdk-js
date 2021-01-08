@@ -54,14 +54,14 @@
                 {
                     "title": "Aspera Connect HTML Documentation for Windows",
                     "type": "text/html",
-                    "href": #WIN_DOCS_HTML_ENTRIES#,
+                    "href": "#WIN_DOCS_HTML_ENTRIES#",
                     "hreflang": "en",
                     "rel": "documentation"
                 },
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": #RELEASE_NOTES_URL#,
+                    "href": "#RELEASE_NOTES_URL#",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -125,14 +125,14 @@
                 {
                     "title": "Aspera Connect HTML Documentation for Windows",
                     "type": "text/html",
-                    "href": #WIN_DOCS_HTML_ENTRIES#,
+                    "href": "#WIN_DOCS_HTML_ENTRIES#",
                     "hreflang": "en",
                     "rel": "documentation"
                 },
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": #RELEASE_NOTES_URL#,
+                    "href": "#RELEASE_NOTES_URL#",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -189,14 +189,14 @@
                 {
                     "title": "Aspera Connect HTML Documentation for Windows",
                     "type": "text/html",
-                    "href": #WIN_DOCS_HTML_ENTRIES#,
+                    "href": "#WIN_DOCS_HTML_ENTRIES#",
                     "hreflang": "en",
                     "rel": "documentation"
                 },
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": #RELEASE_NOTES_URL#,
+                    "href": "#RELEASE_NOTES_URL#",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -253,14 +253,14 @@
                 {
                     "title": "Aspera Connect HTML Documentation for Windows",
                     "type": "text/html",
-                    "href": #WIN_DOCS_HTML_ENTRIES#,
+                    "href": "#WIN_DOCS_HTML_ENTRIES#",
                     "hreflang": "en",
                     "rel": "documentation"
                 },
                 {
                     "title": "Aspera Connect Release Notes for Windows",
                     "type": "text/html",
-                    "href": #RELEASE_NOTES_URL#,
+                    "href": "#RELEASE_NOTES_URL#",
                     "hreflang": "en",
                     "rel": "release-notes"
                 },
@@ -304,14 +304,14 @@
                 {
                     "title": "Aspera Connect for Mac HTML Documentation",
                     "type": "text/html",
-                    "href": #MAC_DOCS_HTML_ENTRIES#,
+                    "href": "#MAC_DOCS_HTML_ENTRIES#",
                     "hreflang": "en",
                     "rel": "documentation"
                 },
                 {
                     "title": "Aspera Connect for Mac Release Notes",
                     "type": "text/html",
-                    "href": #RELEASE_NOTES_URL#,
+                    "href": "#RELEASE_NOTES_URL#",
                     "hreflang": "en",
                     "rel": "release-notes"
                 }
@@ -347,14 +347,14 @@
                 {
                     "title": "Aspera Connect for Linux HTML Documentation",
                     "type": "text/html",
-                    "href": #LINUX_DOCS_HTML_ENTRIES#,
+                    "href": "#LINUX_DOCS_HTML_ENTRIES#",
                     "hreflang": "en",
                     "rel": "documentation"
                 },
                 {
                     "title": "Aspera Connect for Linux Release Notes",
                     "type": "text/html",
-                    "href": #RELEASE_NOTES_URL#,
+                    "href": "#RELEASE_NOTES_URL#",
                     "hreflang": "en",
                     "rel": "release-notes"
                 }

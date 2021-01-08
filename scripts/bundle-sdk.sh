@@ -2,8 +2,7 @@
 set -eux
 
 rm -rf dist
-mkdir -p dist
-mkdir dist/v4
+mkdir -p dist/v4
 
 # Bundle v2 of the SDK
 cp -R ./files/v2/* ./dist
@@ -12,16 +11,16 @@ cp -R ./files/v2/* ./dist
 cp ./packages/browser/build/*.js ./dist/v4
 cp ./packages/browser/build/*.map ./dist/v4
 
-# Bundle react carbon bar
+# Bundle Connect banner
 mkdir -p dist/v4/install/carbon-installer
 cp -R ./packages/carbon-installer/build/* ./dist/v4/install/carbon-installer
 
-# Build and bundle legacy Connect banners
-ruby ./scripts/bundle-banners.rb ./dist/v4
+# Bundle legacy Connect banner
+cp -R ./files/legacy-install/auto-topbar ./dist/v4/install/auto-topbar
 
 # Bundle installers and build connect_references.json
-ruby ./scripts/bundle-installers.rb ./dist
-ruby ./scripts/bundle-installers.rb ./dist/v4
+node ./scripts/bundle-installers.js ./dist
+node ./scripts/bundle-installers.js ./dist/v4
 
 # Bundle non-javascript files
 cp ./files/notices.txt ./dist/v4
