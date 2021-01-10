@@ -1,54 +1,42 @@
-[![Build Status](https://build.aspera.us/buildStatus/icon?job=apps-trunk-build-mac-10.13-64-connect-sdk-dw%2Fmaster)](https://build.aspera.us/job/apps-trunk-build-mac-10.13-64-connect-sdk-dw/job/master/)
-
 ## Top-level project for the IBM Aspera Connect SDK
+
+## Description
+This project builds and bundles the [Connect SDK](https://api.ibm.com/explorer/catalog/aspera/product/ibm-aspera/api/connect-sdk/doc/connect_sdk_guide) which contains both the [Javascript SDK](packages/browser/README.md) and [Carbon Installer](packages/carbon-installer/README.md) components as well as various Connect [installers](https://www.ibm.com/aspera/connect/).
+
+## Prerequisites
+* NodeJS 12.x+
 
 ## Getting Started
 Clone the repo:
 ```shell
-$ git clone git@gitlab.aspera.us:apps/connect-sdk.git
+git clone git@github.ibm.com:Aspera/connect-sdk.git
 
 ```
 Install all dependencies:
 ```shell
-$ npm install
+cd connect-sdk
+npm install
 ```
 
 ## Build
-To build all javascript components and output SDK zip file, run:
-
-```shell
-$ npm run build
-```
-The SDK zip file will be located in the top-level directory.
-
-To skip bundling the installers, set:
-```shell
-$ export SKIP_INSTALLERS=1
-```
-
-To set a custom location for the installers, including revision number, set:
-```shell
-$ export OVERRIDE_INSTALLERS=/aspera/process/release/3.9.1
-$ export REV_NUMBER=3.9.1.171801
-
-# Optionally - to only skip one click installers
-$ export SKIP_ONE_CLICK=1
-```
+1. Copy all required Connect installers into a root directory named `imports`. Custom installer directories can be set via environment variables (in order of priority):
+      1. `SKIP_INSTALLERS=1` Skip bundling the installers
+      2. `OVERRIDE_LINUX_INSTALLERS=/tmp/linux` Custom directory for Linux installers
+      3. `OVERRIDE_MAC_INSTALLERS=/tmp/mac` Custom directory for macOS installers      
+      4. `OVERRIDE_WIN_INSTALLERS=/tmp/win` Custom directory for Windows installers
+      5. `OVERRIDE_INSTALLERS=/tmp/default` Custom directory for all installers
+2. `npm run build`
 
 ## Release
-Automated versioning and CHANGELOG generation is available via the `standard-version`
-package.
-
-When you are ready to create a git tag and generate a CHANGELOG, run:
+To bump the version, run:
 
 ```shell
-$ npm run release
+npm run bump -- --release-as <new_version>
 ```
 
-To simply bump the version, run:
+For automatic tagging and CHANGELOG generation, run:
 
 ```shell
-$ npm run bump -- --release-as 3.10.0
+npm run release -- --dry-run
 ```
-
-Read the output for instructions on what to do next.
+Remove `--dry-run` to actually make the changes.
