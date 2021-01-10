@@ -30,7 +30,7 @@ let INSTALLER_NAMES = [];
 function buildReferences () {
   const info = getInstallerInfo();
 
-  const references = path.join(__dirname, '..', 'files', 'connect_references.json');
+  const references = path.join(__dirname, '..', 'resources', 'connect_references.json');
   let contents = fs.readFileSync(references, 'utf8');
 
   // Substitute timestamp
@@ -65,7 +65,7 @@ function buildReferences () {
   minify('json', output, path.join(OUTPUT_DIR, '..', 'connect_references.min.json'))
 
   // Build and write contents to connectversions.js and minify
-  const versJs = path.join(__dirname, '..', 'files', 'connectversions.js');
+  const versJs = path.join(__dirname, '..', 'resources', 'connectversions.js');
   let versContents = fs.readFileSync(versJs, 'utf8');
   versContents = versContents.replace(/#AS_CONNECT_REFERENCES#/g, contents);
   const versJsOutput = path.join(OUTPUT_DIR, '..', 'connectversions.js');
