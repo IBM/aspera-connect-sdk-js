@@ -1,4 +1,3 @@
 # Overrides for detected languages on GHE
 files/** -linguist-detectable
 packages/legacy-install/** -linguist-detectable
-scripts/3rdparty/** -linguist-detectable

@@ -6,7 +6,7 @@ const version = require('../package.json').version;
 
 const { env } = process;
 const ARGS = process.argv.slice(2);
-const OUTPUT_DIR = path.join(__dirname, '..', ARGS[0], 'bin');
+const BIN_DIR = path.join(__dirname, '..', ARGS[0], 'bin');
 const INSTALLER_DIR = path.join(__dirname, '..', 'imports');
 
 const INSTALLERS = [
@@ -59,18 +59,25 @@ function buildReferences () {
   contents = contents.replace(/#WIN_FIPS_ONE_CLICK_INSTALLER#/g, info.windowsFips.oneClick.filename);
   contents = contents.replace(/#WIN_FIPS_INSTALLER#/g, info.windowsFips.msi.filename);
 
-  // Write contents to output and minify
-  const output = path.join(OUTPUT_DIR, '..', 'connect_references.json');
-  fs.writeFileSync(output, contents);
-  minify('json', output, path.join(OUTPUT_DIR, '..', 'connect_references.min.json'))
+  const outputDir = path.join(BIN_DIR, '..');
 
-  // Build and write contents to connectversions.js and minify
-  const versJs = path.join(__dirname, '..', 'resources', 'connectversions.js');
-  let versContents = fs.readFileSync(versJs, 'utf8');
+  // Write contents to output
+  const connectRefs = path.join(outputDir, 'connect_references.json');
+  fs.writeFileSync(connectRefs, contents);
+  // Minify
+  const minifiedContents = JSON.stringify(JSON.parse(contents));
+  const connectRefsMin = path.join(outputDir, 'connect_references.min.json');
+  fs.writeFileSync(connectRefsMin, minifiedContents);
+
+  // Build connect versions
+  const connectVersions = path.join(__dirname, '..', 'resources', 'connectversions.js');
+  let versContents = fs.readFileSync(connectVersions, 'utf8');
   versContents = versContents.replace(/#AS_CONNECT_REFERENCES#/g, contents);
-  const versJsOutput = path.join(OUTPUT_DIR, '..', 'connectversions.js');
-  fs.writeFileSync(versJsOutput, versContents);
-  minify('js', versJsOutput, path.join(OUTPUT_DIR, '..', 'connectversions.min.js'))
+  // Write contents
+  let connectVersionsOutput = path.join(outputDir, 'connectversions.js')
+  fs.writeFileSync(connectVersionsOutput, versContents);
+  // Minify
+  minify(connectVersionsOutput, path.join(outputDir, 'connectversions.min.js'))
 }
 
 async function copyInstallers () {
@@ -79,7 +86,7 @@ async function copyInstallers () {
 
   for (const platform of INSTALLERS) {
     const { installers, src } = platform;
-    await copyByGlob(installers, src, OUTPUT_DIR);
+    await copyByGlob(installers, src, BIN_DIR);
   };
 }
 
@@ -232,16 +239,15 @@ function getVersionFromString (s) {
   return '';
 }
 
-function minify (type, src, dst) {
-  const minifier = path.join(__dirname, '..', 'scripts', '3rdparty', 'minifier', 'minify-tool.js');
-  const child = child_process.exec(`node ${minifier} --${type} ${src} > ${dst}`);
+function minify (src, dst) {
+  const child = child_process.exec(`npx terser ${src} -m -c -o ${dst}`);
   child.on('exit', code => {
-    console.log(`Minifier exited with code ${code}`);
+    console.log(`Terser exited with code ${code}`);
   });
 }
 
 // Create output directory if it does not exist
-fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+fs.mkdirSync(BIN_DIR, { recursive: true });
 
 (async () => {
   try {
