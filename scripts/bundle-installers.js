@@ -254,6 +254,7 @@ fs.mkdirSync(BIN_DIR, { recursive: true });
     await copyInstallers();
     await buildReferences();
   } catch (err) {
-    throw new Error(`Could not bundle installers: ${err}`);
+    console.log(err);
+    process.exit(1);
   }
 })();
