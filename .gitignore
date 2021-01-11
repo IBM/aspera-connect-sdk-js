@@ -3,7 +3,7 @@ node_modules/
 dist/
 esm/
 build/
-docs/
+/docs/
 out/
 *ConnectSDK*
 *.zip

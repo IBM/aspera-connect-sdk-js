@@ -12,7 +12,7 @@
     "build:bundle:watch": "webpack --watch",
     "build:dist": "tsc -p tsconfig.json",
     "build:dist:watch": "tsc -p tsconfig.json -w --preserveWatchOutput",
-    "build:docs": "jsdoc build/asperaweb-4.js --configure config/jsdoc.config.js",
+    "build:docs": "jsdoc build/asperaweb-4.js --configure docs/jsdoc.config.js",
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:esm:watch": "tsc -p tsconfig.esm.json -w --preserveWatchOutput",
     "build:watch": "run-p build:dist:watch build:esm:watch build:bundle:watch",

@@ -27,4 +27,4 @@ cp ./resources/notices.txt ./dist/v4
 cp -R ./resources/plugin ./dist/v4/plugin
 
 # Bundle docs
-cp -R ./packages/browser/docs ./dist/v4/docs
+cp -R ./packages/browser/build/docs ./dist/v4/docs
