@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { dict } from '../language'
 import * as Utils from '../utils';
 import TwoStepBanner from './TwoStepBanner';
-import ThreeStepBanner from './ThreeStepBanner';
 import StatusBanner from './StatusBanner';
 import styles from '../styles/components/App.module.scss';
 
@@ -135,7 +134,7 @@ class App extends Component<{}, State> {
         }
 
         // For 2-step banner, remap download state to install state
-        if (message === 'download' && !this.useThreeStepBanner()) {
+        if (message === 'download') {
           message = 'install';
         }
 
@@ -146,20 +145,9 @@ class App extends Component<{}, State> {
     }
   }
 
-  // Allow override for banner type
-  useThreeStepBanner () {
-    let threeStepOverride = Utils.getLocalStorage('aspera-banner-override');
-    return threeStepOverride === '3';
-  }
-
   renderBanner() {
     console.log(`rendering state: ${this.state.banner}`);
-    let carbonBanner;
-    if (this.useThreeStepBanner()) {
-      carbonBanner = <ThreeStepBanner currentState={this.state.banner} href={this.state.href} majorVersion={this.state.majorVersion} isOutdated={this.isOutdated} changeState={this.changeState.bind(this)}/>;
-    } else {
-      carbonBanner = <TwoStepBanner currentState={this.state.banner} href={this.state.href} majorVersion={this.state.majorVersion} isOutdated={this.isOutdated} changeState={this.changeState.bind(this)}/>;
-    }
+    let carbonBanner = <TwoStepBanner currentState={this.state.banner} href={this.state.href} majorVersion={this.state.majorVersion} isOutdated={this.isOutdated} changeState={this.changeState.bind(this)}/>;
 
     return this.useStatusBanner() ? <StatusBanner currentState={this.state.banner}/>
       : carbonBanner;

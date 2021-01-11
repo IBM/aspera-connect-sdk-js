@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import Enzyme, { shallow, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import App from '../../components/App';
-import ThreeStepBanner from '../../components/TwoStepBanner';
+import TwoStepBanner from '../../components/TwoStepBanner';
 import StatusBanner from '../../components/StatusBanner';
 
 Enzyme.configure({ adapter: new Adapter() });
@@ -42,7 +42,7 @@ it('renders three step banner', () => {
   });
   const wrapper = shallow(<App />);
   map.message({data: 'download'});
-  expect(wrapper.find(ThreeStepBanner)).toHaveLength(1);
+  expect(wrapper.find(TwoStepBanner)).toHaveLength(1);
 });
 
 // download message is re-mapped to install
