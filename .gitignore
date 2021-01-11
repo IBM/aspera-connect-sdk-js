@@ -10,6 +10,7 @@ out/
 results/
 .svn/
 coverage/
+test.html
 
 # symbolic links for quick testing
 connect
