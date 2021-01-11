@@ -1,10 +1,5 @@
 #!groovy
 
-// For release versions take the installers from main
-def APPS_BRANCH = "${env.BRANCH_NAME == 'main' ? 'main' : 'develop'}"
-def APPS_PIPELINE = "apps/${APPS_BRANCH}"
-def INSTALLER_TARGET = 'imports/dist/sdk'
-
 pipeline {
   agent {
     node{
@@ -19,6 +14,11 @@ pipeline {
     PATH = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
   }
   parameters {
+    string(
+      name: 'APPS_BRANCH',
+      defaultValue: env.BRANCH_NAME == 'main' ? 'main' : 'v3.11.x',
+      description: 'Branch of apps to get installers from'
+    )
     string(
       name: 'OVERRIDE_INSTALLERS',
       defaultValue: '',
@@ -47,11 +47,15 @@ pipeline {
   }
   stages {
     stage('Copy Installers') {
+      environment {
+        APPS_PROJECT = "apps/${params.APPS_BRANCH}"
+        INSTALLER_DIR = 'imports/dist/sdk'
+      }
       steps {
-        copyArtifacts filter: 'BUILD/mac-10.11-64-release/bin/IBMAsperaConnect*.dmg', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PIPELINE}", target: "${INSTALLER_TARGET}"
-        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*.exe', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PIPELINE}", target: "${INSTALLER_TARGET}"
-        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect*FIPS*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.10-build-win-v140-32-fips', target: "${INSTALLER_TARGET}"
-        copyArtifacts filter: 'installer/BUILD/linux-g2.12-64-release/ibm-aspera-connect*.tar.gz', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PIPELINE}", target: "${INSTALLER_TARGET}"
+        copyArtifacts filter: 'BUILD/mac-10.11-64-release/bin/IBMAsperaConnect*.dmg', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
+        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*.exe', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
+        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect*FIPS*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.10-build-win-v140-32-fips', target: "${INSTALLER_DIR}"
+        copyArtifacts filter: 'installer/BUILD/linux-g2.12-64-release/ibm-aspera-connect*.tar.gz', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
         sh 'env | sort'
       }
     }
