@@ -49,7 +49,7 @@ pipeline {
     stage('Copy Installers') {
       environment {
         APPS_PROJECT = "connect-app/${params.APPS_BRANCH}"
-        INSTALLER_DIR = 'imports/dist/sdk'
+        INSTALLER_DIR = 'imports'
       }
       steps {
         copyArtifacts filter: 'BUILD/mac-10.11-64-release/bin/IBMAsperaConnect*.dmg', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
