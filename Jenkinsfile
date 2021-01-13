@@ -48,7 +48,7 @@ pipeline {
   stages {
     stage('Copy Installers') {
       environment {
-        APPS_PROJECT = "apps/${params.APPS_BRANCH}"
+        APPS_PROJECT = "connect-app/${params.APPS_BRANCH}"
         INSTALLER_DIR = 'imports/dist/sdk'
       }
       steps {
