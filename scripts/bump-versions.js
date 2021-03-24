@@ -25,7 +25,7 @@ if (version) {
   });
 
   // Change the version used by AW4.__VERSION__ and docs
-  files = ['packages/browser/src/version.ts', 'packages/browser/config/jsdoc.config.js', 'packages/browser/GettingStarted.md'];
+  files = ['packages/browser/src/version.ts', 'packages/browser/docs/jsdoc.config.js', 'packages/browser/docs/GettingStarted.md'];
   replace({
     files: files,
     from: /\d+\.\d+.\d+(?:-\w+(?:\.\w+)?)?/g,

@@ -1,5 +1,5 @@
 module.exports = {
-    version: '3.11.1',
+    version: '3.11.2',
     opts: {
         destination: 'build/docs',
         readme: 'docs/GettingStarted.md',
