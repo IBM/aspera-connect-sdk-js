@@ -39,8 +39,8 @@ function buildReferences () {
   // Substitute release notes and html guides links
   const { htmlGuides, releaseNotes } = getDocumentation();
   contents = contents.replace(/#LINUX_DOCS_HTML_ENTRIES#/g, htmlGuides.linux);
-  contents = contents.replace(/#MAC_DOCS_HTML_ENTRIES#/g, htmlGuides.osx);
-  contents = contents.replace(/#WIN_DOCS_HTML_ENTRIES#/g, htmlGuides.win);
+  contents = contents.replace(/#MAC_DOCS_HTML_ENTRIES#/g, htmlGuides.macos);
+  contents = contents.replace(/#WIN_DOCS_HTML_ENTRIES#/g, htmlGuides.windows);
   contents = contents.replace(/#RELEASE_NOTES_URL#/g, releaseNotes);
 
   // Substitute Linux installer info
@@ -150,17 +150,17 @@ function getInstallerDir (os) {
 }
 
 function getDocumentation () {
-  const baseUrl = 'https://www.ibm.com/support/knowledgecenter';
-  let short = version.split('.');
-  short = `${short[0]}.${short[1]}`;
+  const baseUrl = 'https://www.ibm.com/docs/en/aspera-connect';
 
-  // XXX 3.11.1 RN will be appended to 3.11.0 RN
-  let pinned = '3.11.0'
-  let releaseNotes = `${baseUrl}/SSXMX3_${short}/connect_relnotes/${pinned}.html`;
+  let versionArr = version.split('.');
+  let short = `${versionArr[0]}.${versionArr[1]}`;
+  let long = versionArr.join('');
+
+  let releaseNotes = `${baseUrl}/${short}?topic=notes-release-aspera-connect-${long}`;
 
   let htmlGuides = {};
-  ['linux', 'osx', 'win'].forEach((os) => {
-    let link = `${baseUrl}/SSXMX3_${short}/connect_user_${os}/guide.html`;
+  ['linux', 'macos', 'windows'].forEach((os) => {
+    let link = `${baseUrl}/${short}?topic=aspera-connect-user-guide-${os}`;
     htmlGuides[os] = link;
   });
 
