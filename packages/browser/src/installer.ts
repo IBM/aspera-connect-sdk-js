@@ -94,8 +94,8 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   connectOptions.sdkLocation = (Utils.isNullOrUndefinedOrEmpty(options.sdkLocation)) ? DEFAULT_SDK_LOCATION : Utils.getFullURI(options.sdkLocation) ;
   connectOptions.stylesheetLocation = Utils.getFullURI(options.stylesheetLocation);
   connectOptions.correlationId = options.correlationId;
-  // Allow 'none' but default to 'carbon'
-  connectOptions.style = options.style === 'none' ? 'none' : 'carbon';
+  // NOTE: some apps may still use the "blue" style
+  connectOptions.style = options.style || 'carbon';
 
   if (typeof(Storage) !== 'undefined') {
     let overrideStyle = Utils.getLocalStorage('aspera-connect-install-style');
