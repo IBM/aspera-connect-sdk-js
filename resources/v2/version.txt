@@ -1,4 +1,0 @@
-Module: svn://builder@zob/connect/branches/3.5.3/sdk
-Version: 100126
-Platform: mac-intel-10.9
-Build Count: 1

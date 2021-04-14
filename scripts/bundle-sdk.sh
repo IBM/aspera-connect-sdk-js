@@ -19,7 +19,6 @@ cp -R ./packages/carbon-installer/build/* ./dist/v4/install/carbon-installer
 cp -R ./resources/auto-topbar ./dist/v4/install/auto-topbar
 
 # Bundle installers and build connect_references.json
-node ./scripts/bundle-installers.js ./dist
 node ./scripts/bundle-installers.js ./dist/v4
 
 # Bundle non-javascript files
