@@ -45,8 +45,6 @@ import * as types from './core/types';
  *
  *   Format:
  *   `//domain/path/to/css/file.css`
- * @param {Boolean} [oneClick=true] Default installer type to offer users when
- *   visiting the web page.
  * @param {Boolean} [useFips=false] Serve FIPS-compatible Connect installers on Windows.
  *
  * @example
@@ -89,7 +87,6 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   }
 
   connectOptions.iframeId = options.iframeId || 'aspera-iframe-container';
-  connectOptions.oneClick = options.oneClick === false ? false : true;
   connectOptions.useFips = options.useFips === true ? true : false;
   connectOptions.sdkLocation = (Utils.isNullOrUndefinedOrEmpty(options.sdkLocation)) ? DEFAULT_SDK_LOCATION : Utils.getFullURI(options.sdkLocation) ;
   connectOptions.stylesheetLocation = Utils.getFullURI(options.stylesheetLocation);
@@ -662,9 +659,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         if (referencesJSON) {
           for (let i = 0; i < referencesJSON.links.length; i++) {
             let link = referencesJSON.links[i];
-            // Defaults to setting one click installer unless ConnectInstaller was
-            //   passed oneClick = false.
-            let rel = connectOptions.oneClick ? 'enclosure-one-click' : 'enclosure';
+            let rel = 'enclosure-one-click';
             // Serve FIPS installers if opted in
             if (connectOptions.useFips && /Win/.test(navigator.platform)) {
               rel = rel + '-fips';

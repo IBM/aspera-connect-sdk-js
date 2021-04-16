@@ -53,9 +53,8 @@ pipeline {
       }
       steps {
         copyArtifacts filter: '*x86_64.dmg', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
-        copyArtifacts filter: '*.msi, *.exe', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
-        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnect*FIPS*.msi, installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.10-build-win-v140-32-fips', target: "${INSTALLER_DIR}"
-        copyArtifacts filter: 'BUILD/mac-10.11-64-release/bin/IBMAsperaConnectInstaller-*.dmg', fingerprintArtifacts: true, flatten: true, projectName: "connect-app/v3.11.x", target: "${INSTALLER_DIR}"
+        copyArtifacts filter: '*.exe', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
+        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.10-build-win-v140-32-fips', target: "${INSTALLER_DIR}"
         copyArtifacts filter: 'installer/BUILD/linux-g2.12-64-release/ibm-aspera-connect*.tar.gz', fingerprintArtifacts: true, flatten: true, projectName: "connect-app/v3.11.x", target: "${INSTALLER_DIR}"
       }
     }

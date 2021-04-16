@@ -15,7 +15,6 @@ export interface InstallerOptions {
   iframeId?: string;
   iframeClass?: string;
   style?: string;
-  oneClick?: boolean;
   correlationId?: string;
   useFips?: boolean;
 }

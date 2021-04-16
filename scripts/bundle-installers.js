@@ -15,11 +15,11 @@ const INSTALLERS = [
     src: getInstallerDir('linux')
   },
   {
-    installers: ['ibm-aspera-connect_*.dmg', 'IBMAsperaConnectInstaller-*.dmg'],
+    installers: ['ibm-aspera-connect_*.dmg'],
     src: getInstallerDir('macos')
   },
   {
-    installers: ['ibm-aspera-connect_*.exe', 'ibm-aspera-connect_*.msi', 'IBMAsperaConnectSetup-ML-FIPS-*.exe', 'IBMAsperaConnect-ML-FIPS-*.msi'],
+    installers: ['ibm-aspera-connect_*.exe', 'IBMAsperaConnectSetup-ML-FIPS-*.exe'],
     src: getInstallerDir('windows')
   }
 ];
@@ -48,16 +48,16 @@ function buildReferences () {
   contents = contents.replace(/#LINUX64_CONNECT_INSTALLER#/g, info.linux.filename);
 
   // Substitute macOS installer info
-  contents = contents.replace(/#MAC_CONNECT_VERSION#/g, info.macOS.oneClick.version);
-  contents = contents.replace(/#MAC_ONE_CLICK_INSTALLER#/g, info.macOS.oneClick.filename);
-  contents = contents.replace(/#MAC_INSTALLER#/g, info.macOS.dmg.filename);
+  contents = contents.replace(/#MAC_CONNECT_VERSION#/g, info.macOS.version);
+  contents = contents.replace(/#MAC_ONE_CLICK_INSTALLER#/g, info.macOS.filename);
+  contents = contents.replace(/#MAC_INSTALLER#/g, info.macOS.filename);
 
   // Substitute Windows installer info
-  contents = contents.replace(/#WIN_CONNECT_VERSION#/g, info.windows.oneClick.version);
-  contents = contents.replace(/#WIN_ONE_CLICK_INSTALLER#/g, info.windows.oneClick.filename);
-  contents = contents.replace(/#WIN_INSTALLER#/g, info.windows.msi.filename);
-  contents = contents.replace(/#WIN_FIPS_ONE_CLICK_INSTALLER#/g, info.windowsFips.oneClick.filename);
-  contents = contents.replace(/#WIN_FIPS_INSTALLER#/g, info.windowsFips.msi.filename);
+  contents = contents.replace(/#WIN_CONNECT_VERSION#/g, info.windows.version);
+  contents = contents.replace(/#WIN_ONE_CLICK_INSTALLER#/g, info.windows.filename);
+  contents = contents.replace(/#WIN_INSTALLER#/g, info.windows.filename);
+  contents = contents.replace(/#WIN_FIPS_ONE_CLICK_INSTALLER#/g, info.windowsFips.filename);
+  contents = contents.replace(/#WIN_FIPS_INSTALLER#/g, info.windowsFips.filename);
 
   const outputDir = path.join(BIN_DIR, '..');
 
@@ -174,23 +174,14 @@ function getDocumentation () {
 function getInstallerInfo () {
   // Check if we skipped packaging the installers
   if (INSTALLER_NAMES.length === 0) {
-    INSTALLER_NAMES = ['', '', '', '', '', '', ''];
+    INSTALLER_NAMES = ['', '', '', ''];
   }
 
   const info = {
     linux: getLinuxInstaller(),
-    macOS: {
-      oneClick: getMacInstaller(true),
-      dmg: getMacInstaller(false)
-    },
-    windows: {
-      oneClick: getWindowsInstaller(true, false),
-      msi: getWindowsInstaller(false, false)
-    },
-    windowsFips: {
-      oneClick: getWindowsInstaller(true, true),
-      msi: getWindowsInstaller(false, true)
-    }
+    macOS: getMacInstaller(),
+    windows: getWindowsInstaller(false),
+    windowsFips: getWindowsInstaller(true)
   };
   // Output for easier debugging
   console.log(info);
@@ -206,27 +197,27 @@ function getLinuxInstaller () {
   };
 }
 
-function getMacInstaller (oneClick) {
+function getMacInstaller () {
   return {
-    filename: INSTALLER_NAMES[oneClick ? 1 : 2],
-    version: getVersionFromString(INSTALLER_NAMES[oneClick ? 1 : 2]),
-    desc: `macOS ${oneClick ? 'one click' : 'regular'} installer`
+    filename: INSTALLER_NAMES[1],
+    version: getVersionFromString(INSTALLER_NAMES[1]),
+    desc: `macOS one click installer`
   };
 }
 
-function getWindowsInstaller (oneClick, fips) {
+function getWindowsInstaller (fips) {
     if (fips) {
       return {
-        filename: INSTALLER_NAMES[oneClick ? 5 : 6],
-        version: getVersionFromString(INSTALLER_NAMES[oneClick ? 5 : 6]),
-        desc: `Windows FIPS-compliant ${oneClick ? 'one click' : 'regular'} installer`
+        filename: INSTALLER_NAMES[3],
+        version: getVersionFromString(INSTALLER_NAMES[3]),
+        desc: `Windows FIPS-compliant one click installer`
       };
     }
 
     return {
-      filename: INSTALLER_NAMES[oneClick ? 3 : 4],
-      version: getVersionFromString(INSTALLER_NAMES[oneClick ? 3 : 4]),
-      desc: `Windows ${oneClick ? 'one click' : 'regular'} installer`
+      filename: INSTALLER_NAMES[2],
+      version: getVersionFromString(INSTALLER_NAMES[2]),
+      desc: `Windows one click installer`
     };
 }
 
