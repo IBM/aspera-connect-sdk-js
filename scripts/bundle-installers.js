@@ -11,15 +11,15 @@ const INSTALLER_DIR = path.join(__dirname, '..', 'imports');
 
 const INSTALLERS = [
   {
-    installers: ['ibm-aspera-connect-*-linux-g2.12-64.tar.gz'],
+    installers: ['ibm-aspera-connect-*tar.gz'],
     src: getInstallerDir('linux')
   },
   {
-    installers: ['IBMAsperaConnectInstallerOneClick-*.dmg', 'IBMAsperaConnectInstaller-*.dmg'],
+    installers: ['ibm-aspera-connect_*.dmg', 'IBMAsperaConnectInstaller-*.dmg'],
     src: getInstallerDir('macos')
   },
   {
-    installers: ['IBMAsperaConnectSetup-ML-!(FIPS)*.exe', 'IBMAsperaConnect-ML-!(FIPS)*.msi', 'IBMAsperaConnectSetup-ML-FIPS-*.exe', 'IBMAsperaConnect-ML-FIPS-*.msi'],
+    installers: ['ibm-aspera-connect_*.exe', 'ibm-aspera-connect_*.msi', 'IBMAsperaConnectSetup-ML-FIPS-*.exe', 'IBMAsperaConnect-ML-FIPS-*.msi'],
     src: getInstallerDir('windows')
   }
 ];
