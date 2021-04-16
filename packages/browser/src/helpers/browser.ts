@@ -18,9 +18,15 @@ let checkFirefox = function (ua: any, minver: number) {
   return (ver >= minver);
 };
 
+const isAndroid = (): boolean => /(android)/i.test(ua);
+
+const isIos = (): boolean => /iPad|iPhone|iPod/.test(ua) && !(window as any)['MSStream'];
+
 export default {
+  ANDROID: isAndroid(),
   OPERA: /opera|opr/i.test(ua) && !/edge/i.test(ua),
   IE: /msie|trident/i.test(ua) && !/edge/i.test(ua),
+  IOS: isIos(),
   CHROME: /chrome|crios|crmo/i.test(ua) && !/opera|opr/i.test(ua) && !/edge/i.test(ua),
   FIREFOX: /firefox|iceweasel/i.test(ua) && !/edge/i.test(ua) && checkFirefox(ua, 50),
   FIREFOX_LEGACY: /firefox|iceweasel/i.test(ua) && !/edge/i.test(ua) && !checkFirefox(ua, 50),

@@ -431,6 +431,10 @@ export function isError (x: any): x is types.ConnectError {
   return (x && x.error !== undefined);
 }
 
+export function isMobile (): boolean {
+  return (BROWSER.IOS || BROWSER.ANDROID);
+}
+
 export {
   BROWSER
 };

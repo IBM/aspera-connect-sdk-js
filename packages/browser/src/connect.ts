@@ -122,7 +122,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   let connectStatus: types.ConnectStatusStrings = STATUS.INITIALIZING;
   let objectId = Utils.nextObjectId();
   let outstandingActivityReqs = 0; // Keep track of polling requests to avoid overfilling the queue
-  let apiReady = false;
+  let connectRunning = false;
+  let mobileConnectRunning = false;
   let requestHandler = new RequestHandler({
     id: PLUGIN_ID,
     containerId: PLUGIN_CONTAINER_ID,
@@ -151,8 +152,12 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
 
   function connectReady () {
     Logger.debug('Connect API is ready.');
-    apiReady = true;
-    initDragDrop();
+    if (Utils.isMobile()) {
+      mobileConnectRunning = true;
+    } else {
+      connectRunning = true;
+      initDragDrop();
+    }
   }
 
   function getAllTransfersHelper (iterationToken: number, callbacks?: types.Callbacks<types.AllTransfersInfo>): Promise<types.AllTransfersInfo> | void {
@@ -198,14 +203,14 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     }
   }
 
-  function pollTransfersHelperFunction () {
+  function pollGetAllTransfers () {
     // TODO: Need to make sure that all request implementations error on timeout
     if (outstandingActivityReqs >= MAX_ACTIVITY_OUTSTANDING) {
       Logger.debug('Skipping activity request. Reached maximum number of outstanding polling requests.');
       return;
     }
     outstandingActivityReqs++;
-    getAllTransfersHelper(transferEventIterationToken, {
+    getAllTransfers({
       success: function (response: any) {
         outstandingActivityReqs--;
         notifyTransferListeners(response);
@@ -213,7 +218,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       error: function () {
         outstandingActivityReqs--;
       }
-    });
+    }, transferEventIterationToken);
   }
 
   /**
@@ -270,6 +275,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     } else if (newStatus === STATUS.RETRYING) {
       setConnectStatus(STATUS.RETRYING);
     } else if (newStatus === STATUS.FAILED) {
+      connectRunning = false;
       setConnectStatus(STATUS.FAILED);
     } else if (newStatus === STATUS.EXTENSION_INSTALL) {
       setConnectStatus(STATUS.EXTENSION_INSTALL);
@@ -295,33 +301,22 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   function send<T> (request: InstanceType<typeof Request>, callbacks: types.Callbacks<T>): void;
   function send<T> (request: InstanceType<typeof Request>): Promise<T>;
   function send<T> (request: InstanceType<typeof Request>, callbacks?: types.Callbacks<T>): Promise<T> | void {
-    if (!apiReady) {
-      // Should wait for the RUNNING status event before using the Connect API
-      Logger.warn('Connect API is not yet available - wait for the running status event.');
-    } else if (!api) {
-      throw new Error('Must call #initSession before using the Connect API.');
-    }
-
     /** Add default settings for all POST requests */
     if (request.method === HTTP_METHOD.POST) {
       request.addSettings(addStandardSettings);
     }
 
     if (callbacks) {
-      request.send<T>(api).then(
-        (response) => {
-          if (typeof callbacks.success === 'function') {
-            callbacks.success(response);
-          }
+      request.send<T>(api).then((response) => {
+        if (typeof callbacks.success === 'function') {
+          callbacks.success(response);
         }
-      ).catch(
-        (error: types.ConnectError) => {
-          if (typeof callbacks.error === 'function') {
-            Logger.debug('Calling error callback.');
-            callbacks.error(error);
-          }
+      }).catch((error: types.ConnectError) => {
+        if (typeof callbacks.error === 'function') {
+          Logger.debug('Calling error callback.');
+          callbacks.error(error);
         }
-      );
+      });
     } else {
       return request.send<T>(api);
     }
@@ -362,7 +357,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     // Add the listener
     if (type === EVENT.TRANSFER || type === EVENT.ALL) {
       if (transferEventIntervalId === 0) {
-        transferEventIntervalId = setInterval(pollTransfersHelperFunction, POLLING_TIME);
+        transferEventIntervalId = setInterval(pollGetAllTransfers, POLLING_TIME);
       }
       // Already set a function for polling the status, just add to the queue
       transferListeners.push(listener);
@@ -382,10 +377,12 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
          .setBody(authSpec)
          .setValidator(validateAuthSpec);
 
-    if (callbacks) {
-      send<{}>(request, callbacks);
-    } else {
-      return send<{}>(request);
+    if (connectRunning) {
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
     }
   }
   /**
@@ -414,7 +411,17 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
 
   function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number): void;
   function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number = 0): void | Promise<types.AllTransfersInfo> {
-    return getAllTransfersHelper(iterationToken, callbacks);
+    if (connectRunning) {
+      return getAllTransfersHelper(iterationToken, callbacks);
+    } else if (mobileConnectRunning && window.AsperaMobile) {
+      window.AsperaMobile.getAllTransfers(iterationToken).then(transfers => {
+        if (callbacks.success) callbacks.success(transfers as unknown as types.AllTransfersInfo);
+      }).catch(err => {
+        if (callbacks.error) callbacks.error(err);
+      });
+    } else {
+      throw new Error('getAllTransfers: No method is available for getting all transfers');
+    }
   }
   /**
    * Get statistics for all transfers.
@@ -455,10 +462,16 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setParam(transferId)
         .setValidator(validateTransferId);
 
-    if (callbacks) {
-      send<{ transfer_info: types.TransferInfo }>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<{ transfer_info: types.TransferInfo }>(request, callbacks);
+      } else {
+        return send<{ transfer_info: types.TransferInfo }>(request);
+      }
+    } else if (mobileConnectRunning && window.AsperaMobile) {
+      return window.AsperaMobile.getTransfer(transferId) as unknown as Promise<{ transfer_info: types.TransferInfo }>;
     } else {
-      return send<{ transfer_info: types.TransferInfo }>(request);
+      throw new Error('getTransfer: No transfer method is available for retrieving a transfer');
     }
   }
   /**
@@ -542,10 +555,12 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setBody(options)
         .setValidator(validateTransferId);
 
-    if (callbacks) {
-      send<{}>(request, callbacks);
-    } else {
-      return send<{}>(request);
+    if (connectRunning) {
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
     }
   }
   /**
@@ -584,10 +599,14 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setBody(options)
         .setValidator(validateArrayBufferOptions);
 
-    if (callbacks) {
-      send<types.ArrayBufferOutput>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<types.ArrayBufferOutput>(request, callbacks);
+      } else {
+        return send<types.ArrayBufferOutput>(request);
+      }
     } else {
-      return send<types.ArrayBufferOutput>(request);
+      throw new Error('readAsArrayBuffer: No method is available for reading a file');
     }
   }
   /**
@@ -633,10 +652,14 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setBody(options)
         .setValidator(validateBufferOptions);
 
-    if (callbacks) {
-      send<types.ArrayBufferOutput>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<types.ArrayBufferOutput>(request, callbacks);
+      } else {
+        return send<types.ArrayBufferOutput>(request);
+      }
     } else {
-      return send<types.ArrayBufferOutput>(request);
+      throw new Error('readChunkAsArrayBuffer: No method is available for reading a file');
     }
   }
   /**
@@ -687,10 +710,14 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       .setBody(localOptions)
       .setValidator(validateChecksumOptions);
 
-    if (callbacks) {
-      send<types.ChecksumFileOutput>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<types.ChecksumFileOutput>(request, callbacks);
+      } else {
+        return send<types.ChecksumFileOutput>(request);
+      }
     } else {
-      return send<types.ChecksumFileOutput>(request);
+      throw new Error('getChecksum: No method is available for retrieving a checksum');
     }
   }
   /**
@@ -801,10 +828,14 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setParam(transferId)
         .setValidator(validateTransferId);
 
-    if (callbacks) {
-      send<{}>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
     } else {
-      return send<{}>(request);
+      throw new Error('removeTransfer: No transfer method is available for removing a transfer');
     }
   }
   /**
@@ -846,10 +877,16 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setBody(options)
         .setValidator(validateTransferId);
 
-    if (callbacks) {
-      send<types.ResumeTransferOutput>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<types.ResumeTransferOutput>(request, callbacks);
+      } else {
+        return send<types.ResumeTransferOutput>(request);
+      }
+    } else if (mobileConnectRunning && window.AsperaMobile) {
+      return window.AsperaMobile.resumeTransfer(transferId, {});
     } else {
-      return send<types.ResumeTransferOutput>(request);
+      throw new Error('resumeTransfer: No transfer method is available for resuming a transfer');
     }
   }
   /**
@@ -1005,10 +1042,14 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setName('showAbout')
         .setMethod(HTTP_METHOD.GET);
 
-    if (callbacks) {
-      send<{}>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
     } else {
-      return send<{}>(request);
+      throw new Error('showAbout: No method is available for opening the about window');
     }
   }
   /**
@@ -1037,10 +1078,14 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setParam(transferId)
         .setValidator(validateTransferId);
 
-    if (callbacks) {
-      send<{}>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
     } else {
-      return send<{}>(request);
+      throw new Error('showDirectory: No method is available for opening directory');
     }
   }
   /**
@@ -1260,7 +1305,13 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setMethod(HTTP_METHOD.POST)
         .setBody(localOptions);
 
-    return send<types.ShowSelectFileDialogOutput>(request);
+    if (connectRunning) {
+      return send<types.ShowSelectFileDialogOutput>(request);
+    } else if (mobileConnectRunning && window.AsperaMobile) {
+      return window.AsperaMobile.showSelectFileDialog() as unknown as Promise<types.ShowSelectFileDialogOutput>;
+    } else {
+      throw new Error('showSelectFileDialogPromise: No method is available for opening the file dialog');
+    }
   };
 
   /**
@@ -1339,7 +1390,11 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setMethod(HTTP_METHOD.POST)
         .setBody(localOptions);
 
-    return send<types.ShowSelectFolderDialogOutput>(request);
+    if (connectRunning) {
+      return send<types.ShowSelectFolderDialogOutput>(request);
+    } else {
+      throw new Error('showSelectFolderDialogPromise: No method is available for opening the folder dialog');
+    }
   };
 
   function showTransferManager (callbacks: types.Callbacks<{}>): void;
@@ -1350,10 +1405,14 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setName('showTransferManager')
         .setMethod(HTTP_METHOD.GET);
 
-    if (callbacks) {
-      send<{}>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
     } else {
-      return send<{}>(request);
+      throw new Error('showTransferManager: No method is available for opening the transfer manager');
     }
   }
   /**
@@ -1382,10 +1441,14 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setParam(transferId)
         .setValidator(validateTransferId);
 
-    if (callbacks) {
-      send<{}>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
     } else {
-      return send<{}>(request);
+      throw new Error('showTransferMonitor: No method is available for opening the transfer monitor');
     }
   }
   /**
@@ -1418,24 +1481,35 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       return Utils.createError(-1, 'Please call #initSession first.');
     }
 
-    /** Initialize request handler and launch Connect */
-    requestHandler.init().then(
-      () => {
-        Logger.debug(`Initialization finished. Connect status: ${connectStatus}`);
-        /** Make sure to mark Connect is ready if for some reason it's not already so we don't block requests */
-        if (!apiReady && connectStatus === STATUS.RUNNING) {
-          connectReady();
-        }
+    // Initialize Mobile Connect if detected
+    if (Utils.isMobile() && window.AsperaMobile) {
+      let version = window.AsperaMobile.version();
+      Logger.debug(`Detected mobile app version: ${version}`);
+      // Can enforce minimum version here
+      if (version) {
+        setConnectStatus(STATUS.RUNNING);
+        connectReady();
+      } else {
+        setConnectStatus(STATUS.FAILED);
+      }
 
-        if (connectStatus !== STATUS.RUNNING) {
-          Logger.debug('Connect API is not ready.');
-        }
+      return;
+    }
+
+    /** Initialize Desktop Connect */
+    requestHandler.init().then(() => {
+      Logger.debug(`Initialization finished. Connect status: ${connectStatus}`);
+      /** Make sure to mark Connect is ready if for some reason it's not already so we don't block requests */
+      if (!connectRunning && connectStatus === STATUS.RUNNING) {
+        connectReady();
       }
-    ).catch(
-      (error) => {
-        Logger.error('Initialization error:', error);
+
+      if (connectStatus !== STATUS.RUNNING) {
+        Logger.debug('Connect API is not ready.');
       }
-    );
+    }).catch((error) => {
+      Logger.error('Initialization error:', error);
+    });
   };
 
   /**
@@ -1516,7 +1590,13 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       }]
     };
 
-    return this.startTransfers(transferSpecs);
+    if (connectRunning) {
+      return this.startTransfers(transferSpecs);
+    } else if (mobileConnectRunning && window.AsperaMobile) {
+      return window.AsperaMobile.startTransfer(transferSpec) as unknown as Promise<types.StartTransferOutput>;
+    } else {
+      throw new Error('startTransferPromise: No transfer method is available for starting a transfer');
+    }
   }
   this.startTransferPromise = startTransferPromise;
 
@@ -1534,11 +1614,15 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setBody(transferSpecs)
         .setRequestId(requestId);
 
-    if (callbacks) {
-      send<types.StartTransferOutput>(request, callbacks);
-      return { request_id : requestId };
+    if (connectRunning) {
+      if (callbacks) {
+        send<types.StartTransferOutput>(request, callbacks);
+        return { request_id : requestId };
+      } else {
+        return send<types.StartTransferOutput>(request);
+      }
     } else {
-      return send<types.StartTransferOutput>(request);
+      throw new Error('startTransfers: No transfer method is available for starting a transfer');
     }
   }
   /**
@@ -1599,10 +1683,16 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setParam(transferId)
         .setValidator(validateTransferId);
 
-    if (callbacks) {
-      send<{}>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<{}>(request, callbacks);
+      } else {
+        return send<{}>(request);
+      }
+    } else if (mobileConnectRunning && window.AsperaMobile) {
+      return window.AsperaMobile.stopTransfer(transferId) as unknown as Promise<{}>;
     } else {
-      return send<{}>(request);
+      throw new Error('stopTransfer: No method is available for stopping a transfer');
     }
   }
   /**
@@ -1625,25 +1715,27 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   function testSshPorts (options: types.TestSshPortsOptions, callbacks: types.Callbacks<{}>): void;
   function testSshPorts (options: types.TestSshPortsOptions): Promise<{}>;
   function testSshPorts (options: types.TestSshPortsOptions, callbacks?: types.Callbacks<{}>): Promise<{}> | void {
-    if (options && options.remote_host) {
-      let localOptions: any = {};
-      localOptions.remote_host = options.remote_host;
-      localOptions.ssh_port = options.ssh_port || 33001;
-      localOptions.timeout_sec = options.timeout_sec || 3;
+    let localOptions: any = {};
+    localOptions.remote_host = options.remote_host;
+    localOptions.ssh_port = options.ssh_port || 33001;
+    localOptions.timeout_sec = options.timeout_sec || 3;
 
-      const request =
-        new Request()
-          .setName('testSshPorts')
-          .setMethod(HTTP_METHOD.POST)
-          .setBody(localOptions);
+    const request =
+      new Request()
+        .setName('testSshPorts')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(localOptions);
 
+    if (connectRunning) {
       if (callbacks) {
         send<{}>(request, callbacks);
       } else {
         return send<{}>(request);
       }
+    } else if (mobileConnectRunning && window.AsperaMobile) {
+      return window.AsperaMobile.testSshPorts(localOptions) as unknown as Promise<{}>;
     } else {
-      throw new Error('#testSshPorts options argument is either missing or incorrect.');
+      throw new Error('testSshPorts: No method is available for testing ports');
     }
   }
   /**
@@ -1677,10 +1769,19 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
         .setName('version')
         .setMethod(HTTP_METHOD.GET);
 
-    if (callbacks) {
-      send<types.VersionOutput>(request, callbacks);
+    if (connectRunning) {
+      if (callbacks) {
+        send<types.VersionOutput>(request, callbacks);
+      } else {
+        return send<types.VersionOutput>(request);
+      }
+    } else if (mobileConnectRunning && window.AsperaMobile) {
+      return new Promise(resolve => {
+        let version = window.AsperaMobile!.version() as unknown as Promise<types.VersionOutput>;
+        resolve(version);
+      });
     } else {
-      return send<types.VersionOutput>(request);
+      throw new Error('version: No method is available for checking Connect version');
     }
   }
   /**
