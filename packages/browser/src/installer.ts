@@ -74,6 +74,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   let connectInstallerListeners: any = [];
   // @ts-ignore :disable:no-unused-variable
   let retryCount = 0;
+  const isSupportedBrowser = !Utils.BROWSER.IE;
 
   if (Utils.isNullOrUndefinedOrEmpty(options)) {
     options = {};
@@ -795,7 +796,11 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
      * @return {null}
      */
   this.showDownload = function () {
-    show('download');
+    if (isSupportedBrowser) {
+      show('download');
+    } else {
+      this.showUnsupportedBrowser();
+    }
   };
 
     /**
@@ -807,8 +812,12 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
      * @return {null}
      */
   this.showInstall = function () {
-    show('install');
-    Utils.setLocalStorage('aspera-install-attempted', 'true');
+    if (isSupportedBrowser) {
+      show('install');
+      Utils.setLocalStorage('aspera-install-attempted', 'true');
+    } else {
+      this.showUnsupportedBrowser();
+    }
   };
 
     /**
@@ -820,7 +829,11 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
      * @return {null}
      */
   this.showUpdate = function () {
-    show('update');
+    if (isSupportedBrowser) {
+      show('update');
+    } else {
+      this.showUnsupportedBrowser();
+    }
   };
 
     /**

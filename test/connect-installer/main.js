@@ -5,11 +5,11 @@ var initialize = function() {
 
     let installerOptions = { sdkLocation: CONNECT_INSTALLER, style: "carbon", correlationId: 'test' };
     var asperaInstaller = new AW4.ConnectInstaller(installerOptions);
-    asperaInstaller.addEventListener((event) => {
+    asperaInstaller.addEventListener(function (event) {
       console.log(event);
     });
 
-    asperaInstaller.addActivityListener(AW4.ConnectInstaller.EVENT_TYPE.CONNECT_BAR_EVENT, data => {
+    asperaInstaller.addActivityListener(AW4.ConnectInstaller.EVENT_TYPE.CONNECT_BAR_EVENT, function (data) {
       console.log('received connect bar event:', data);
     });
 
@@ -24,8 +24,8 @@ var initialize = function() {
             asperaInstaller.connected();
             // Make sure we can use Connect API after we're told it's running.
             let callback = {
-              success: (version) => { console.log('version returned:', version); },
-              error: () => { console.log('version error'); }
+              success: function (version) { console.log('version returned:', version); },
+              error: function () { console.log('version error'); }
             };
             asperaWeb.version(callback);
         } else if (eventType === AW4.Connect.EVENT.STATUS && data == AW4.Connect.STATUS.EXTENSION_INSTALL) {
