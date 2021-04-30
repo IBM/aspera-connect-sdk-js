@@ -10,7 +10,7 @@
     "build:skip-zip": "run-s build:browser build:carbon build:bundle",
     "build:zip": "./scripts/zip-sdk.sh",
     "bump": "node ./scripts/bump-versions.js",
-    "clean": "rimraf *.zip *ConnectSDK* dist packages/browser/docs packages/browser/esm packages/browser/build packages/browser/dist",
+    "clean": "rimraf *.zip *ConnectSDK* dist packages/browser/esm packages/browser/build packages/browser/dist",
     "preinstall": "node ./scripts/preinstall.js",
     "release": "standard-version --no-verify --path packages/ --skip.bump=true",
     "test:browser": "npm --prefix packages/browser run test:integration -- --browsers ChromeCustom"
