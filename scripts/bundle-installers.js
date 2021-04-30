@@ -11,7 +11,7 @@ const INSTALLER_DIR = path.join(__dirname, '..', 'imports');
 
 const INSTALLERS = [
   {
-    installers: ['ibm-aspera-connect-*tar.gz'],
+    installers: ['ibm-aspera-connect_*tar.gz'],
     src: getInstallerDir('linux')
   },
   {
