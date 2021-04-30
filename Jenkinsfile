@@ -1,100 +1,90 @@
 #!groovy
 
 pipeline {
-  agent {
-    node{
-      label 'ci-bld-mac10v13-0'
-    }
-  }
-  options {
-    timeout(time: 1, unit: 'HOURS')
-    buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '30'))
-  }
-  environment {
-    PATH = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:$PATH"
-  }
-  parameters {
-    string(
-      name: 'APPS_BRANCH',
-      defaultValue: env.BRANCH_NAME == 'main' ? 'main' : 'develop',
-      description: 'Branch of apps to get installers from'
-    )
-    string(
-      name: 'OVERRIDE_INSTALLERS',
-      defaultValue: '',
-      description: 'Get all installers from a different source location, /aspera/process/test/connect/3.10/archive'
-    )
-    string(
-      name: 'OVERRIDE_WIN_INSTALLERS',
-      defaultValue: '',
-      description: 'Optional: Get latest Windows installers (non-fips) from a different source location (i.e. Jenkins)'
-    )
-    string(
-      name: 'OVERRIDE_MAC_INSTALLERS',
-      defaultValue: '',
-      description: 'Optional: Get latest Mac installers from a different source location (i.e. Jenkins)'
-    )
-    string(
-      name: 'OVERRIDE_LINUX_INSTALLERS',
-      defaultValue: '/aspera/process/release/connect/3.11.2',
-      description: 'Optional: Get latest Linux installers from a different source location (i.e. Jenkins)'
-    )
-    string(
-      name: 'REV_NUMBER',
-      defaultValue: '',
-      description: 'Full version of installer to use when overriding (ex: 3.9.1.171801)'
-    )
-  }
-  stages {
-    stage('Copy Installers') {
-      environment {
-        APPS_PROJECT = "connect-app/${params.APPS_BRANCH}"
-        INSTALLER_DIR = 'imports'
-      }
-      steps {
-        copyArtifacts filter: '*x86_64.dmg', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
-        copyArtifacts filter: '*.exe', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
-        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.10-build-win-v140-32-fips', target: "${INSTALLER_DIR}"
-      }
-    }
-    stage('Build') {
-      steps {
-        sh "env | sort"
-        sh "npm install"
-        sh "npm run build"
-      }
-    }
-    stage('Test') {
-      parallel {
-        stage('Banner') {
-          steps {
-            sh "npm --prefix packages/carbon-installer test -- --watchAll false"
-          }
+    agent {
+        node{
+            label 'linux && docker && x86_64'
         }
-        stage('Karma') {
-          steps {
-            sh "npm run test:browser"
-          }
+    }
+    options {
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '30'))
+    }
+    parameters {
+        string(description: 'Specify connect-app branch',
+            name: 'CONNECT_APP_BRANCH',
+            defaultValue: env.BRANCH_NAME == 'main' ? 'main' : 'develop')
+        string(description: 'Override installer directory (ex: /aspera/process/test/connect/3.10/archive)',
+            name: 'OVERRIDE_INSTALLERS',
+            defaultValue: '')
+        string(description: 'Override Windows installer directory',
+            name: 'OVERRIDE_WIN_INSTALLERS',
+            defaultValue: '')
+        string(description: 'Override macOS installer directory',
+            name: 'OVERRIDE_MAC_INSTALLERS',
+            defaultValue: '')
+        string(description: 'Override Linux installer directory',
+            name: 'OVERRIDE_LINUX_INSTALLERS',
+            defaultValue: '')
+    }
+    stages {
+        stage('Linux-64') {
+            agent {
+                dockerfile {
+                    reuseNode true
+                    args '-u root:root'
+                }
+            }
+            stages {
+                stage('Prepare') {
+                    environment {
+                        APPS_PROJECT = "connect-app/${params.CONNECT_APP_BRANCH}"
+                        INSTALLER_DIR = 'imports'
+                    }
+                    steps {
+                        copyArtifacts filter: '*x86_64.dmg', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
+                        copyArtifacts filter: '*.exe', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
+                        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.10-build-win-v140-32-fips', target: "${INSTALLER_DIR}"
+                        copyArtifacts filter: 'installer/BUILD/linux-g2.12-64-release/ibm-aspera-connect*.tar.gz', fingerprintArtifacts: true, flatten: true, projectName: "connect-app/v3.11.x", target: "${INSTALLER_DIR}"
+                    }
+                }
+                stage('Build') {
+                    steps {
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
+                }
+                stage('Test') {
+                    parallel {
+                        stage('Unit') {
+                            steps {
+                                sh 'npm run test:carbon'
+                            }
+                        }
+                        stage('Integration') {
+                            steps {
+                                sh 'npm run test:browser'
+                            }
+                        }
+                        stage('Lint') {
+                            steps {
+                                sh 'npm run test:lint'
+                            }
+                        }
+                    }
+                }
+                stage('Package') {
+                    steps {
+                        sh 'npm run build:zip'
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: '*.zip', allowEmptyArchive: true
+                            cleanWs()
+                        }
+                    }
+                }
+            }
         }
-        stage('Lint') {
-          steps {
-            sh "npm --prefix packages/browser run lint"
-          }
-        }
-      }
     }
-    stage('Package') {
-      steps {
-        sh "npm run build:zip"
-      }
-    }
-  }
-  post {
-    success {
-      archiveArtifacts '*.zip'
-    }
-    cleanup {
-      cleanWs()
-    }
-  }
 }

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -eux
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
