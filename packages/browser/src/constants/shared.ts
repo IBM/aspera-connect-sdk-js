@@ -1,6 +1,6 @@
 import { ConnectStatus, ConnectEvent, TransferStatus, HttpMethod } from '../core/types';
 
-export const MIN_SECURE_VERSION = '3.8.0';
+export const MIN_SECURE_VERSION = '3.9.0';
 export const HTTP_METHOD: HttpMethod = {
   GET: 'GET',
   POST: 'POST',

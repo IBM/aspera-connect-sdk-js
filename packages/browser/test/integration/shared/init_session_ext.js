@@ -109,20 +109,20 @@ var testInitSessionExtensions = function() {
     });
   });
 
-  context('when Connect initialized with minVersion = 3.8.0', function() {
+  context('when Connect initialized with minVersion = 3.9.0', function() {
     beforeEach(function() {
       // Reset Connect session
       if (this.useExtensions) {
-        this.asperaWeb = new AW4.Connect( { minVersion: '3.8.0', connectMethod: 'extension' } );
+        this.asperaWeb = new AW4.Connect( { minVersion: '3.9.0', connectMethod: 'extension' } );
       } else {
-        this.asperaWeb = new AW4.Connect( { minVersion: '3.8.0', connectMethod: 'http' } );
+        this.asperaWeb = new AW4.Connect( { minVersion: '3.9.0', connectMethod: 'http' } );
       }
     });
 
-    context('when user has Connect 3.7.4 installed', function() {
+    context('when user has Connect 3.8.0 installed', function() {
       it('should set Connect status to OUTDATED', function(done) {
-        extensionResponse(200, '{ "version": "3.7.4.157934" }');
-        this.server.respondWith('GET', /version/, [200, { "Content-Type": "application/json" }, '{ "version": "3.7.4.157934" }']);
+        extensionResponse(200, '{ "version": "3.8.0.157934" }');
+        this.server.respondWith('GET', /version/, [200, { "Content-Type": "application/json" }, '{ "version": "3.8.0.157934" }']);
 
         this.asperaWeb.initSession();
 
@@ -134,7 +134,7 @@ var testInitSessionExtensions = function() {
       });
     });
 
-    context('when user has Connect 3.8.0 installed', function() {
+    context('when user has Connect 4.0.0 installed', function() {
       it('should set Connect status to RUNNING', function(done) {
         this.asperaWeb.initSession();
 
@@ -146,18 +146,18 @@ var testInitSessionExtensions = function() {
     });
   });
 
-  context('when Connect initialized with minVersion = 3.9.0', function() {
+  context('when Connect initialized with minVersion = 4.1.0', function() {
     var optional;
     beforeEach(function() {
       // Reset Connect session
       if (this.useExtensions) {
-        this.asperaWeb = new AW4.Connect( { minVersion: '3.9.0', connectMethod: 'extension' } );
+        this.asperaWeb = new AW4.Connect( { minVersion: '4.1.0', connectMethod: 'extension' } );
       } else {
-        this.asperaWeb = new AW4.Connect( { minVersion: '3.9.0', connectMethod: 'http' } );
+        this.asperaWeb = new AW4.Connect( { minVersion: '4.1.0', connectMethod: 'http' } );
       }
     });
 
-    context('when user has Connect 3.8.0 installed', function() {
+    context('when user has Connect 4.0.0 installed', function() {
       it('should set Connect status to OUTDATED', function(done) {
         this.asperaWeb.initSession();
 
@@ -191,9 +191,9 @@ var testInitSessionExtensions = function() {
 
         setTimeout(() => {
           if (this.useExtensions) {
-            expect(extensionRequests.last().body).to.match(/"min_version":"3.9.0"/);
+            expect(extensionRequests.last().body).to.match(/"min_version":"4.1.0"/);
           } else {
-            expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"min_version":"3.9.0"/);
+            expect(decryptRequest(this.server.lastRequest.requestBody)).to.match(/"min_version":"4.1.0"/);
           }
           this.asperaWeb.stop();
           done();
@@ -204,13 +204,13 @@ var testInitSessionExtensions = function() {
         beforeEach(function() {
           if (this.useExtensions) {
             this.asperaWeb = new AW4.Connect({
-              minVersion: '3.9.0',
+              minVersion: '4.1.0',
               sdkLocation: 'example.com/connect/v4',
               connectMethod: 'extension'
             });
           } else {
             this.asperaWeb = new AW4.Connect({
-              minVersion: '3.9.0',
+              minVersion: '4.1.0',
               sdkLocation: 'example.com/connect/v4',
               connectMethod: 'http'
             });
