@@ -13,7 +13,7 @@
     "clean": "rimraf *.zip *ConnectSDK* dist packages/browser/esm packages/browser/build packages/browser/dist",
     "preinstall": "node ./scripts/preinstall.js",
     "release": "standard-version --no-verify --path packages/ --skip.bump=true",
-    "test:browser": "npm --prefix packages/browser run test:integration -- --browsers ChromeCustom",
+    "test:browser": "npm --prefix packages/browser run test:integration:headless",
     "test:carbon": "npm --prefix packages/carbon-installer run test -- --watchAll false",
     "test:lint": "npm --prefix packages/browser run lint"
   },

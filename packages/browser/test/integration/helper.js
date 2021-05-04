@@ -6,24 +6,7 @@ var callback = {
   error: function(err) {}
 };
 
-var wampCallback = {
-  onSuccess: function(success) {},
-  onError: function(err) {},
-  onClose: function(close) {console.log(close)}
-};
-
-// TODO: Find workaround for encrypted requests
-var decryptRequest = function(body) {
-  byteArray = AW4.Utils.decrypt(body);
-  decryptedRequest = AW4.crypt.aesjs.utils.utf8.fromBytes(byteArray);
-  return decryptedRequest;
-};
-
-var fakeURL = 'ws://localhost:8080';
-var mockServer = new mockSocket.Server(fakeURL);
-var connected = false;
-var return_error = false;
-var wampReq = '';
+var DEFAULT_VERSION = '4.0.0.17';
 
 var extResponse = {};
 var extensionRequests;
@@ -51,9 +34,9 @@ function extensionResponse(httpCode, body) {
 
 function returnVersion() {
   var version = {
-      'extension_version' : '3.10.145834'
+      'extension_version' : DEFAULT_VERSION
   };
-  // document.dispatchEvent(new CustomEvent('AsperaConnectCheckResponse', res));
+
   window.postMessage({
     'type': 'AsperaConnectCheckResponse',
     'detail': version
@@ -88,7 +71,7 @@ function httpRequest(evt) {
     message.request_id = evt.detail.request_id;
 
     if (uri.match(/version/)) {
-      var body = JSON.stringify({ 'version' : '4.0.0.17' });
+      var body = JSON.stringify({ 'version' : DEFAULT_VERSION });
       message.body = body;
     } else if (uri.match(/require/) || uri.match(/authenticate/) || uri.match(/activity/) ||
                 uri.match(/transfer/) || uri.match(/array/) || uri.match(/windows/)) {
@@ -98,56 +81,12 @@ function httpRequest(evt) {
   } else {
     message.request_id = evt.detail.request_id;
   }
-  // document.dispatchEvent(new CustomEvent('AsperaConnectResponse', {'detail' : message}));
+
   window.postMessage({
     'type': 'AsperaConnectResponse',
     'detail': message
   }, '*')
 }
-
-// Mock server to respond to WebSocket connections
-mockServer.on('connection', function (socket) {
-  socket.on('message', function (data) {
-    if (data.match(/version/)) {
-      if (return_error) {
-        return_error = false;
-        socket.send("[50,1,{},[],{\"body\":{\"version\": \"3.9.0.123456\"},\"headers\":{},\"status_code\":404}]");
-      } else {
-        socket.send("[50,1,{},[],{\"body\":{\"version\": \"3.9.0.123456\"},\"headers\":{},\"status_code\":200}]");
-      }
-    } else if (data.match(/activity/)) {
-        if (return_error) {
-          return_error = false;
-          socket.send("[50,1,{},[],{\"body\":{\"version\": \"3.9.0.123456\"},\"headers\":{},\"status_code\":404}]");
-        } else {
-          wampReq = data;
-          socket.send("[50,1,{},[],{\"body\":{\"version\": \"3.9.0.123456\"},\"headers\":{},\"status_code\":200}]");
-        }
-    } else {
-      connected = true;
-      socket.send("[2,2264775509761427,{\"roles\":{\"dealer\":{\"features\":{\"call_timeout\":true,\"progressive_call_results\":true}},\"broker\":{}}}]");
-    }
-  });
-});
-
-// Mock a second WAMP server with different url
-var mockServer2 = new mockSocket.Server('wss://localhost:9999');
-mockServer2.on('connection', function (socket) {
-  socket.on('message', function (data) {
-    if (data.match(/version/)) {
-      socket.send("[50,1,{},[],{\"body\":{\"version\": \"3.9.0.123456\"},\"headers\":{},\"status_code\":200}]");
-    } else if (data.match(/unprovide\.wamp\.api/)) {
-      wampReq = data;
-      socket.send("[50,4,{},[],{\"body\":\"{  }\",\"headers\":{},\"status_code\":200}]");
-    } else {
-      connected = true;
-      socket.send("[2,2264775509761427,{\"roles\":{\"dealer\":{\"features\":{\"call_timeout\":true,\"progressive_call_results\":true}},\"broker\":{}}}]");
-    }
-  });
-});
-
-// TODO: Move mockServer start/stop into beforeEach/afterEach functions.
-// mockServer.stop()
 
 // Fake that Connect is installed and running.
 beforeEach("Fake Connect is running", function() {
@@ -189,8 +128,6 @@ beforeEach("Fake Connect is running", function() {
 });
 
 afterEach(function() {
-  // asperaWeb = null;
-
   this.server.restore();
   this.clock.restore();
   this.server.requests = [];
@@ -203,8 +140,6 @@ afterEach(function() {
   localStorage.removeItem(AW4.Utils.LS_CONNECT_APP_ID);
 
   sandbox.restore();
-  connected = false;
-  wampReq = '';
   extResponse = {};
 
   // It's very important to cleanup these event listeners

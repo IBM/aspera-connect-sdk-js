@@ -3,17 +3,20 @@ var testStop = function() {
     res = this.asperaWeb.stop();
     expect(res).to.equal(true);
   });
-  
-  it('should prevent calls to Connect', function() {
+
+  it('should prevent calls to Connect', function(done) {
     this.asperaWeb.stop();
-    if (this.useExtensions) {
-      this.asperaWeb.version(callback);
-      expect(callback.success.callCount).to.equal(0);
-    } else {
-      exp = this.server.requests.length;
-      this.asperaWeb.version(callback);
-      expect(this.server.requests.length).to.equal(exp);
-    }
+    expected = this.server.requests.length;
+    this.asperaWeb.version(callback);
+
+    setTimeout(() => {
+      if (this.useExtensions) {
+        expect(callback.success.callCount).to.equal(0);
+      } else {
+        expect(this.server.requests.length).to.equal(expected);
+      }
+      done();
+    }, 50);
   });
 };
 
@@ -22,7 +25,7 @@ var testStopExtensions = function() {
     res = this.asperaWeb.stop();
     expect(res).to.equal(true);
   });
-  
+
   it('should prevent calls to Connect', function(done) {
     this.asperaWeb.stop();
     this.asperaWeb.version(callback);

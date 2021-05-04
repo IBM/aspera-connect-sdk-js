@@ -21,7 +21,6 @@ module.exports = function(config) {
       'test/integration/shared/*.js',
       'test/integration/helper.js',
       'test/integration/connect.js',
-      'test/integration/dragndrop.js',
       'test/integration/utils.js',
       'test/integration/logger.js'
     ],
@@ -35,6 +34,9 @@ module.exports = function(config) {
     reporters: ['progress', 'mocha'],
     port: 8080,
     colors: true,
+    browserConsoleLogOptions: {
+      terminal: false
+    },
     logLevel: config.LOG_DISABLE,
     browsers: ['Chrome'],
     singleRun: true,

@@ -18,127 +18,18 @@ describe('AW4', function() {
           this.clock.restore();
         });
 
-        testInitSessionExtensions();
-      });
-
-      describe('#version', function() {
-        testVersionExtensions('/connect/info/version');
-      });
-
-      describe('#authenticate', function() {
-        testAuthenticateExtensions();
-      });
-
-      describe('#getAllTransfers', function() {
-        testGetAllTransfersExtensions();
-      });
-
-      describe('#removeTransfer', function() {
-        testRemoveTransferExtensions();
-      });
-
-      describe('#stopTransfer', function() {
-        testStopTransferExtensions();
-      });
-
-      describe('#stop', function() {
-        testStopExtensions();
-      });
-
-      describe('#start', function() {
-        testStartExtensions();
-      });
-
-      describe('#readAsArrayBuffer', function() {
-        testReadAsArrayBufferExtensions();
-      });
-
-      describe('#readChunkAsArrayBuffer', function() {
-        testReadChunkAsArrayBufferExtensions();
-      });
-
-      describe('#startTransfer', function() {
-        testStartTransferExtensions();
-      });
-
-      describe('#modifyTransfer', function() {
-        testModifyTransferExtensions();
-      });
-
-      describe('#resumeTransfer', function() {
-        testResumeTransferExtensions();
-      });
-
-      xdescribe('#addEventListener', function() {
-        testAddEventListener();
-      });
-
-      describe('#addRemoveListener', function() {
-        testRemoveEventListener();
-      });
-
-      describe('#showAbout', function() {
-        testShowAboutExtensions();
-      });
-
-      describe('#showDirectory', function() {
-        testShowDirectoryExtensions();
-      });
-
-      describe('#showPreferences', function() {
-        testShowPreferencesExtensions();
-      });
-
-      describe('#showSaveFileDialog', function() {
-        testShowSaveFileDialogExtensions();
-      });
-
-      describe('#showSelectFileDialog', function() {
-        testShowSelectFileDialogExtensions();
-      });
-
-      describe('#showSelectFolderDialog', function() {
-        testShowSelectFolderDialogExtensions();
-      });
-
-      describe('#showTransferManager', function() {
-        testShowTransferManagerExtensions();
-      });
-
-      describe('#showTransferMonitor', function() {
-        testShowTransferMonitorExtensions();
-      });
-    });
-    context('using http', function() {
-      beforeEach(function(done) {
-        this.clock.restore();
-        this.asperaWeb = new AW4.Connect({connectMethod: 'http'});
-        this.asperaWeb.initSession();
-
-        setTimeout(() => {
-          done();
-        }, 100);
-      });
-
-      xdescribe('#initSession', function() {
-        beforeEach(function() {
-          this.clock.restore();
-          // Reset Connect session
-          this.asperaWeb = new AW4.Connect({connectMethod: 'http'});
-        });
-
         testInitSession();
       });
 
       describe('#version', function() {
-        testVersion('http://127.0.0.1:33003/v5/connect/info/version');
+        testVersion('/connect/info/version');
       });
 
       describe('#authenticate', function() {
         testAuthenticate();
       });
 
-      xdescribe('#getAllTransfers', function() {
+      describe('#getAllTransfers', function() {
         testGetAllTransfers();
       });
 
@@ -158,28 +49,24 @@ describe('AW4', function() {
         testStart();
       });
 
-      xdescribe('#readAsArrayBuffer', function() {
+      describe('#readAsArrayBuffer', function() {
         testReadAsArrayBuffer();
       });
 
-      xdescribe('#readChunkAsArrayBuffer', function() {
+      describe('#readChunkAsArrayBuffer', function() {
         testReadChunkAsArrayBuffer();
       });
 
-      xdescribe('#startTransfer', function() {
+      describe('#startTransfer', function() {
         testStartTransfer();
       });
 
-      xdescribe('#modifyTransfer', function() {
+      describe('#modifyTransfer', function() {
         testModifyTransfer();
       });
 
-      xdescribe('#resumeTransfer', function() {
+      describe('#resumeTransfer', function() {
         testResumeTransfer();
-      });
-
-      xdescribe('#addEventListener', function() {
-        testAddEventListener();
       });
 
       describe('#addRemoveListener', function() {
@@ -198,15 +85,110 @@ describe('AW4', function() {
         testShowPreferences();
       });
 
-      xdescribe('#showSaveFileDialog', function() {
+      describe('#showSaveFileDialog', function() {
         testShowSaveFileDialog();
       });
 
-      xdescribe('#showSelectFileDialog', function() {
+      describe('#showSelectFileDialog', function() {
         testShowSelectFileDialog();
       });
 
-      xdescribe('#showSelectFolderDialog', function() {
+      describe('#showSelectFolderDialog', function() {
+        testShowSelectFolderDialog();
+      });
+
+      describe('#showTransferManager', function() {
+        testShowTransferManager();
+      });
+
+      describe('#showTransferMonitor', function() {
+        testShowTransferMonitor();
+      });
+    });
+    context('using http', function() {
+      beforeEach(function(done) {
+        this.clock.restore();
+        this.asperaWeb = new AW4.Connect({connectMethod: 'http'});
+        this.asperaWeb.initSession();
+
+        setTimeout(() => {
+          done();
+        }, 100);
+      });
+
+      describe('#version', function() {
+        testVersion('http://127.0.0.1:33003/v5/connect/info/version');
+      });
+
+      describe('#authenticate', function() {
+        testAuthenticate();
+      });
+
+      describe('#getAllTransfers', function() {
+        testGetAllTransfers();
+      });
+
+      describe('#removeTransfer', function() {
+        testRemoveTransfer();
+      });
+
+      describe('#stopTransfer', function() {
+        testStopTransfer();
+      });
+
+      describe('#stop', function() {
+        testStop();
+      });
+
+      describe('#start', function() {
+        testStart();
+      });
+
+      describe('#readAsArrayBuffer', function() {
+        testReadAsArrayBuffer();
+      });
+
+      describe('#readChunkAsArrayBuffer', function() {
+        testReadChunkAsArrayBuffer();
+      });
+
+      describe('#startTransfer', function() {
+        testStartTransfer();
+      });
+
+      describe('#modifyTransfer', function() {
+        testModifyTransfer();
+      });
+
+      describe('#resumeTransfer', function() {
+        testResumeTransfer();
+      });
+
+      describe('#addRemoveListener', function() {
+        testRemoveEventListener();
+      });
+
+      describe('#showAbout', function() {
+        testShowAbout();
+      });
+
+      describe('#showDirectory', function() {
+        testShowDirectory();
+      });
+
+      describe('#showPreferences', function() {
+        testShowPreferences();
+      });
+
+      describe('#showSaveFileDialog', function() {
+        testShowSaveFileDialog();
+      });
+
+      describe('#showSelectFileDialog', function() {
+        testShowSelectFileDialog();
+      });
+
+      describe('#showSelectFolderDialog', function() {
         testShowSelectFolderDialog();
       });
 

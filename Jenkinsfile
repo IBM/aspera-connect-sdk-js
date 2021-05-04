@@ -78,6 +78,8 @@ pipeline {
                     post {
                         always {
                             archiveArtifacts artifacts: '*.zip', allowEmptyArchive: true
+                        }
+                        cleanup {
                             cleanWs()
                         }
                     }
