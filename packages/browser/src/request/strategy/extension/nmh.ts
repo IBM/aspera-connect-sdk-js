@@ -13,7 +13,7 @@ class NativeHostStrategy extends BaseExtensionStrategy {
   /**
    * Handles disconnect messages from the extension.
    */
-  handleDisconnect = async (evt: any) => {
+  handleDisconnect = async (evt: any): Promise<void> => {
     Logger.debug('Native host disconnected. Detail: ' + evt.detail);
     /** Disconnect is expected if Connect is outdated */
     if (this.connectStatus === STATUS.OUTDATED) {
@@ -43,14 +43,14 @@ class NativeHostStrategy extends BaseExtensionStrategy {
     // Handle non-install disconnect issues
     if (this.connectStatus !== STATUS.DEGRADED) {
       this.changeConnectStatus(STATUS.DEGRADED);
-      let connectFound = await this.detectConnect(this.options.connectLaunchWaitTimeoutMs);
+      const connectFound = await this.detectConnect(this.options.connectLaunchWaitTimeoutMs);
       if (connectFound) {
         this.changeConnectStatus(STATUS.RUNNING);
       } else {
         this.changeConnectStatus(STATUS.FAILED);
       }
     }
-  }
+  };
 
   /**
    * Resolves the extension response
@@ -75,7 +75,7 @@ class NativeHostStrategy extends BaseExtensionStrategy {
 
     if (data) {
       Logger.trace('Native host impl received response: ' + JSON.stringify(data));
-      let id = data.request_id;
+      const id = data.request_id;
       /**
        * Each instance of this class will receive document events, but
        * the request might not have originated from this instance.
@@ -84,11 +84,11 @@ class NativeHostStrategy extends BaseExtensionStrategy {
         return;
       }
 
-      let resolve = this.outstandingRequests[id].resolve;
+      const resolve = this.outstandingRequests[id].resolve;
       if ('body64' in data) {
         this.outstandingRequests[id].response += data.body64;
         if (data.complete === true) {
-          let resp = atou(this.outstandingRequests[id].response);
+          const resp = atou(this.outstandingRequests[id].response);
           delete this.outstandingRequests[id];
           resolve({
             status: data.status,
@@ -105,43 +105,43 @@ class NativeHostStrategy extends BaseExtensionStrategy {
         });
       }
     }
-  }
+  };
 
-  detectionLoop = async (timeoutMs: number = -1, loop: () => Promise<boolean>): Promise<boolean> => {
-    let timeoutPromise = new Promise<false>((resolve) => {
+  detectionLoop = async (timeoutMs = -1, loop: () => Promise<boolean>): Promise<boolean> => {
+    const timeoutPromise = new Promise<false>((resolve) => {
       setTimeout(resolve, timeoutMs, false);
     });
     /**
      * Race against timeout promise if timeout was provided.
      * If timeout is -1, then promise won't return until Connect detected.
      */
-    let found = await Promise.race<boolean>([
+    const found = await Promise.race<boolean>([
       ...timeoutMs !== -1 ? [timeoutPromise] : [],
       loop()
     ]);
 
     clearInterval(this._detectionRetry);
     return found;
-  }
+  };
 
   /**
    * Returns promise that resolves with true | false if Connect is detected or not.
    */
-  detectConnect = async (timeoutMs: number = -1): Promise<boolean> => {
-    let waitUntilDetected = (): Promise<boolean> => {
+  detectConnect = async (timeoutMs = -1): Promise<boolean> => {
+    const waitUntilDetected = (): Promise<boolean> => {
       return new Promise((resolve) => {
         let attemptNumber = 1;
-        let check = async () => {
+        const check = async () => {
           try {
             Logger.debug('Detecting Connect installation via extension. Attempt ' + attemptNumber);
             attemptNumber++;
-            let endpoint = {
+            const endpoint = {
               method: 'GET',
               path: '/connect/info/version'
             };
             // Offset this request id by an additional factor
-            let detectConnectRequestId = this.options.objectId * 10500;
-            let { status } = await this.httpRequest(endpoint, detectConnectRequestId);
+            const detectConnectRequestId = this.options.objectId * 10500;
+            const { status } = await this.httpRequest(endpoint, detectConnectRequestId);
             if (status === 503) {
               Logger.debug('Detected old version of Connect via extension.');
               this.changeConnectStatus(STATUS.OUTDATED);
@@ -166,26 +166,26 @@ class NativeHostStrategy extends BaseExtensionStrategy {
     };
 
     return this.detectionLoop(timeoutMs, waitUntilDetected);
-  }
+  };
 
   /**
    * Returns promise that resolves with true | false if extension is detected or not.
    */
-  detectExtension = async (timeoutMs: number = -1): Promise<boolean> => {
+  detectExtension = async (timeoutMs = -1): Promise<boolean> => {
     if (this._extensionDetected) {
       return true;
     }
 
-    let waitUntilDetected = (): Promise<boolean> => {
+    const waitUntilDetected = (): Promise<boolean> => {
       return new Promise((resolve) => {
         let attemptNumber = 1;
-        let check = () => {
+        const check = () => {
           Logger.debug('Detecting Connect extension. Attempt ' + attemptNumber);
           attemptNumber++;
           document.dispatchEvent(new CustomEvent('AsperaConnectCheck', {}));
         };
 
-        let versionResponse = (evt: any) => {
+        const versionResponse = (evt: any) => {
           if (evt.type === 'message' && typeof evt.data === 'object' && 'type' in evt.data
                 && evt.data.type === 'AsperaConnectCheckResponse') {
             window.removeEventListener('message', versionResponse);
@@ -197,24 +197,24 @@ class NativeHostStrategy extends BaseExtensionStrategy {
         };
 
         window.addEventListener('message', versionResponse);
-        let interval = timeoutMs === -1 ? 1000 : 200;
+        const interval = timeoutMs === -1 ? 1000 : 200;
         this._detectionRetry = setInterval(check, interval);
         void check();
       });
     };
 
     return this.detectionLoop(timeoutMs, waitUntilDetected);
-  }
+  };
 
-  stop = () => {
+  stop = (): void => {
     clearInterval(this._detectionRetry);
-  }
+  };
 
   /**
    * Returns only once extension and Connect are both detected. Caller handles
    * any timeout.
    */
-  startup = async () => {
+  startup = async (): Promise<void> => {
     /** Setup extension response handlers */
     // @ts-ignore
     document.addEventListener('AsperaConnectResponse', this.resolveExtensionResponse);
@@ -226,7 +226,7 @@ class NativeHostStrategy extends BaseExtensionStrategy {
     /** Await Connect detection */
     await this.detectConnect();
     Logger.debug('nmh init finished');
-  }
+  };
 }
 
 export default NativeHostStrategy;

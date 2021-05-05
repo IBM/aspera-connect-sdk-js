@@ -5,6 +5,15 @@ import { INSTALL_EVENT as EVENT, ACTIVITY_EVENT, EVENT_TYPE } from './constants'
 import { __VERSION__ } from './version';
 import * as types from './core/types';
 
+// TODO: implement actual types
+interface ConnectInstallerCtor {
+  new(options?: any): any;
+  ACTIVITY_EVENT: any;
+  EVENT: any;
+  EVENT_TYPE: any;
+  supportsInstallingExtensions: boolean;
+}
+
 /**
  * @classdesc Contains methods to support Connect installation
  *
@@ -57,23 +66,16 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   if (!new.target) {
     throw new Error('ConnectInstaller() must be called with new');
   }
-  ////////////////////////////////////////////////////////////////////////////
-  // Private constants
-  ////////////////////////////////////////////////////////////////////////////
+
   const DEFAULT_SDK_LOCATION = '//d3gcli72yxqn2z.cloudfront.net/connect/v4';
   const CONNECT_VERSIONS_JS = '/connectversions.min.js';
 
-  ////////////////////////////////////////////////////////////////////////////
-  // Private variables
-  ////////////////////////////////////////////////////////////////////////////
-  let connectOptions: any = {};
-  let listeners: any = [];
+  const connectOptions: any = {};
+  const listeners: any = [];
   let connectJSONreferences: any | undefined;
   let showInstallTimerID = 0;
   let iframeLoadedFlag = false;
-  let connectInstallerListeners: any = [];
-  // @ts-ignore :disable:no-unused-variable
-  let retryCount = 0;
+  const connectInstallerListeners: any = [];
   const isSupportedBrowser = !Utils.BROWSER.IE;
 
   if (Utils.isNullOrUndefinedOrEmpty(options)) {
@@ -96,19 +98,16 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   connectOptions.style = options.style || 'carbon';
 
   if (typeof(Storage) !== 'undefined') {
-    let overrideStyle = Utils.getLocalStorage('aspera-connect-install-style');
+    const overrideStyle = Utils.getLocalStorage('aspera-connect-install-style');
     if (overrideStyle) {
       connectOptions.style = overrideStyle;
     }
   }
 
   if (connectOptions.style === 'carbon') {
+    // @ts-ignore
     ConnectInstaller.supportsInstallingExtensions = true;
   }
-
-  ////////////////////////////////////////////////////////////////////////////
-  // Helper Functions
-  ////////////////////////////////////////////////////////////////////////////
 
   /*
    * loadFiles(files, type, callback) -> null
@@ -121,20 +120,20 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
    *     `false` : if files failed to load
    *
    */
-  let loadFiles = function (files: string[], type: string, callback: any) {
+  const loadFiles = function (files: string[], type: string, callback: any) {
     if (files === null || typeof files === 'undefined' || !(files instanceof Array)) {
       return;
     } else if (type === null || typeof type !== 'string') {
       return;
     }
     let numberOfFiles = 0;
-    let head = document.getElementsByTagName('head')[0] || document.documentElement;
+    const head = document.getElementsByTagName('head')[0] || document.documentElement;
 
     /* Loads the file given, and sets a callback, when the file is the last one and a callback is
      * provided, it will call it
      * Loading mechanism based on https://jquery.org (MIT license)
      */
-    let loadFilesHelper = function (file: string) {
+    const loadFilesHelper = function (file: string) {
       // IE9+ supports both script.onload AND script.onreadystatechange thus the done check
       let done = false;
       let fileref: HTMLScriptElement | HTMLLinkElement;
@@ -183,7 +182,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     }
   };
 
-  let osPlatform = function () {
+  const osPlatform = function () {
     let os = 'Not supported';
     if (/Win/.test(navigator.platform)) {
       if (navigator.userAgent.indexOf('WOW64') !== -1 || navigator.userAgent.indexOf('Win64') !== -1) {
@@ -207,7 +206,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     return os;
   };
 
-  let osVersion = function () {
+  const osVersion = function () {
     let match: any = '';
     if (/Win/.test(navigator.platform)) {
       match = navigator.userAgent.match(/Windows NT (\d+)[._](\d+)/);
@@ -219,20 +218,20 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       return;
     }
 
-    let osVersion = {
+    const osVersion = {
       highWord: parseFloat(match[1]),
       loWord: parseFloat(match[2])
     };
     return osVersion;
   };
 
-  let platformVersion = function (arg0: any) {
+  const platformVersion = function (arg0: any) {
     if (!Utils.isNullOrUndefinedOrEmpty(arg0)) {
-      let match = arg0.match(/(\d+)[.](\d+)/);
+      const match = arg0.match(/(\d+)[.](\d+)/);
       if (Utils.isNullOrUndefinedOrEmpty(match)) {
         return;
       }
-      let platformVersion = {
+      const platformVersion = {
         highWord: parseFloat(match[1]),
         loWord: parseFloat(match[2])
       };
@@ -243,20 +242,20 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     return arg0;
   };
 
-  let notifyListeners = function (event: any) {
+  const notifyListeners = function (event: any) {
     for (let i = 0; i < listeners.length; i++) {
       listeners[i](event);
     }
   };
 
-  let notifyActivityListeners = function (status: any) {
+  const notifyActivityListeners = function (status: any) {
     for (let i = 0; i < connectInstallerListeners.length; i++) {
       connectInstallerListeners[i](status);
     }
   };
 
-  let addStyleString = function (str: string) {
-    let node = document.createElement('style');
+  const addStyleString = function (str: string) {
+    const node = document.createElement('style');
     node.setAttribute('type', 'text/css');
         // Fix for <= IE9
         // @ts-ignore
@@ -270,16 +269,12 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     document.body.appendChild(node);
   };
 
-  let supportsExtensions = function () {
+  const supportsExtensions = function () {
     return (
       (Utils.BROWSER.CHROME || Utils.BROWSER.EDGE_WITH_EXTENSION || Utils.BROWSER.FIREFOX) ||
       Utils.BROWSER.SAFARI_NO_NPAPI
     );
   };
-
-    ////////////////////////////////////////////////////////////////////////////
-    // API Functions
-    ////////////////////////////////////////////////////////////////////////////
 
   this.addEventListener = function (listener: any) {
     if (typeof listener !== 'function') {
@@ -353,9 +348,9 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       return;
     }
     let updatesURL = connectOptions.sdkLocation;
-    let replaceJSONWithFullHref = function (connectversionsSdkLocation: string, entryJSON: any) {
+    const replaceJSONWithFullHref = function (connectversionsSdkLocation: string, entryJSON: any) {
       for (let i = 0; i < entryJSON.links.length; i++) {
-        let hrefLink = entryJSON.links[i].href;
+        const hrefLink = entryJSON.links[i].href;
         if (!/^https?:\/\//i.test(hrefLink) && !/^\/\//.test(hrefLink)) {
           entryJSON.links[i].hrefAbsolute = connectversionsSdkLocation + '/' + hrefLink;
         }
@@ -363,19 +358,19 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     };
     // load references from file and parse to load in the iframe
     const parseIstallJSON = (connectversionsSdkLocation: string) => {
-      let parsedInstallJSON = (window as any).connectVersions;
-      let installEntries = parsedInstallJSON.entries;
-      let procesJSONentry = function (entryJSON: any) {
+      const parsedInstallJSON = (window as any).connectVersions;
+      const installEntries = parsedInstallJSON.entries;
+      const procesJSONentry = function (entryJSON: any) {
         replaceJSONWithFullHref(connectversionsSdkLocation, entryJSON);
         connectJSONreferences = entryJSON;
         callback(entryJSON);
       };
-      let userOS = osPlatform();
+      const userOS = osPlatform();
       for (let i = 0; i < installEntries.length; i++) {
-        let entry = installEntries[i];
+        const entry = installEntries[i];
         if (entry.navigator.platform === userOS) {
-          let userOSVersion = osVersion();
-          let currentPlatform = platformVersion(entry.platform.version);
+          const userOSVersion = osVersion();
+          const currentPlatform = platformVersion(entry.platform.version);
           if (!Utils.isNullOrUndefinedOrEmpty(currentPlatform) && !Utils.isNullOrUndefinedOrEmpty(userOSVersion)) {
             if ((userOSVersion.highWord > currentPlatform.highWord) ||
                   (userOSVersion.highWord >= currentPlatform.highWord &&
@@ -391,8 +386,8 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       }
       this.showUnsupportedBrowser();
     };
-    let scriptLoaded = function (success: boolean) {
-      let fallbackURL = DEFAULT_SDK_LOCATION;// connectOptions.sdkLocation;
+    const scriptLoaded = function (success: boolean) {
+      const fallbackURL = DEFAULT_SDK_LOCATION;// connectOptions.sdkLocation;
       if (success && (window as any).connectVersions !== undefined) {
         parseIstallJSON(updatesURL);
       } else if (updatesURL !== fallbackURL) {
@@ -421,14 +416,14 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   this.isExtensionInstalled = function (timeout: number, callbacks?: types.DetectionCallbacks) {
     // Prereq: asperaweb-4 needs to be loaded first
     // @ts-ignore
-    let extReqImpl: types.RequestStrategy = Utils.BROWSER.SAFARI_NO_NPAPI ? new SafariAppStrategy() : new NativeHostStrategy();
+    const extReqImpl: types.RequestStrategy = Utils.BROWSER.SAFARI_NO_NPAPI ? new SafariAppStrategy() : new NativeHostStrategy();
     if (!supportsExtensions()) {
       Logger.debug('This browser does not use extensions.');
       return;
     }
 
     if (callbacks) {
-      extReqImpl.detectExtension!(timeout).then(
+      extReqImpl.detectExtension?.(timeout).then(
         (success: boolean) => {
           if (success && typeof callbacks.success === 'function') {
             callbacks.success();
@@ -447,7 +442,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         }
       );
     } else {
-      return extReqImpl.detectExtension!(timeout);
+      return extReqImpl.detectExtension?.(timeout);
     }
   };
 
@@ -504,13 +499,13 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
    *
    */
   this.startExtensionInstall = function () {
-    let lnk = this.getExtensionStoreLink();
+    const lnk = this.getExtensionStoreLink();
     if (lnk !== '') {
       window.open(lnk, '_blank');
     }
   };
 
-  let getRefreshWindow = function () {
+  const getRefreshWindow = function () {
     // Fix for refreshing only window in which we are contained, if we are an iframe just refresh the iframe (Sharepoint bug)
     let inIframe = false;
     try {
@@ -520,7 +515,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     }
 
     if (inIframe) {
-      let iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
+      const iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
       if (iframe.contentWindow) {
         return iframe.contentWindow;
       }
@@ -530,13 +525,13 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   };
 
   // Get top window href and open in new tab
-  let openNewTab = function () {
-    let url = window.top.location.href;
+  const openNewTab = function () {
+    const url = window.top.location.href;
     window.open(url, '_blank');
   };
 
-  let isActivityEvent = function (e: any) {
-    for (let key in ACTIVITY_EVENT) {
+  const isActivityEvent = function (e: any) {
+    for (const key in ACTIVITY_EVENT) {
       if (ACTIVITY_EVENT[key] === e) {
         return true;
       }
@@ -544,8 +539,8 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     return false;
   };
 
-  let setHideClass = function (hide: boolean) {
-    let iframe = document.getElementById(connectOptions.iframeId);
+  const setHideClass = function (hide: boolean) {
+    const iframe = document.getElementById(connectOptions.iframeId);
     if (iframe) {
       iframe.style.display = hide ? 'none' : '';
       // TODO: remove redundant visibility style (required by Faspex GA)
@@ -566,7 +561,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
    * 5. `running` (`String`).
    *
    */
-  let show = (eventType: string) => {
+  const show = (eventType: string) => {
     // We always need to check if launching was going to be popped up, if so delete it
     if (showInstallTimerID !== 0) {
       clearTimeout(showInstallTimerID);
@@ -608,7 +603,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         this.showDownload();
       } else if (event.data === EVENT.REFRESH_PAGE) {
         notifyListeners(event.data);
-        let refreshWindow = getRefreshWindow();
+        const refreshWindow = getRefreshWindow();
         // tslint:disable-next-line
         refreshWindow.location.reload(true);
       } else if (event.data === EVENT.IFRAME_REMOVED) {
@@ -616,13 +611,13 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         this.dismiss();
       } else if (event.data === EVENT.TROUBLESHOOT) {
         notifyListeners(event.data);
-        let refreshWindow = getRefreshWindow();
+        const refreshWindow = getRefreshWindow();
         refreshWindow.location.href = 'https://test-connect.asperasoft.com';
       } else if (event.data === EVENT.CONTINUE) {
         Utils.addVersionException();
         notifyListeners(event.data);
         if ((Utils.BROWSER.SAFARI && !Utils.BROWSER.SAFARI_NO_NPAPI) || Utils.BROWSER.IE) {
-          let refreshWindow = getRefreshWindow();
+          const refreshWindow = getRefreshWindow();
           // tslint:disable-next-line
           refreshWindow.location.reload(true);
         } else {
@@ -646,20 +641,20 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       iframeLoadedFlag = true;
       notifyListeners(EVENT.IFRAME_LOADED);
 
-      let iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
+      const iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
 
       if (Utils.BROWSER.SAFARI || Utils.BROWSER.IE) {
-        let downloadTimestamp = Utils.getLocalStorage('aspera-connect-app-download');
+        const downloadTimestamp = Utils.getLocalStorage('aspera-connect-app-download');
         if (!Utils.isNullOrUndefinedOrEmpty(downloadTimestamp)) {
-          iframe.contentWindow!.postMessage('downloadTimestamp=' + downloadTimestamp, '*');
+          iframe.contentWindow?.postMessage('downloadTimestamp=' + downloadTimestamp, '*');
         }
       }
 
       // populate the iframe with the information pulled from connectversions.js
-      let populateIframe = function (referencesJSON: any) {
+      const populateIframe = function (referencesJSON: any) {
         if (referencesJSON) {
           for (let i = 0; i < referencesJSON.links.length; i++) {
-            let link = referencesJSON.links[i];
+            const link = referencesJSON.links[i];
             let rel = 'enclosure-one-click';
             // Serve FIPS installers if opted in
             if (connectOptions.useFips && /Win/.test(navigator.platform)) {
@@ -668,8 +663,8 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
 
             if (link.rel === rel) {
               if (typeof iframe !== 'undefined' && iframe !== null) {
-                iframe.contentWindow!.postMessage('downloadlink=' + link.hrefAbsolute, '*');
-                iframe.contentWindow!.postMessage('downloadVersion=' + referencesJSON.version, '*');
+                iframe.contentWindow?.postMessage('downloadlink=' + link.hrefAbsolute, '*');
+                iframe.contentWindow?.postMessage('downloadVersion=' + referencesJSON.version, '*');
               }
             }
           }
@@ -678,7 +673,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         }
 
         // Set dialog type
-        iframe.contentWindow!.postMessage(eventType, '*');
+        iframe.contentWindow?.postMessage(eventType, '*');
       };
 
       this.installationJSON(populateIframe);
@@ -686,16 +681,16 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       if (connectOptions.stylesheetLocation) {
         // Inserting a stylesheet into the DOM for more manageable styles.
         if (typeof iframe !== 'undefined' && iframe !== null) {
-          iframe.contentWindow!.postMessage('insertstylesheet=' + connectOptions.stylesheetLocation, '*');
+          iframe.contentWindow?.postMessage('insertstylesheet=' + connectOptions.stylesheetLocation, '*');
         }
       }
 
       if (connectOptions.correlationId) {
-        iframe.contentWindow!.postMessage('correlationId=' + connectOptions.correlationId, '*');
+        iframe.contentWindow?.postMessage('correlationId=' + connectOptions.correlationId, '*');
       }
 
       if (__VERSION__) {
-        iframe.contentWindow!.postMessage('sdkVersion=' + __VERSION__, '*');
+        iframe.contentWindow?.postMessage('sdkVersion=' + __VERSION__, '*');
       }
 
       notifyListeners(EVENT.IFRAME_LOADED);
@@ -717,7 +712,6 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       iframe = document.createElement('iframe');
       iframe.id = connectOptions.iframeId;
       iframe.className = connectOptions.iframeId;
-      // tslint:disable-next-line
       iframe.frameBorder = '0';
 
       if (connectOptions.style === 'carbon') {
@@ -728,7 +722,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
 
       document.body.appendChild(iframe);
       // Check for tight security policies
-      if (!iframe.contentWindow!.postMessage) {
+      if (!iframe.contentWindow?.postMessage) {
         return;
       }
 
@@ -744,12 +738,12 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     setHideClass(false);
 
     if (iframeLoadedFlag) {
-      iframe.contentWindow!.postMessage(eventType, '*');
+      iframe.contentWindow?.postMessage(eventType, '*');
     } else {
-            // Give time to the iFrame to be loaded #31040
-            // @ts-ignore
+      // Give time to the iFrame to be loaded #31040
+      // @ts-ignore
       if (iframe.attachEvent) {
-                // @ts-ignore
+        // @ts-ignore
         iframe.attachEvent('onload', iframeLoaded);
       } else {
         iframe.onload = iframeLoaded;
@@ -757,7 +751,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     }
   };
 
-    // Direct communication from Connect
+  // Direct communication from Connect
   window.addEventListener('message', (event) => {
     if (event.data === 'show_extension_install') {
       this.showExtensionInstall();
@@ -777,12 +771,12 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
      *   are called, the banner will not appear.
      * @return {null}
      */
-  this.showLaunching = function (timeout: number = 3500) {
+  this.showLaunching = function (timeout = 3500) {
     if (showInstallTimerID !== 0) {
       clearTimeout(showInstallTimerID);
     }
 
-    let showLaunchingHelperFunction = function () {
+    const showLaunchingHelperFunction = function () {
       show('launching');
     };
     showInstallTimerID = setTimeout(showLaunchingHelperFunction, timeout);
@@ -845,7 +839,6 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
      */
   this.showRetry = function () {
     show('retry');
-    retryCount++;
   };
 
     /**
@@ -860,7 +853,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
 
     if (!Utils.BROWSER.IE) {
       // Create a DOM element to help the extension return to the right page
-      let extHelper = document.createElement('div');
+      const extHelper = document.createElement('div');
       extHelper.className = 'aspera-connect-ext-locator'; // TODO: Document
       extHelper.style.display = 'none';
       document.body.appendChild(extHelper);
@@ -900,9 +893,9 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
      *   is dismissed..
      * @return {null}
      */
-  this.connected = (timeout: number = 2000) => {
+  this.connected = (timeout = 2000) => {
     clearTimeout(showInstallTimerID);
-    let iframe = document.getElementById(connectOptions.iframeId);
+    const iframe = document.getElementById(connectOptions.iframeId);
     if (typeof iframe !== 'undefined' && iframe !== null) {
       show('running');
       setTimeout(this.dismiss, timeout);
@@ -927,7 +920,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     setHideClass(true);
     return;
   };
-};
+} as any as ConnectInstallerCtor;
 
 ConnectInstaller.EVENT = EVENT;
 ConnectInstaller.ACTIVITY_EVENT = ACTIVITY_EVENT;

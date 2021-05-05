@@ -34,14 +34,14 @@ let nextObjId = 0;
 /**
  * Returns fasp initialize protocol
  */
-export function getInitUrl () {
+export function getInitUrl (): string {
   return 'fasp://initialize';
 }
 
-export function getXMLHttpRequest () {
+export function getXMLHttpRequest (): XMLHttpRequest {
   if (typeof XMLHttpRequest === 'undefined') {
   // @ts-ignore
-    XMLHttpRequest = function () {
+    XMLHttpRequest = function () { // eslint-disable-line
       try {
         return new ActiveXObject('Msxml2.XMLHTTP.6.0');
       } catch (e) {}
@@ -58,10 +58,6 @@ export function getXMLHttpRequest () {
 
   return new XMLHttpRequest();
 }
-
-////////////////////////////////////////////////////////////////////////////
-// Compatibility functions
-////////////////////////////////////////////////////////////////////////////
 
 /**
  * Returns standardized error object
@@ -92,14 +88,11 @@ export function parseJson <T> (str: any): T | types.ConnectError {
   return obj;
 }
 
-////////////////////////////////////////////////////////////////////////////
-// Helper Functions
-////////////////////////////////////////////////////////////////////////////
-export function copyObject (obj: any) {
-  let localObj: any = {};
+export function copyObject (obj: any): any {
+  const localObj: any = {};
   if (!isNullOrUndefinedOrEmpty(obj)) {
-    for (let property in obj) {
-      if (obj.hasOwnProperty(property)) {
+    for (const property in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, property)) {
         localObj[property] = obj[property];
       }
     }
@@ -134,12 +127,12 @@ export function isNullOrUndefinedOrEmpty (x: any): x is undefined | null | '' {
  * If the version number contains a character that is not a numeral it ignores
  * it
  */
-export function versionLessThan (a: string, b: string) {
-  let versionToArray = function (version: string) {
-    let splits = version.split('.');
-    let versionArray = new Array();
+export function versionLessThan (a: string, b: string): boolean {
+  const versionToArray = function (version: string) {
+    const splits = version.split('.');
+    const versionArray = [];
     for (let i = 0; i < splits.length; i++) {
-      let versionPart = parseInt(splits[i], 10);
+      const versionPart = parseInt(splits[i], 10);
       if (!isNaN(versionPart)) {
         versionArray.push(versionPart);
       }
@@ -148,8 +141,8 @@ export function versionLessThan (a: string, b: string) {
     return versionArray;
   };
 
-  let aArr = versionToArray(a);
-  let bArr = versionToArray(b);
+  const aArr = versionToArray(a);
+  const bArr = versionToArray(b);
   let i;
   for (i = 0; i < Math.min(aArr.length, bArr.length); i++) {
     // if i=2, a=[0,0,1,0] and b=[0,0,2,0]
@@ -174,9 +167,9 @@ export function checkVersionException (): boolean {
   if (typeof(localStorage) === 'undefined') {
     return false;
   }
-  let prevContinuedSeconds = localStorage.getItem(LS_CONTINUED_KEY);
+  const prevContinuedSeconds = localStorage.getItem(LS_CONTINUED_KEY);
   if (prevContinuedSeconds !== undefined && prevContinuedSeconds !== null) {
-    let currentTimeSeconds = Math.round(new Date().getTime() / 1000);
+    const currentTimeSeconds = Math.round(new Date().getTime() / 1000);
     if ((currentTimeSeconds - Number(prevContinuedSeconds)) < 60 * 24) {
       Logger.debug('User opted out of update');
       return true;
@@ -195,7 +188,7 @@ export function addVersionException (): void {
 /**
  * Helper function to generate deferred promise
  */
-export function generatePromiseData <T> (): { promise: Promise<T>, resolver: any, rejecter: any } {
+export function generatePromiseData<T> (): { promise: Promise<T>; resolver: any; rejecter: any } {
   let resolver;
   let rejecter;
 
@@ -212,15 +205,15 @@ export function generatePromiseData <T> (): { promise: Promise<T>, resolver: any
 }
 
 export function generateUuid (): string {
-  let date = new Date().getTime();
+  const date = new Date().getTime();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     let r: any;
     // @ts-ignore
     r = ((date + 16) * Math.random()).toFixed() % 16;
     if (c !== 'x') {
-      /*jslint bitwise: true */
+      /* jslint bitwise: true */
       r = r & 0x3 | 0x8;
-      /*jslint bitwise: false */
+      /* jslint bitwise: false */
     }
     return r.toString(16);
   });
@@ -228,7 +221,7 @@ export function generateUuid (): string {
 
 export function generateRandomStr (size: number): string {
   let text = '';
-  let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
   for (let i = 0; i < size; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -252,15 +245,15 @@ export function generateRandomStr (size: number): string {
  * * `false` - If Connect is either not installed or we could not detect it.
  * @return {null}
  */
-export function launchConnect (userCallback?: (t: boolean) => any) {
+export function launchConnect (userCallback?: (t: boolean) => any): void {
   let isRegistered = false;
-  let callback = (installed: boolean) => {
+  const callback = (installed: boolean) => {
     if (typeof userCallback === 'function') {
       userCallback(installed);
     }
   };
 
-  let launchUri = getInitUrl();
+  const launchUri = getInitUrl();
   Logger.debug('Starting Connect session: ' + launchUri);
   if (BROWSER.CHROME || BROWSER.OPERA) {
     document.body.focus();
@@ -278,7 +271,7 @@ export function launchConnect (userCallback?: (t: boolean) => any) {
   } else if (BROWSER.EDGE_LEGACY || BROWSER.EDGE_WITH_EXTENSION) {
     document.location.href = launchUri;
   } else if (BROWSER.FIREFOX_LEGACY || BROWSER.FIREFOX || BROWSER.SAFARI_NO_NPAPI) {
-    let dummyIframe = document.createElement('IFRAME') as HTMLIFrameElement;
+    const dummyIframe = document.createElement('IFRAME') as HTMLIFrameElement;
     dummyIframe.src = launchUri;
     // Don't show the iframe and don't allow it to take up space
     dummyIframe.style.visibility = 'hidden';
@@ -313,8 +306,8 @@ export function getFullURI (relativeURL: string | undefined): string | void {
     return;
   }
 
-  let url = relativeURL;
-  let a = document.createElement('a');
+  const url = relativeURL;
+  const a = document.createElement('a');
   a.href = url;
   let fullURL = a.href;
   if (fullURL.indexOf('/', fullURL.length - 1) !== -1) {
@@ -338,7 +331,7 @@ export function getFullURI (relativeURL: string | undefined): string | void {
  * let inputString = 'foo'
  * AW4.Utils.atou(inputString) // returns "Zm9v"
  */
-export function utoa (inputString: string) {
+export function utoa (inputString: string): string {
   if (window.btoa) {
     return window.btoa(unescape(encodeURIComponent(inputString)));
   } else {
@@ -360,7 +353,7 @@ export function utoa (inputString: string) {
  * let inputString = 'Zm9v'
  * AW4.Utils.atou(inputString) // returns "foo"
  */
-export function atou (inputString: string) {
+export function atou (inputString: string): string {
   if (window.atob) {
     return decodeURIComponent(escape(window.atob(inputString)));
   } else {
@@ -368,51 +361,49 @@ export function atou (inputString: string) {
   }
 }
 
-export function nextObjectId () {
+export function nextObjectId (): number {
   // Return an incrementing id even if file was reloaded
   nextObjId++;
   return nextObjId;
 }
 
 /** Returns true if status code is 2xx */
-export function isSuccessCode (code: number) {
+export function isSuccessCode (code: number): boolean {
   return code >= 200 && code < 300;
 }
 
-export function getLocalStorage (key: string) {
+export function getLocalStorage (key: string): string | null {
   try {
-    if (typeof(localStorage) === 'undefined') {
-      return '';
+    if (typeof(localStorage) !== 'undefined') {
+      return localStorage.getItem(key);
     }
-	  return localStorage.getItem(key);
   } catch (error) {
     // Accessing local storage can be blocked by third party cookie settings
-	  Logger.error('Error accessing localStorage: ', JSON.stringify(error));
-	  return '';
+    Logger.error('Error accessing localStorage: ', JSON.stringify(error));
   }
+
+  return '';
 }
 
-export function recordConnectDetected () {
+export function recordConnectDetected (): void {
   window.localStorage.setItem(LS_CONNECT_DETECTED, Date.now().toString());
 }
 
-export function setLocalStorage (key: string, value: string) {
+export function setLocalStorage (key: string, value: string): void {
   try {
-    if (typeof(localStorage) === 'undefined') {
-      return '';
+    if (typeof(localStorage) !== 'undefined') {
+      localStorage.setItem(key, value);
     }
-	  return localStorage.setItem(key, value);
   } catch (error) {
-	  // Accessing local storage can be blocked by third party cookie settings
-	  Logger.error('Error accessing localStorage: ', JSON.stringify(error));
-	  return;
+    // Accessing local storage can be blocked by third party cookie settings
+    Logger.error('Error accessing localStorage: ', JSON.stringify(error));
   }
 }
 
-export function entropyOk (id: string) {
+export function entropyOk (id: string): boolean {
   let entropy = 0;
-  let len = id.length;
-  let charFreq = Object.create({});
+  const len = id.length;
+  const charFreq = Object.create({});
   id.split('').forEach(function (s) {
     if (charFreq[s]) {
       charFreq[s] += 1;
@@ -420,8 +411,8 @@ export function entropyOk (id: string) {
       charFreq[s] = 1;
     }
   });
-  for (let s in charFreq) {
-    let percent = charFreq[s] / len;
+  for (const s in charFreq) {
+    const percent = charFreq[s] / len;
     entropy -= percent * (Math.log(percent) / Math.log(2));
   }
   return entropy > 3.80;

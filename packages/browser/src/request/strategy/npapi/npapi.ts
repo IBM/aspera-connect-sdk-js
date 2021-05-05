@@ -23,8 +23,8 @@ interface IConnectPlugin extends HTMLObjectElement {
 class NpapiStrategy implements types.RequestStrategy {
   VERSION_PREFIX = '/v5';
   npapiPlugin: IConnectPlugin | undefined;
-  pluginId: string = '';
-  listenerId: string = '';
+  pluginId = '';
+  listenerId = '';
   name = 'npapi';
 
   constructor (private options: types.RequestStrategyOptions) {}
@@ -35,7 +35,7 @@ class NpapiStrategy implements types.RequestStrategy {
    *
    * @param {string} initializeTimeout [[AW4.Connect]] instantiation option
    */
-  createNPAPIPlugin = (initializeTimeout: number) => {
+  createNPAPIPlugin = (initializeTimeout: number): void => {
     let wrapperDiv = document.getElementById(this.listenerId);
     if (isNullOrUndefinedOrEmpty(wrapperDiv)) {
       wrapperDiv = document.createElement('div');
@@ -55,14 +55,14 @@ class NpapiStrategy implements types.RequestStrategy {
     this.npapiPlugin.setAttribute('width', '1');
     this.npapiPlugin.setAttribute('height', '1');
 
-    let timeoutParam = document.createElement('param');
+    const timeoutParam = document.createElement('param');
     timeoutParam.setAttribute('name', 'connect-launch-wait-timeout-ms');
     timeoutParam.setAttribute('value', String(initializeTimeout));
     this.npapiPlugin.appendChild(timeoutParam);
 
     wrapperDiv.appendChild(this.npapiPlugin);
     document.body.appendChild(wrapperDiv);
-  }
+  };
 
   /*
    * Place a request for Connect
@@ -71,16 +71,16 @@ class NpapiStrategy implements types.RequestStrategy {
    * @param {int} requestId Identifier that needs to be returned when calling the given callback
   */
   httpRequest = (endpoint: types.HttpEndpoint, requestId: number): Promise<types.ResolvedHttpResponse> => {
-    let requestPromise = generatePromiseData<types.ResolvedHttpResponse>();
+    const requestPromise = generatePromiseData<types.ResolvedHttpResponse>();
     // NPAPI plugin doesn't accept null data even if it is a GET request
     if (isNullOrUndefinedOrEmpty(endpoint.body)) {
       endpoint.body = '';
     }
 
     const fullEndpoint = `${this.VERSION_PREFIX}${endpoint.path}`;
-    let requestCallback = function (data: any) {
+    const requestCallback = function (data: any) {
       /** Parse data to find out if an error ocurred */
-      let parsedData = parseJson(data);
+      const parsedData = parseJson(data);
       if (isError(parsedData)) {
         requestPromise.resolver({
           status: parsedData.error.code,
@@ -103,14 +103,14 @@ class NpapiStrategy implements types.RequestStrategy {
     }
 
     return requestPromise.promise;
-  }
+  };
 
   /*
    * Called to initialize the plugin, it creates a new instance by appending an
    * <object> element to the DOM and runs the callback with the status
    */
-  startup = async () => {
-    let changeConnectStatus = this.options.requestStatusCallback;
+  startup = async (): Promise<void | types.ConnectError> => {
+    const changeConnectStatus = this.options.requestStatusCallback;
     try {
       if (isNullOrUndefinedOrEmpty(this.npapiPlugin)) {
         if ((BROWSER.IE && (new ActiveXObject('Aspera.AsperaWebCtrl.1'))) ||
@@ -124,7 +124,7 @@ class NpapiStrategy implements types.RequestStrategy {
            * so we just put an interval and keep trying until the object is
            * initialized and has the expected call
            */
-          let npapiWaitPluginLoadedID = setInterval(() => {
+          const npapiWaitPluginLoadedID = setInterval(() => {
             if (!this.npapiPlugin || !this.npapiPlugin.queryBuildVersion) {
               return;
             }
@@ -132,19 +132,15 @@ class NpapiStrategy implements types.RequestStrategy {
             clearInterval(npapiWaitPluginLoadedID);
             // Check version is correct
             if (versionLessThan(this.npapiPlugin.queryBuildVersion(), '3.6')) {
-              // Logger.debug('Plugin too old. Version less than 3.6');
+              // Plugin too old
               this.npapiPlugin = undefined;
               changeConnectStatus(STATUS.FAILED);
               return createError(-1, 'Plugin too old. Version less than 3.6');
-            } else {
-              /** Init was successful */
-              return;
             }
           }, 500);
         } else {
           // If plugin is still null, it means it is not installed
           if (isNullOrUndefinedOrEmpty(this.npapiPlugin)) {
-            // Logger.debug('Plugin not detected. Either not installed or enabled.');
             changeConnectStatus(STATUS.FAILED);
             return createError(-1, 'Plugin not detected. Either not installed or enabled.');
           }
@@ -156,8 +152,7 @@ class NpapiStrategy implements types.RequestStrategy {
       Logger.debug(JSON.stringify(error));
       return createError(-1, `Plugin load error. Make sure plugin is enabled. Details: ${error}`);
     }
-    return;
-  }
+  };
 }
 
 export default NpapiStrategy;

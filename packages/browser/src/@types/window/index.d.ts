@@ -1,6 +1,8 @@
 declare interface Window {
-  attachEvent(evt: string, handleMessage: (evt: any) => any): any;
+  // Add IE-specific interfaces
+  attachEvent(event: string, listener: EventListener): boolean;
 
+  // Add Embedded Connect interface
   AsperaMobile?: {
     getAllTransfers: (iterationToken: number) => Promise<any>;
     getTransfer: (transferId: string) => Promise<any>;

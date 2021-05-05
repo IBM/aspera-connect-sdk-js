@@ -12,7 +12,7 @@ class ApiService implements types.ApiClass {
       fullEndpoint,
       request.method === 'POST' ? JSON.stringify(request.body) : undefined
     );
-  }
+  };
 
   /**
    * Forms the URL to use for the API call
@@ -24,7 +24,7 @@ class ApiService implements types.ApiClass {
     }
 
     let route = endpointInfo.route;
-    let prefix = endpointInfo.prefix;
+    const prefix = endpointInfo.prefix;
     if (param) {
       route = route.replace('${id}', param);
     }
@@ -33,13 +33,13 @@ class ApiService implements types.ApiClass {
   }
 
   private httpRequest = <T>(method: string, path: string, data?: string): Promise<T> => {
-    let endpoint: types.HttpEndpoint = {
+    const endpoint: types.HttpEndpoint = {
       method: method,
       path: path,
       body: data
     };
     return this.requestHandler.start<T>(endpoint);
-  }
+  };
 }
 
 export default ApiService;

@@ -45,7 +45,7 @@ class HttpStrategy implements types.RequestStrategy {
   }
 
   /** Track http implementation state */
-  changeConnectStatus = (newConnectStatus: string) => {
+  changeConnectStatus = (newConnectStatus: string): void => {
     if (this.connectStatus === newConnectStatus) {
       return;
     }
@@ -57,17 +57,17 @@ class HttpStrategy implements types.RequestStrategy {
     if (this.requestStatusCallback) {
       this.requestStatusCallback(newConnectStatus);
     }
-  }
+  };
 
   /**
    * Iterates through ports and returns true if Connect responds
    */
-  check = async () => {
+  check = async (): Promise<boolean> => {
     let success = false;
     for (let port = DEFAULT_PORT; port < (DEFAULT_PORT + 1 + MAX_PORT_SEARCH); port++) {
-      let requestId = this.nextId;
+      const requestId = this.nextId;
       this.connectPort = port;
-      let results = await this.ping(requestId);
+      const results = await this.ping(requestId);
 
       if (results && Utils.isSuccessCode(results.status)) {
         success = true;
@@ -76,9 +76,9 @@ class HttpStrategy implements types.RequestStrategy {
     }
 
     return success;
-  }
+  };
 
-  detectConnect = async (firstRun: boolean) => {
+  detectConnect = async (firstRun: boolean): Promise<boolean> => {
     if (this.connectStatus === STATUS.RUNNING || this.connectStatus === STATUS.STOPPED) {
       return true;
     } else if (this.connectStatus === STATUS.INITIALIZING && !firstRun) {
@@ -87,10 +87,10 @@ class HttpStrategy implements types.RequestStrategy {
     }
 
     /** First attempt at detecting Connect */
-    let success = await this.check();
+    const success = await this.check();
     /** If Connect not found, loop until Connect detected */
     if (!success) {
-      let retryTimeS = this.scanRetryTimeValues[0] + this.scanRetryTimeValues[1];
+      const retryTimeS = this.scanRetryTimeValues[0] + this.scanRetryTimeValues[1];
       this.scanRetryTimeValues[0] = this.scanRetryTimeValues[1];
       this.scanRetryTimeValues[1] = retryTimeS;
 
@@ -105,27 +105,27 @@ class HttpStrategy implements types.RequestStrategy {
     }
 
     return true;
-  }
+  };
 
-  ping = async (requestId: number) => {
-    let request: types.HttpEndpoint = {
+  ping = async (requestId: number): Promise<types.ResolvedHttpResponse> => {
+    const request: types.HttpEndpoint = {
       method: 'GET',
       path: '/connect/info/ping'
     };
 
     return this.httpRequest(request, requestId);
-  }
+  };
 
-  reconnect = async () => {
+  reconnect = async (): Promise<void> => {
     this.changeConnectStatus(STATUS.RETRYING);
     Utils.launchConnect();
     await this.detectConnect(false);
     Logger.debug('Reconnect successful!');
     this.changeConnectStatus(STATUS.RUNNING);
-  }
+  };
 
   send = (endpoint: types.HttpEndpoint, requestId: number): Promise<types.ResolvedHttpResponse> => {
-    let requestPromise = Utils.generatePromiseData<types.ResolvedHttpResponse>();
+    const requestPromise = Utils.generatePromiseData<types.ResolvedHttpResponse>();
     const xhr = Utils.getXMLHttpRequest();
 
     xhr.onreadystatechange = () => {
@@ -158,7 +158,7 @@ class HttpStrategy implements types.RequestStrategy {
         void this.reconnect();
       }
 
-      let response = xhr.responseText;
+      const response = xhr.responseText;
       Logger.trace('HttpRequest processed[' + endpoint.path + '] postData[' + endpoint.body +
               '] status[' + xhr.status + '] response[' + response + ']');
       requestPromise.resolver({
@@ -176,27 +176,27 @@ class HttpStrategy implements types.RequestStrategy {
     }
 
     return requestPromise.promise;
-  }
+  };
 
   httpRequest = async (endpoint: types.HttpEndpoint, requestId: number): Promise<types.ResolvedHttpResponse> => {
     const fullpath = `${LOCALHOST}${this.connectPort}${this.VERSION_PREFIX}${endpoint.path}`;
     // TODO: Make copy of original request
     endpoint.path = fullpath;
-    let result = await this.send(endpoint, requestId);
+    const result = await this.send(endpoint, requestId);
     return result;
-  }
+  };
 
-  stop = () => {
+  stop = (): void => {
     this.changeConnectStatus(STATUS.STOPPED);
-  }
+  };
 
-  startup = async () => {
+  startup = async (): Promise<void> => {
     this.requestStatusCallback = this.options.requestStatusCallback;
 
     /** Await Connect detection */
     await this.detectConnect(true);
     Logger.debug('Finished http init');
-  }
+  };
 }
 
 export default HttpStrategy;

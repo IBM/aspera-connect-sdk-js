@@ -1,20 +1,20 @@
-let ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
 
-let checkSafari = function (ua: any, minver: number) {
-  let match = ua.match(/(?:Version)[\/](\d+(\.\d+)?)/i);
-  let ver = parseInt((match && match.length > 1 && match[1] || '0'), 10);
+const checkSafari = function (ua: any, minver: number) {
+  const match = ua.match(/(?:Version)[/](\d+(\.\d+)?)/i);
+  const ver = parseInt((match && match.length > 1 && match[1] || '0'), 10);
   return (ver >= minver);
 };
 
-let checkEdge = function (ua: any, minver: number) {
-  let match = ua.match(/(?:Edge)[\/](\d+(\.\d+)?)/i);
-  let ver = parseInt((match && match.length > 1 && match[1] || '0'), 10);
+const checkEdge = function (ua: any, minver: number) {
+  const match = ua.match(/(?:Edge)[/](\d+(\.\d+)?)/i);
+  const ver = parseInt((match && match.length > 1 && match[1] || '0'), 10);
   return (ver >= minver);
 };
 
-let checkFirefox = function (ua: any, minver: number) {
-  let match = ua.match(/(?:Firefox)[\/](\d+(\.\d+)?)/i);
-  let ver = parseInt((match && match.length > 1 && match[1] || '0'), 10);
+const checkFirefox = function (ua: any, minver: number) {
+  const match = ua.match(/(?:Firefox)[/](\d+(\.\d+)?)/i);
+  const ver = parseInt((match && match.length > 1 && match[1] || '0'), 10);
   return (ver >= minver);
 };
 

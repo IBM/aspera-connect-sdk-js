@@ -17,7 +17,7 @@ class SafariAppStrategy extends BaseExtensionStrategy {
   resolveHttpResponse = (evt: CustomEvent): void | types.HttpResponse => {
     if (evt.detail) {
       Logger.trace('Safari extension impl received response: ' + JSON.stringify(evt));
-      let id = evt.detail.request_id;
+      const id = evt.detail.request_id;
       /**
        * Each instance of this class will receive document events, but
        * the request might not have originated from this instance.
@@ -25,8 +25,8 @@ class SafariAppStrategy extends BaseExtensionStrategy {
       if (!(id in this.outstandingRequests)) {
         return;
       }
-      let path = this.outstandingRequests[id].req.uri_reference;
-      let resolve = this.outstandingRequests[id].resolve;
+      const path = this.outstandingRequests[id].req.uri_reference;
+      const resolve = this.outstandingRequests[id].resolve;
       delete this.outstandingRequests[id];
 
       if (evt.detail.status === 0 && path.indexOf('/connect/transfers/activity') > 0
@@ -43,36 +43,36 @@ class SafariAppStrategy extends BaseExtensionStrategy {
         });
       }
     }
-  }
+  };
 
-  checkEvent = () => {
+  checkEvent = (): void => {
     document.dispatchEvent(new CustomEvent('AsperaConnectCheck', {}));
-  }
+  };
 
-  detectExtension = async (timeoutMs: number = -1): Promise<boolean> => {
+  detectExtension = async (timeoutMs = -1): Promise<boolean> => {
     /** First check if we have already detected the extension */
     if (this.extensionDetected) {
       Logger.debug('Skipping extension check - already detected.');
       return true;
     }
 
-    let timeoutPromise = new Promise<false>((resolve) => {
+    const timeoutPromise = new Promise<false>((resolve) => {
       setTimeout(resolve, timeoutMs, false);
     });
 
-    let waitUntilDetected = (): Promise<boolean> => {
+    const waitUntilDetected = (): Promise<boolean> => {
       return new Promise((resolve) => {
         let attemptNumber = 1;
 
-        let check = () => {
+        const check = () => {
           Logger.debug('Detecting Connect extension. Attempt ' + attemptNumber);
           attemptNumber++;
           // Event based
           this.checkEvent();
           // DOM based extension detector
-          let connectDetected = document.getElementById('aspera-connect-detector');
+          const connectDetected = document.getElementById('aspera-connect-detector');
           if (connectDetected) {
-            let extensionEnable = connectDetected.getAttribute('extension-enable');
+            const extensionEnable = connectDetected.getAttribute('extension-enable');
             if (extensionEnable === 'true') {
               Logger.debug('Detected extension');
               clearInterval(this.detectionRetry);
@@ -94,7 +94,7 @@ class SafariAppStrategy extends BaseExtensionStrategy {
           // create detector
           if (!connectDetected) {
             Logger.debug('Creating detector in sdk...');
-            let div = document.createElement('div');
+            const div = document.createElement('div');
             div.id = 'aspera-connect-detector';
             div.setAttribute('extension-enable', 'false');
             document.body.appendChild(div);
@@ -102,7 +102,7 @@ class SafariAppStrategy extends BaseExtensionStrategy {
         };
 
         // NOTE: Safari bugs sometime leads to breakdown in getting responses
-        let versionResponse = (evt: any) => {
+        const versionResponse = (evt: any) => {
           if (evt.type === 'AsperaConnectCheckResponse' && 'detail' in evt && typeof evt.detail === 'object') {
             document.removeEventListener('AsperaConnectCheckResponse', versionResponse);
             Logger.debug('Got response from Connect: ' + JSON.stringify(evt.detail));
@@ -113,13 +113,13 @@ class SafariAppStrategy extends BaseExtensionStrategy {
         };
 
         document.addEventListener('AsperaConnectCheckResponse', versionResponse);
-        let interval = timeoutMs === -1 ? 500 : 200;
+        const interval = timeoutMs === -1 ? 500 : 200;
         this.detectionRetry = setInterval(check, interval);
         check();
       });
     };
 
-    let found = await Promise.race<boolean>([
+    const found = await Promise.race<boolean>([
       ...timeoutMs !== -1 ? [timeoutPromise] : [],
       waitUntilDetected()
     ]);
@@ -127,10 +127,10 @@ class SafariAppStrategy extends BaseExtensionStrategy {
     clearInterval(this.detectionRetry);
     return found;
 
-  }
+  };
 
-  triggerExtensionCheck () {
-    let dummyIframe = document.createElement('IFRAME') as HTMLIFrameElement;
+  triggerExtensionCheck (): void {
+    const dummyIframe = document.createElement('IFRAME') as HTMLIFrameElement;
     dummyIframe.src = 'fasp://initialize?checkextensions';
     dummyIframe.style.visibility = 'hidden';
     dummyIframe.style.position = 'absolute';
@@ -140,18 +140,18 @@ class SafariAppStrategy extends BaseExtensionStrategy {
     document.body.appendChild(dummyIframe);
   }
 
-  stop = () => {
+  stop = (): void => {
     clearTimeout(this.detectionRetry);
-  }
+  };
 
-  startup = async () => {
+  startup = async (): Promise<void> => {
     Logger.debug('startup()');
     // @ts-ignore
     document.addEventListener('AsperaConnectResponse', this.resolveHttpResponse);
     /** Await extension detection */
     await this.detectExtension();
     Logger.debug('safari init finished');
-  }
+  };
 }
 
 export default SafariAppStrategy;

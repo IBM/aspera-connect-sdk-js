@@ -14,17 +14,17 @@ const LEVEL: LogLevels = {
 };
 
 let LogLevel: number = LEVEL.INFO;
-if (typeof localStorage !== 'undefined' && localStorage.hasOwnProperty(LS_LOG_KEY)) {
+if (typeof localStorage !== 'undefined' && Object.prototype.hasOwnProperty.call(localStorage, LS_LOG_KEY)) {
   LogLevel = Number(localStorage.getItem(LS_LOG_KEY));
 }
 
-export function trace (...args: any[]) {
+export function trace (...args: any[]): void {
   if (LogLevel >= LEVEL.TRACE) {
     print('log', args);
   }
 }
 
-export function debug (...args: any[]) {
+export function debug (...args: any[]): void {
   if (LogLevel >= LEVEL.DEBUG) {
     print('log', args);
   }
@@ -36,7 +36,7 @@ export function debug (...args: any[]) {
  * and if window.console is defined, then message will be sent to
  * console.log.
  */
-export function log (...args: any[]) {
+export function log (...args: any[]): void {
   print('log', args);
 }
 
@@ -46,7 +46,7 @@ export function log (...args: any[]) {
  * and if window.console is defined, then message will be sent to
  * console.warn.
  */
-export function warn (...args: any[]) {
+export function warn (...args: any[]): void {
   print('warn', args);
 }
 
@@ -56,13 +56,13 @@ export function warn (...args: any[]) {
  * and if window.console is defined, then message will be sent to
  * console.error.
  */
-export function error (...args: any[]) {
+export function error (...args: any[]): void {
   print('error', args);
 }
 
 function print (level: 'error' | 'warn' | 'log', message: any[]) {
   if (typeof window.console !== 'undefined') {
-    (console)[level].apply(console, message);
+    window.console[level](...message);
   }
 }
 
@@ -79,7 +79,7 @@ function print (level: 'error' | 'warn' | 'log', message: any[]) {
  * * `2` - TRACE
  * @return {null}
  */
-export function setLevel (level: number) {
+export function setLevel (level: number): void {
   LogLevel = level;
   localStorage[LS_LOG_KEY] = level;
 }

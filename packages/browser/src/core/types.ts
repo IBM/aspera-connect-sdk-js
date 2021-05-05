@@ -9,6 +9,9 @@ export interface Globals {
   sessionKey: string;
 }
 
+// Define a type that means "empty object"
+export type EmptyObject = Record<string, never>;
+
 export interface InstallerOptions {
   sdkLocation?: string;
   stylesheetLocation?: string;
@@ -46,8 +49,8 @@ export interface RequestInfo
   extends HttpEndpoint {
   requestId: number;
   /** Resolve function to return the response */
-  resolve?: Function;
-  reject?: Function;
+  resolve?: (response: any) => void;
+  reject?: (response: any) => void;
 }
 
 export interface RequestInfoHash<T> {
@@ -151,8 +154,8 @@ type PageNames =
   'security';
 
 export interface PromiseInfo {
-  resolve: Function;
-  reject: Function;
+  resolve: (response: any) => void;
+  reject: (response: any) => void;
 }
 
 export interface PreferencesOptions {
@@ -168,7 +171,7 @@ interface DialogOptions {
   title?: string;
 }
 
-export interface SaveFileDialogOptions extends DialogOptions {}
+export type SaveFileDialogOptions = DialogOptions;
 export interface SelectFileDialogOptions extends DialogOptions {
   /** Allow the selection of multiple files. */
   allowMultipleSelection?: boolean;
@@ -179,7 +182,7 @@ export type SelectFolderDialogOptions = Pick<SelectFileDialogOptions, 'title' | 
 export interface DataTransfer {
   /** Object returned only on drop event */
   dataTransfer: {
-    files: FileObject[]
+    files: FileObject[];
   };
 }
 
@@ -194,13 +197,13 @@ export interface TestSshPortsOptions {
 
 type FileObject = {
   /** Last modified timestamp of file */
-  lastModifiedDate: string,
+  lastModifiedDate: string;
   /** Absolute path to file */
-  name: string,
+  name: string;
   /** Size of file */
-  size: number,
+  size: number;
   /** Content type of file */
-  type: string
+  type: string;
 };
 
 export interface DragDropOptions {
@@ -359,9 +362,9 @@ export interface Callbacks<T> {
  */
 export interface ConnectError {
   error: {
-    code: number,
-    internal_message: string,
-    user_message: string
+    code: number;
+    internal_message: string;
+    user_message: string;
   };
 }
 
@@ -391,9 +394,9 @@ export interface ConnectClient {
   /**
    * Test authentication credentials against a transfer server.
    */
-  authenticate (authSpec: Partial<TransferSpec>, callbacks: Callbacks<{}>): void;
-  authenticate (authSpec: Partial<TransferSpec>): Promise<{}>;
-  authenticate (authSpec: Partial<TransferSpec>, callbacks?: Callbacks<{}>): void | Promise<{}>;
+  authenticate (authSpec: Partial<TransferSpec>, callbacks: Callbacks<EmptyObject>): void;
+  authenticate (authSpec: Partial<TransferSpec>): Promise<EmptyObject>;
+  authenticate (authSpec: Partial<TransferSpec>, callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
   getAllTransfers (callbacks: Callbacks<AllTransfersInfo>, iterationToken?: number): void;
   getAllTransfers (callbacks: Callbacks<AllTransfersInfo>, iterationToken?: number): void | Promise<AllTransfersInfo>;
@@ -405,23 +408,23 @@ export interface ConnectClient {
   getStatus (): ConnectStatusStrings;
   initSession (id?: string): ApplicationIdObject | ConnectError;
 
-  modifyTransfer (transferId: string, options: Partial<TransferSpec>, callbacks: Callbacks<{}>): void;
-  modifyTransfer (transferId: string, options: Partial<TransferSpec>): Promise<{}>;
-  modifyTransfer (transferId: string, options: Partial<TransferSpec>, callbacks?: Callbacks<{}>): void | Promise<{}>;
+  modifyTransfer (transferId: string, options: Partial<TransferSpec>, callbacks: Callbacks<EmptyObject>): void;
+  modifyTransfer (transferId: string, options: Partial<TransferSpec>): Promise<EmptyObject>;
+  modifyTransfer (transferId: string, options: Partial<TransferSpec>, callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
   readAsArrayBuffer (options: { path: string }, callbacks: Callbacks<ArrayBufferOutput>): void;
   readAsArrayBuffer (options: { path: string }): Promise<ArrayBufferOutput>;
   readAsArrayBuffer (options: { path: string }, callbacks?: Callbacks<ArrayBufferOutput>): void | Promise<ArrayBufferOutput>;
 
   readChunkAsArrayBuffer (
-    options: { path: string, offset: number, chunkSize: number },
+    options: { path: string; offset: number; chunkSize: number },
     callbacks: Callbacks<ArrayBufferOutput>
   ): void;
   readChunkAsArrayBuffer (
-    options: { path: string, offset: number, chunkSize: number }
+    options: { path: string; offset: number; chunkSize: number }
   ): Promise<ArrayBufferOutput>;
   readChunkAsArrayBuffer (
-    options: { path: string, offset: number, chunkSize: number },
+    options: { path: string; offset: number; chunkSize: number },
     callbacks?: Callbacks<ArrayBufferOutput>
   ): void | Promise<ArrayBufferOutput>;
 
@@ -431,9 +434,9 @@ export interface ConnectClient {
 
   removeEventListener (type?: EventString, listener?: EventListener): boolean;
 
-  removeTransfer (transferId: string, callbacks: Callbacks<{}>): void;
-  removeTransfer (transferId: string): Promise<{}>;
-  removeTransfer (transferId: string, callbacks?: Callbacks<{}>): void | Promise<{}>;
+  removeTransfer (transferId: string, callbacks: Callbacks<EmptyObject>): void;
+  removeTransfer (transferId: string): Promise<EmptyObject>;
+  removeTransfer (transferId: string, callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
   resumeTransfer (
     transferId: string,
@@ -456,21 +459,21 @@ export interface ConnectClient {
     listener: DragDropListener
   ): void | ConnectError;
 
-  showAbout (callbacks: Callbacks<{}>): void;
-  showAbout (): Promise<{}>;
-  showAbout (callbacks?: Callbacks<{}>): void | Promise<{}>;
+  showAbout (callbacks: Callbacks<EmptyObject>): void;
+  showAbout (): Promise<EmptyObject>;
+  showAbout (callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
-  showDirectory (transferId: string, callbacks: Callbacks<{}>): void;
-  showDirectory (transferId: string): Promise<{}>;
-  showDirectory (transferId: string, callbacks?: Callbacks<{}>): void | Promise<{}>;
+  showDirectory (transferId: string, callbacks: Callbacks<EmptyObject>): void;
+  showDirectory (transferId: string): Promise<EmptyObject>;
+  showDirectory (transferId: string, callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
-  showPreferences (callbacks: Callbacks<{}>): void;
-  showPreferences (): Promise<{}>;
-  showPreferences (callbacks?: Callbacks<{}>): void | Promise<{}>;
+  showPreferences (callbacks: Callbacks<EmptyObject>): void;
+  showPreferences (): Promise<EmptyObject>;
+  showPreferences (callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
-  showPreferencesPage (options: PreferencesOptions, callbacks: Callbacks<{}>): void;
-  showPreferencesPage (options: PreferencesOptions): Promise<{}>;
-  showPreferencesPage (options: PreferencesOptions, callbacks?: Callbacks<{}>): void | Promise<{}>;
+  showPreferencesPage (options: PreferencesOptions, callbacks: Callbacks<EmptyObject>): void;
+  showPreferencesPage (options: PreferencesOptions): Promise<EmptyObject>;
+  showPreferencesPage (options: PreferencesOptions, callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
   showSaveFileDialog (callbacks: Callbacks<ShowSaveFileDialogOutput>, options?: SaveFileDialogOptions): void;
 
@@ -480,13 +483,13 @@ export interface ConnectClient {
   showSelectFolderDialog (callbacks: Callbacks<ShowSelectFolderDialogOutput>, options?: SelectFolderDialogOptions): void;
   showSelectFolderDialogPromise (options?: SelectFolderDialogOptions): Promise<ShowSelectFolderDialogOutput>;
 
-  showTransferManager (callbacks: Callbacks<{}>): void;
-  showTransferManager (): Promise<{}>;
-  showTransferManager (callbacks?: Callbacks<{}>): void | Promise<{}>;
+  showTransferManager (callbacks: Callbacks<EmptyObject>): void;
+  showTransferManager (): Promise<EmptyObject>;
+  showTransferManager (callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
-  showTransferMonitor (transferId: string, callbacks: Callbacks<{}>): void;
-  showTransferMonitor (transferId: string): Promise<{}>;
-  showTransferMonitor (transferId: string, callbacks?: Callbacks<{}>): void | Promise<{}>;
+  showTransferMonitor (transferId: string, callbacks: Callbacks<EmptyObject>): void;
+  showTransferMonitor (transferId: string): Promise<EmptyObject>;
+  showTransferMonitor (transferId: string, callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
   start (): void | ConnectError;
 
@@ -504,13 +507,13 @@ export interface ConnectClient {
 
   stop (): void;
 
-  stopTransfer (transferId: string, callbacks: Callbacks<{}>): void;
-  stopTransfer (transferId: string): Promise<{}>;
-  stopTransfer (transferId: string, callbacks?: Callbacks<{}>): void | Promise<{}>;
+  stopTransfer (transferId: string, callbacks: Callbacks<EmptyObject>): void;
+  stopTransfer (transferId: string): Promise<EmptyObject>;
+  stopTransfer (transferId: string, callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
-  testSshPorts (options: TestSshPortsOptions, callbacks: Callbacks<{}>): void;
-  testSshPorts (options: TestSshPortsOptions): Promise<{}>;
-  testSshPorts (options: TestSshPortsOptions, callbacks?: Callbacks<{}>): void | Promise<{}>;
+  testSshPorts (options: TestSshPortsOptions, callbacks: Callbacks<EmptyObject>): void;
+  testSshPorts (options: TestSshPortsOptions): Promise<EmptyObject>;
+  testSshPorts (options: TestSshPortsOptions, callbacks?: Callbacks<EmptyObject>): void | Promise<EmptyObject>;
 
   version (callbacks: Callbacks<VersionOutput>): void;
   version (): Promise<VersionOutput>;
@@ -525,8 +528,8 @@ export interface ResumeTransferOutput {
         index: number;
         xfer_id: string;
         xfer_retry: string;
-      }
-    }
+      };
+    };
     transfer_spec: TransferSpec;
     uuid: string;
   };
@@ -542,13 +545,13 @@ export interface ChecksumFileOutput {
   checksum: string;
 }
 
-export interface DropEventOutput extends DragDropEvent {}
+export type DropEventOutput = DragDropEvent;
 
-export interface ShowSaveFileDialogOutput extends DataTransfer {}
+export type ShowSaveFileDialogOutput = DataTransfer;
 
-export interface ShowSelectFileDialogOutput extends DataTransfer {}
+export type ShowSelectFileDialogOutput = DataTransfer;
 
-export interface ShowSelectFolderDialogOutput extends DataTransfer {}
+export type ShowSelectFolderDialogOutput = DataTransfer;
 
 export interface VersionOutput {
   /** Connect is installed system-wide or not. */
@@ -566,8 +569,8 @@ export interface TransferOutput {
     aspera: {
       index: number;
       xfer_id: string;
-      xfer_retry: number
-    }
+      xfer_retry: number;
+    };
   };
 }
 

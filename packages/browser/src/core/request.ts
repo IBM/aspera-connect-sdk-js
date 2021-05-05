@@ -6,11 +6,11 @@ class Request {
   name: string | undefined;
   method: string | undefined;
   param: string | undefined;
-  body: object | undefined;
+  body: Record<string, unknown> | undefined;
   requestId: string | undefined;
-  validators: Function[] = [];
+  validators: ((request: Request) => void)[] = [];
 
-  addSettings (addStandardSettings: Function) {
+  addSettings (addStandardSettings: (body: any) => any): void {
     let data = copyObject(this.body);
     data = addStandardSettings(data);
 
@@ -30,37 +30,37 @@ class Request {
     this.body = data;
   }
 
-  setBody (body: object) {
+  setBody (body: any): Request {
     this.body = body;
     return this;
   }
 
-  setMethod (method: string) {
+  setMethod (method: string): Request {
     this.method = method;
     return this;
   }
 
-  setName (name: string) {
+  setName (name: string): Request {
     this.name = name;
     return this;
   }
 
-  setParam (param: string) {
+  setParam (param: string): Request {
     this.param = param;
     return this;
   }
 
-  setRequestId (id: string) {
+  setRequestId (id: string): Request {
     this.requestId = id;
     return this;
   }
 
-  setValidator (...validators: Function[]) {
+  setValidator (...validators: ((request: Request) => void)[]): Request {
     this.validators = [...this.validators, ...validators];
     return this;
   }
 
-  validate () {
+  validate (): void {
     /** Add default validators here */
     this.validators.push(validateName, validateMethod);
 

@@ -19,13 +19,13 @@ class Provider implements types.Provider {
 
   create = (klass: any): types.RequestStrategy => {
     return new klass(this._options);
-  }
+  };
 
-  getHttpStrategy = () => {
+  getHttpStrategy = (): types.RequestStrategy => {
     return this.create(HttpStrategy);
-  }
+  };
 
-  getStrategy = async () => {
+  getStrategy = async (): Promise<types.RequestStrategy> => {
     try {
       /**
        * Priority:
@@ -44,9 +44,9 @@ class Provider implements types.Provider {
         this.strategy = this.supportsNativeHost() ? this.create(NativeHostStrategy) : this.create(SafariAppStrategy);
 
         Logger.debug('Checking if extension installed...');
-        let installed = await this.strategy.detectExtension!(1000);
+        const installed = await this.strategy.detectExtension?.(1000);
         if (!installed) {
-          let supportsInstall = ConnectInstaller.supportsInstallingExtensions === true;
+          const supportsInstall = ConnectInstaller.supportsInstallingExtensions === true;
 
           if (this._options.connectMethod === 'extension' || supportsInstall) {
             if (!this.supportsSafariAppExt()) {
@@ -64,40 +64,40 @@ class Provider implements types.Provider {
     } catch (e) {
       throw new Error(`Unexpected error while determining the request implementation: ${e}`);
     }
-  }
+  };
 
-  requiresHttp = () => {
+  requiresHttp = (): boolean => {
     return (this._options.connectMethod === 'http' || !this.supportsExtensions() || Utils.checkVersionException());
-  }
+  };
 
-  setHttpStrategy = () => {
+  setHttpStrategy = (): void => {
     Logger.debug('Using http strategy');
     this.strategy = this.getHttpStrategy();
-  }
+  };
 
-  supportsExtensions = () => {
+  supportsExtensions = (): boolean => {
     return (this.supportsNativeHost() || this.supportsSafariAppExt());
-  }
+  };
 
-  supportsHttp = () => {
+  supportsHttp = (): boolean => {
     if (Utils.getXMLHttpRequest() === null) {
       return false;
     }
 
     return true;
-  }
+  };
 
-  supportsNativeHost = () => {
+  supportsNativeHost = (): boolean => {
     return (BROWSER.CHROME || BROWSER.EDGE_WITH_EXTENSION || BROWSER.FIREFOX);
-  }
+  };
 
-  supportsNpapi = () => {
+  supportsNpapi = (): boolean => {
     return (BROWSER.IE || BROWSER.SAFARI && !BROWSER.SAFARI_NO_NPAPI);
-  }
+  };
 
-  supportsSafariAppExt = () => {
+  supportsSafariAppExt = (): boolean => {
     return BROWSER.SAFARI_NO_NPAPI;
-  }
+  };
 }
 
 export default Provider;

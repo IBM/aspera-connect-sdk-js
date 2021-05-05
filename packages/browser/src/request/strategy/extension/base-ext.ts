@@ -20,17 +20,17 @@ abstract class BaseExtensionStrategy implements types.RequestStrategy {
     this.options = options;
   }
 
-  changeConnectStatus = (newConnectStatus: string) => {
+  changeConnectStatus = (newConnectStatus: string): void => {
     if (this.connectStatus === newConnectStatus) {
       return;
     }
 
     this.connectStatus = newConnectStatus;
     this.options.requestStatusCallback(newConnectStatus);
-  }
+  };
 
   httpRequest = (endpoint: types.HttpEndpoint, requestId: number): Promise<types.ResolvedHttpResponse> => {
-    let requestPromise = generatePromiseData<types.ResolvedHttpResponse>();
+    const requestPromise = generatePromiseData<types.ResolvedHttpResponse>();
     if (endpoint.path.indexOf('/v5/') > -1 || endpoint.path.indexOf('/v6/') > -1) {
       // TODO: Don't mutate original object
       endpoint.path = endpoint.path.replace('/v5', '').replace('/v6', '');
@@ -41,7 +41,7 @@ abstract class BaseExtensionStrategy implements types.RequestStrategy {
       endpoint.body = '';
     }
 
-    let req: types.ExtensionRequest = {
+    const req: types.ExtensionRequest = {
       'request_id': requestId,
       'min_version': this.options.minVersion || '',
       'method': endpoint.method,
@@ -72,7 +72,7 @@ abstract class BaseExtensionStrategy implements types.RequestStrategy {
     document.dispatchEvent(new CustomEvent('AsperaConnectRequest', { 'detail': req }));
 
     return requestPromise.promise;
-  }
+  };
 
   abstract startup (): Promise<void>;
 }
