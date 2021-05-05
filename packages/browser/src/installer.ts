@@ -518,15 +518,15 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     } catch (e) {
       inIframe = true;
     }
-    let refreshWindow = window;
-        // NOTE: contentWindow used in thsi way will always be undefined according to its HTML specification
+
     if (inIframe) {
       let iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
       if (iframe.contentWindow) {
-        refreshWindow = iframe.contentWindow;
+        return iframe.contentWindow;
       }
     }
-    return refreshWindow;
+
+    return window;
   };
 
   // Get top window href and open in new tab

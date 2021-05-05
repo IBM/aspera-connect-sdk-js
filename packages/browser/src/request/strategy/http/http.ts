@@ -94,7 +94,7 @@ class HttpStrategy implements types.RequestStrategy {
       this.scanRetryTimeValues[0] = this.scanRetryTimeValues[1];
       this.scanRetryTimeValues[1] = retryTimeS;
 
-      await new Promise(resolve => {
+      await new Promise<void>(resolve => {
         setTimeout(async () => {
           await this.detectConnect(false);
           /** Go to running here if Connect was installed during loop after initial timeout */
