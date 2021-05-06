@@ -23,7 +23,6 @@
     "@typescript-eslint/eslint-plugin": "^4.22.1",
     "@typescript-eslint/parser": "^4.22.1",
     "chai": "^4.2.0",
-    "core-js": "^3.0.1",
     "eslint": "^7.25.0",
     "eslint-plugin-jsdoc": "^33.1.0",
     "jsdoc": "^3.6.3",
@@ -42,7 +41,9 @@
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "es6-promise": "^4.2.8"
+  },
   "jshintConfig": {
     "esversion": 6
   }

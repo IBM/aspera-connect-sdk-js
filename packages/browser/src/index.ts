@@ -1,4 +1,4 @@
-import 'core-js/features/promise';
+import 'es6-promise/auto';
 import { Connect } from './connect';
 import { AW4Type, ConnectRoot, getGlobalObject } from './core/aspera-web-global.model';
 import { ConnectInstaller } from './installer';
