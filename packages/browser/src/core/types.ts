@@ -388,7 +388,7 @@ export interface ConnectSettings
 }
 
 /** Connect SDK interface */
-export interface ConnectClient {
+export interface ConnectClientType {
   addEventListener (type: EventString, listener: EventListener): void | ConnectError;
 
   /**
@@ -518,6 +518,42 @@ export interface ConnectClient {
   version (callbacks: Callbacks<VersionOutput>): void;
   version (): Promise<VersionOutput>;
   version (callbacks?: Callbacks<VersionOutput>): Promise<VersionOutput> | void;
+}
+
+export interface ConnectInstallerClientType {
+  addActivityListener: (type: string, callback: (activity: string) => void) => void;
+  addEventListener: (callback: (event: string) => void) => void;
+  connected: (timeout?: number) => void;
+  dismiss: () => void;
+  doesBrowserNeedExtensionStore: () => boolean;
+  getExtensionStoreLink: () => boolean;
+  installationJSON: (callback: (data: unknown) => unknown) => void;
+  isExtensionInstalled: (timeout: number, callback?: DetectionCallbacks) => void;
+  showDownload: () => void;
+  showExtensionInstall: () => void;
+  showInstall: () => void;
+  showLaunching: (timeout?: number) => void;
+  showPrevious: () => void;
+  showRetry: () => void;
+  showUnsupportedBrowser: () => void;
+  showUpdate: () => void;
+  startExtensionInstall: () => void;
+}
+
+export interface ConnectType {
+  new (options?: ConfigurationOptions): ConnectClientType;
+  EVENT: ConnectEvent;
+  STATUS: ConnectStatus;
+  TRANSFER_STATUS: TransferStatus;
+  HTTP_METHOD: HttpMethod;
+}
+
+export interface ConnectInstallerType {
+  new (options?: InstallerOptions): ConnectInstallerClientType;
+  ACTIVITY_EVENT: any;
+  EVENT: any;
+  EVENT_TYPE: any;
+  supportsInstallingExtensions: boolean;
 }
 
 export interface ResumeTransferOutput {

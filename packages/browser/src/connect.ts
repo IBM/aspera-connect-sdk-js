@@ -6,7 +6,7 @@
  */
 
 import * as Utils from './utils';
-import * as Logger from './logger';
+import { Logger } from './logger';
 import RequestHandler from './request/handler';
 import { HTTP_METHOD, STATUS, EVENT, TRANSFER_STATUS, LS_CONNECT_APP_ID } from './constants';
 import ApiService from './core/api';
@@ -20,19 +20,6 @@ validateChecksumOptions
 } from './core/validators';
 import { ConnectGlobals } from './helpers/globals';
 import * as types from './core/types';
-
-/**
- * Workaround for not using class notation for Connect - we say that
- * Connect is the same as any which is the same as something that when called
- * with the new operator gives an instance of ConnectClient.
- */
-interface ConnectConstructor {
-  new (options?: types.ConfigurationOptions): types.ConnectClient;
-  EVENT: types.ConnectEvent;
-  STATUS: types.ConnectStatus;
-  TRANSFER_STATUS: types.TransferStatus;
-  HTTP_METHOD: types.HttpMethod;
-}
 
 /**
  * @classdesc Contains all the Connect API methods
@@ -75,7 +62,7 @@ interface ConnectConstructor {
  * let asperaWeb = new AW4.Connect(options) // returns instance of AW4.Connect
  */
 
-const ConnectClient = function ConnectClient (this: types.ConnectClient, options?: types.ConfigurationOptions) {
+const Connect = function Connect (this: types.ConnectClientType, options?: types.ConfigurationOptions): void {
   if (!new.target) {
     throw new Error('Connect() must be called with new');
   }
@@ -98,7 +85,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   const EXTENSION_REQUEST_TIMEOUT = options.extensionRequestTimeout;
 
   // Evaluate local storage overrides
-  if (typeof(Storage) !== 'undefined') {
+  if (typeof (Storage) !== 'undefined') {
     const overrideMethod = Utils.getLocalStorage('aspera-connect-method');
     if (overrideMethod) {
       CONNECT_METHOD = overrideMethod;
@@ -186,7 +173,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
           .setMethod(HTTP_METHOD.GET);
 
       send<any>(request).catch(
-        () => {}
+        () => { }
       );
     }
   }
@@ -298,8 +285,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     notifyStatusListeners(connectStatus);
   }
 
-  function send<T> (request: InstanceType<typeof Request>, callbacks: types.Callbacks<T>): void;
-  function send<T> (request: InstanceType<typeof Request>): Promise<T>;
+  function send<T>(request: InstanceType<typeof Request>, callbacks: types.Callbacks<T>): void;
+  function send<T>(request: InstanceType<typeof Request>): Promise<T>;
   function send<T> (request: InstanceType<typeof Request>, callbacks?: types.Callbacks<T>): Promise<T> | void {
     /** Add default settings for all POST requests */
     if (request.method === HTTP_METHOD.POST) {
@@ -367,15 +354,15 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     }
   };
 
-  function authenticate (authSpec: Partial<types.TransferSpec>, callbacks: types.Callbacks<types.EmptyObject>): void;
-  function authenticate (authSpec: Partial<types.TransferSpec>): Promise<types.EmptyObject>;
+  function authenticate(authSpec: Partial<types.TransferSpec>, callbacks: types.Callbacks<types.EmptyObject>): void;
+  function authenticate(authSpec: Partial<types.TransferSpec>): Promise<types.EmptyObject>;
   function authenticate (authSpec: Partial<types.TransferSpec>, callbacks?: types.Callbacks<types.EmptyObject>): void | Promise<types.EmptyObject> {
     const request =
-       new Request()
-         .setName('authenticate')
-         .setMethod(HTTP_METHOD.POST)
-         .setBody(authSpec)
-         .setValidator(validateAuthSpec);
+      new Request()
+        .setName('authenticate')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(authSpec)
+        .setValidator(validateAuthSpec);
 
     if (connectRunning) {
       if (callbacks) {
@@ -409,7 +396,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.authenticate = authenticate;
 
-  function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number): void;
+  function getAllTransfers(callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken: number): void;
   function getAllTransfers (callbacks: types.Callbacks<types.AllTransfersInfo>, iterationToken = 0): void | Promise<types.AllTransfersInfo> {
     if (connectRunning) {
       return getAllTransfersHelper(iterationToken, callbacks);
@@ -452,9 +439,9 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     return connectStatus;
   };
 
-  function getTransfer (transferId: string, callbacks: types.Callbacks<{ transfer_info: types.TransferInfo }>): void;
-  function getTransfer (transferId: string): Promise<{ transfer_info: types.TransferInfo }>;
-  function getTransfer (transferId: string, callbacks?: types.Callbacks<{ transfer_info: types.TransferInfo }>): void | Promise<{ transfer_info: types.TransferInfo}> {
+  function getTransfer(transferId: string, callbacks: types.Callbacks<{ transfer_info: types.TransferInfo }>): void;
+  function getTransfer(transferId: string): Promise<{ transfer_info: types.TransferInfo }>;
+  function getTransfer (transferId: string, callbacks?: types.Callbacks<{ transfer_info: types.TransferInfo }>): void | Promise<{ transfer_info: types.TransferInfo }> {
     const request =
       new Request()
         .setName('getTransfer')
@@ -524,7 +511,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       APPLICATION_ID = id;
     } else {
       let appId = Utils.getLocalStorage(LS_CONNECT_APP_ID);
-       /** Generate a new application id */
+      /** Generate a new application id */
       if (!appId) {
         appId = Utils.utoa(Utils.generateUuid());
       }
@@ -536,16 +523,16 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       Logger.warn('WARNING: app_id field entropy might be too low.');
     }
 
-     /** Initialize requests */
+    /** Initialize requests */
     const error = this.start();
     if (error && Utils.isError(error)) {
       return Utils.createError(-1, error);
     }
-    return { 'app_id' : APPLICATION_ID };
+    return { 'app_id': APPLICATION_ID };
   };
 
-  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>, callbacks: types.Callbacks<types.EmptyObject>): void;
-  function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>): Promise<types.EmptyObject>;
+  function modifyTransfer(transferId: string, options: Partial<types.TransferSpec>, callbacks: types.Callbacks<types.EmptyObject>): void;
+  function modifyTransfer(transferId: string, options: Partial<types.TransferSpec>): Promise<types.EmptyObject>;
   function modifyTransfer (transferId: string, options: Partial<types.TransferSpec>, callbacks?: types.Callbacks<types.EmptyObject>): void | Promise<types.EmptyObject> {
     const request =
       new Request()
@@ -589,8 +576,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.modifyTransfer = modifyTransfer;
 
-  function readAsArrayBuffer (options: { path: string }, callbacks: types.Callbacks<types.ArrayBufferOutput>): void;
-  function readAsArrayBuffer (options: { path: string }): Promise<types.ArrayBufferOutput>;
+  function readAsArrayBuffer(options: { path: string }, callbacks: types.Callbacks<types.ArrayBufferOutput>): void;
+  function readAsArrayBuffer(options: { path: string }): Promise<types.ArrayBufferOutput>;
   function readAsArrayBuffer (options: { path: string }, callbacks?: types.Callbacks<types.ArrayBufferOutput>): void | Promise<types.ArrayBufferOutput> {
     const request =
       new Request()
@@ -634,11 +621,11 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.readAsArrayBuffer = readAsArrayBuffer;
 
-  function readChunkAsArrayBuffer (
+  function readChunkAsArrayBuffer(
     options: { path: string; offset: number; chunkSize: number },
     callbacks: types.Callbacks<types.ArrayBufferOutput>
   ): void;
-  function readChunkAsArrayBuffer (
+  function readChunkAsArrayBuffer(
     options: { path: string; offset: number; chunkSize: number }
   ): Promise<types.ArrayBufferOutput>;
   function readChunkAsArrayBuffer (
@@ -689,8 +676,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.readChunkAsArrayBuffer = readChunkAsArrayBuffer;
 
-  function getChecksum (options: types.GetChecksumOptions, callbacks: types.Callbacks<types.ChecksumFileOutput>): void;
-  function getChecksum (options: types.GetChecksumOptions): Promise<types.ChecksumFileOutput>;
+  function getChecksum(options: types.GetChecksumOptions, callbacks: types.Callbacks<types.ChecksumFileOutput>): void;
+  function getChecksum(options: types.GetChecksumOptions): Promise<types.ChecksumFileOutput>;
   function getChecksum (options: types.GetChecksumOptions, callbacks?: types.Callbacks<types.ChecksumFileOutput>): Promise<types.ChecksumFileOutput> | void {
     if (!options) {
       throw new Error('#getChecksum options argument is either missing or incorrect');
@@ -705,10 +692,10 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
 
     const request =
       new Request()
-      .setName('getChecksum')
-      .setMethod(HTTP_METHOD.POST)
-      .setBody(localOptions)
-      .setValidator(validateChecksumOptions);
+        .setName('getChecksum')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(localOptions)
+        .setValidator(validateChecksumOptions);
 
     if (connectRunning) {
       if (callbacks) {
@@ -818,8 +805,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     return listenerFound;
   };
 
-  function removeTransfer (transferId: string, callbacks: types.Callbacks<types.EmptyObject>): void;
-  function removeTransfer (transferId: string): Promise<types.EmptyObject>;
+  function removeTransfer(transferId: string, callbacks: types.Callbacks<types.EmptyObject>): void;
+  function removeTransfer(transferId: string): Promise<types.EmptyObject>;
   function removeTransfer (transferId: string, callbacks?: types.Callbacks<types.EmptyObject>): void | Promise<types.EmptyObject> {
     const request =
       new Request()
@@ -855,12 +842,12 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.removeTransfer = removeTransfer;
 
-  function resumeTransfer (
+  function resumeTransfer(
     transferId: string,
     options: Partial<types.TransferSpec>,
     callbacks: types.Callbacks<types.ResumeTransferOutput>
   ): void;
-  function resumeTransfer (
+  function resumeTransfer(
     transferId: string,
     options: Partial<types.TransferSpec>
   ): Promise<types.ResumeTransferOutput>;
@@ -996,10 +983,10 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
       data.dataTransfer.files = [];
       for (let i = 0; i < filesDropped.length; i++) {
         const fileObject = {
-          'lastModifiedDate' : filesDropped[i].lastModifiedDate,
-          'name'             : filesDropped[i].name,
-          'size'             : filesDropped[i].size,
-          'type'             : filesDropped[i].type
+          'lastModifiedDate': filesDropped[i].lastModifiedDate,
+          'name': filesDropped[i].name,
+          'size': filesDropped[i].size,
+          'type': filesDropped[i].type
         };
         data.dataTransfer.files.push(fileObject);
       }
@@ -1034,8 +1021,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     }
   };
 
-  function showAbout (callbacks: types.Callbacks<types.EmptyObject>): void;
-  function showAbout (): Promise<types.EmptyObject>;
+  function showAbout(callbacks: types.Callbacks<types.EmptyObject>): void;
+  function showAbout(): Promise<types.EmptyObject>;
   function showAbout (callbacks?: types.Callbacks<types.EmptyObject>): void | Promise<types.EmptyObject> {
     const request =
       new Request()
@@ -1068,8 +1055,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.showAbout = showAbout;
 
-  function showDirectory (transferId: string, callbacks: types.Callbacks<types.EmptyObject>): void;
-  function showDirectory (transferId: string): Promise<types.EmptyObject>;
+  function showDirectory(transferId: string, callbacks: types.Callbacks<types.EmptyObject>): void;
+  function showDirectory(transferId: string): Promise<types.EmptyObject>;
   function showDirectory (transferId: string, callbacks?: types.Callbacks<types.EmptyObject>): void | Promise<types.HttpResponse> {
     const request =
       new Request()
@@ -1106,8 +1093,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.showDirectory = showDirectory;
 
-  function showPreferences (callbacks: types.Callbacks<types.EmptyObject>): void;
-  function showPreferences (): Promise<types.EmptyObject>;
+  function showPreferences(callbacks: types.Callbacks<types.EmptyObject>): void;
+  function showPreferences(): Promise<types.EmptyObject>;
   function showPreferences (callbacks?: types.Callbacks<types.EmptyObject>): void | Promise<types.EmptyObject> {
     const request =
       new Request()
@@ -1136,8 +1123,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.showPreferences = showPreferences;
 
-  function showPreferencesPage (options: types.PreferencesOptions, callbacks: types.Callbacks<types.EmptyObject>): void;
-  function showPreferencesPage (options: types.PreferencesOptions): Promise<types.EmptyObject>;
+  function showPreferencesPage(options: types.PreferencesOptions, callbacks: types.Callbacks<types.EmptyObject>): void;
+  function showPreferencesPage(options: types.PreferencesOptions): Promise<types.EmptyObject>;
   function showPreferencesPage (options: types.PreferencesOptions, callbacks?: types.Callbacks<types.EmptyObject>): void | Promise<types.EmptyObject> {
     const allowedPages = ['general', 'transfers', 'bandwidth', 'network', 'security'];
     if (options && options.page && allowedPages.indexOf(options.page) > -1) {
@@ -1397,8 +1384,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     }
   };
 
-  function showTransferManager (callbacks: types.Callbacks<types.EmptyObject>): void;
-  function showTransferManager (): Promise<types.EmptyObject>;
+  function showTransferManager(callbacks: types.Callbacks<types.EmptyObject>): void;
+  function showTransferManager(): Promise<types.EmptyObject>;
   function showTransferManager (callbacks?: types.Callbacks<types.EmptyObject>): void | Promise<types.EmptyObject> {
     const request =
       new Request()
@@ -1431,8 +1418,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.showTransferManager = showTransferManager;
 
-  function showTransferMonitor (transferId: string, callbacks: types.Callbacks<types.EmptyObject>): void;
-  function showTransferMonitor (transferId: string): Promise<types.EmptyObject>;
+  function showTransferMonitor(transferId: string, callbacks: types.Callbacks<types.EmptyObject>): void;
+  function showTransferMonitor(transferId: string): Promise<types.EmptyObject>;
   function showTransferMonitor (transferId: string, callbacks?: types.Callbacks<types.EmptyObject>): void | Promise<types.EmptyObject> {
     const request =
       new Request()
@@ -1553,9 +1540,9 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     const settings = asperaConnectSettings || {};
     const localCallbacks = callbacks || {};
     const transferSpecs: types.TransferSpecs = {
-      transfer_specs : [{
-        transfer_spec : transferSpec,
-        aspera_connect_settings : settings
+      transfer_specs: [{
+        transfer_spec: transferSpec,
+        aspera_connect_settings: settings
       }]
     };
 
@@ -1584,9 +1571,9 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
 
     const settings = asperaConnectSettings || {};
     const transferSpecs: types.TransferSpecs = {
-      transfer_specs : [{
-        transfer_spec : transferSpec,
-        aspera_connect_settings : settings
+      transfer_specs: [{
+        transfer_spec: transferSpec,
+        aspera_connect_settings: settings
       }]
     };
 
@@ -1600,8 +1587,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
   }
   this.startTransferPromise = startTransferPromise;
 
-  function startTransfers (transferSpecs: types.TransferSpecs, callbacks: types.Callbacks<types.StartTransferOutput>): { request_id: string };
-  function startTransfers (transferSpecs: types.TransferSpecs): Promise<types.StartTransferOutput>;
+  function startTransfers(transferSpecs: types.TransferSpecs, callbacks: types.Callbacks<types.StartTransferOutput>): { request_id: string };
+  function startTransfers(transferSpecs: types.TransferSpecs): Promise<types.StartTransferOutput>;
   function startTransfers (
     transferSpecs: types.TransferSpecs,
     callbacks?: types.Callbacks<types.StartTransferOutput>
@@ -1617,7 +1604,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     if (connectRunning) {
       if (callbacks) {
         send<types.StartTransferOutput>(request, callbacks);
-        return { request_id : requestId };
+        return { request_id: requestId };
       } else {
         return send<types.StartTransferOutput>(request);
       }
@@ -1673,8 +1660,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
     return requestHandler.stopRequests();
   };
 
-  function stopTransfer (transferId: string, callbacks: types.Callbacks<types.EmptyObject>): void;
-  function stopTransfer (transferId: string): Promise<types.EmptyObject>;
+  function stopTransfer(transferId: string, callbacks: types.Callbacks<types.EmptyObject>): void;
+  function stopTransfer(transferId: string): Promise<types.EmptyObject>;
   function stopTransfer (transferId: string, callbacks?: types.Callbacks<types.EmptyObject>): Promise<types.EmptyObject> | void {
     const request =
       new Request()
@@ -1712,8 +1699,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.stopTransfer = stopTransfer;
 
-  function testSshPorts (options: types.TestSshPortsOptions, callbacks: types.Callbacks<types.EmptyObject>): void;
-  function testSshPorts (options: types.TestSshPortsOptions): Promise<types.EmptyObject>;
+  function testSshPorts(options: types.TestSshPortsOptions, callbacks: types.Callbacks<types.EmptyObject>): void;
+  function testSshPorts(options: types.TestSshPortsOptions): Promise<types.EmptyObject>;
   function testSshPorts (options: types.TestSshPortsOptions, callbacks?: types.Callbacks<types.EmptyObject>): Promise<types.EmptyObject> | void {
     const localOptions: any = {};
     localOptions.remote_host = options.remote_host;
@@ -1761,8 +1748,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    */
   this.testSshPorts = testSshPorts;
 
-  function version (callbacks: types.Callbacks<types.VersionOutput>): void;
-  function version (): Promise<types.VersionOutput>;
+  function version(callbacks: types.Callbacks<types.VersionOutput>): void;
+  function version(): Promise<types.VersionOutput>;
   function version (callbacks?: types.Callbacks<types.VersionOutput>): Promise<types.VersionOutput> | void {
     const request =
       new Request()
@@ -1804,8 +1791,7 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
    * @return {null}
    */
   this.version = version;
-
-} as any as ConnectConstructor;
+} as any as types.ConnectType;
 
 /**
  * AW4.Connect.EVENT
@@ -1820,8 +1806,8 @@ const ConnectClient = function ConnectClient (this: types.ConnectClient, options
  * AW4.Connect.EVENT.STATUS // returns "status"
  * AW4.Connect.EVENT.TRANSFER // returns "transfer"
  */
-ConnectClient.EVENT = EVENT;
-ConnectClient.HTTP_METHOD = HTTP_METHOD;
+Connect.EVENT = EVENT;
+Connect.HTTP_METHOD = HTTP_METHOD;
 /**
  * AW4.Connect.STATUS
  *
@@ -1842,7 +1828,7 @@ const localStatus = Utils.copyObject(STATUS);
 delete localStatus.DEGRADED;
 delete localStatus.STOPPED;
 delete localStatus.WAITING;
-ConnectClient.STATUS = localStatus;
+Connect.STATUS = localStatus;
 /**
  * AW4.Connect.TRANSFER_STATUS
  *
@@ -1861,9 +1847,9 @@ ConnectClient.STATUS = localStatus;
  * @property {String} WILLRETRY="willretry" Transfer waiting to retry after a
  *   recoverable error.
  */
-ConnectClient.TRANSFER_STATUS = TRANSFER_STATUS;
+Connect.TRANSFER_STATUS = TRANSFER_STATUS;
 
-export default ConnectClient;
+export { Connect };
 
 /**
  * The data format for statistics for all existing transfers.

@@ -1,51 +1,24 @@
-import 'core-js/features/object/assign';
-import 'core-js/features/array/find';
 import 'core-js/features/promise';
+import { Connect } from './connect';
+import { AW4Type, ConnectRoot, getGlobalObject } from './core/aspera-web-global.model';
+import { ConnectInstaller } from './installer';
+import { Logger } from './logger';
+import { Utils } from './utils';
+import { __VERSION__ } from './version';
 
-import {
-  atou,
-  getFullURI,
-  launchConnect,
-  utoa,
-  BROWSER
-} from './utils';
+const AW4: AW4Type = { Connect, ConnectInstaller, Logger, Utils, __VERSION__ };
 
-export { default as Connect } from './connect';
-export { ConnectInstaller } from './installer';
-export { __VERSION__ } from './version';
+let windowIntegrations = {};
+const _window = getGlobalObject<Window>();
 
-import {
-  debug,
-  error,
-  log,
-  setLevel,
-  trace,
-  warn
-} from './logger';
-
-export const Utils = {
-  atou,
-  getFullURI,
-  launchConnect,
-  utoa,
-  BROWSER
-};
-
-export const Logger = {
-  debug,
-  error,
-  log,
-  setLevel,
-  trace,
-  warn
-};
-
-// Necessary in order to support Connect Server AW4 integration.
-// For this to work, webpack must use the 'window' libraryTarget.
-let LocalizeDirlist = {};
-const _window = window as any;
-if (_window.AW4 && _window.AW4.LocalizeDirlist) {
-  LocalizeDirlist = _window.AW4.LocalizeDirlist;
+// Needed for window integrations with AW4
+if (_window.AW4) {
+  windowIntegrations = _window.AW4;
 }
 
-export { LocalizeDirlist };
+(window as Window & ConnectRoot).AW4 = {
+  ...AW4,
+  ...windowIntegrations
+};
+
+export * from './exports';

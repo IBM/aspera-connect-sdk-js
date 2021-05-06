@@ -1,6 +1,6 @@
 import BROWSER from '../../../helpers/browser';
 import { STATUS } from '../../../constants';
-import * as Logger from '../../../logger';
+import { Logger } from '../../../logger';
 import {
   isNullOrUndefinedOrEmpty,
   isError,

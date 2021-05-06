@@ -1,7 +1,7 @@
 import BROWSER from '../../helpers/browser';
 import { STATUS } from '../../constants';
 import * as Utils from '../../utils';
-import * as Logger from '../../logger';
+import { Logger } from '../../logger';
 import { ConnectInstaller } from '../../installer';
 import NpapiStrategy from './npapi';
 import { NativeHostStrategy, SafariAppStrategy } from './extension';

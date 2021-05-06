@@ -1,4 +1,4 @@
-import * as Logger from '../logger';
+import { Logger } from '../logger';
 import * as Utils from '../utils';
 import { MIN_SECURE_VERSION, MAX_POLLING_ERRORS, STATUS } from '../constants';
 import { ConnectGlobals } from '../helpers/globals';

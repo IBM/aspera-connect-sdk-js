@@ -51,8 +51,6 @@ const bundleConfig = {
     extensions: ['.js', '.ts']
   },
   output: {
-    library: ['AW4'],
-    libraryTarget: "window",
     path: path.join(__dirname, 'build'),
   },
   module: {

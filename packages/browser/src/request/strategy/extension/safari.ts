@@ -1,4 +1,4 @@
-import * as Logger from '../../../logger';
+import { Logger } from '../../../logger';
 import { STATUS } from '../../../constants';
 import BaseExtensionStrategy from './base-ext';
 import * as types from '../../../core/types';

@@ -1,18 +1,9 @@
 import * as Utils from './utils';
-import * as Logger from './logger';
+import { Logger } from './logger';
 import { NativeHostStrategy, SafariAppStrategy } from './request/strategy/extension';
 import { INSTALL_EVENT as EVENT, ACTIVITY_EVENT, EVENT_TYPE } from './constants';
 import { __VERSION__ } from './version';
 import * as types from './core/types';
-
-// TODO: implement actual types
-interface ConnectInstallerCtor {
-  new(options?: any): any;
-  ACTIVITY_EVENT: any;
-  EVENT: any;
-  EVENT_TYPE: any;
-  supportsInstallingExtensions: boolean;
-}
 
 /**
  * @classdesc Contains methods to support Connect installation
@@ -62,7 +53,7 @@ interface ConnectInstallerCtor {
  * }
  * let asperaInstaller = new AW4.ConnectInstaller(options)
  */
-const ConnectInstaller = function ConnectInstaller (this: any, options?: types.InstallerOptions) {
+const ConnectInstaller = function ConnectInstaller (this: any, options?: types.InstallerOptions): void {
   if (!new.target) {
     throw new Error('ConnectInstaller() must be called with new');
   }
@@ -91,13 +82,13 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
 
   connectOptions.iframeId = options.iframeId || 'aspera-iframe-container';
   connectOptions.useFips = options.useFips === true ? true : false;
-  connectOptions.sdkLocation = (Utils.isNullOrUndefinedOrEmpty(options.sdkLocation)) ? DEFAULT_SDK_LOCATION : Utils.getFullURI(options.sdkLocation) ;
+  connectOptions.sdkLocation = (Utils.isNullOrUndefinedOrEmpty(options.sdkLocation)) ? DEFAULT_SDK_LOCATION : Utils.getFullURI(options.sdkLocation);
   connectOptions.stylesheetLocation = Utils.getFullURI(options.stylesheetLocation);
   connectOptions.correlationId = options.correlationId;
   // NOTE: some apps may still use the "blue" style
   connectOptions.style = options.style || 'carbon';
 
-  if (typeof(Storage) !== 'undefined') {
+  if (typeof (Storage) !== 'undefined') {
     const overrideStyle = Utils.getLocalStorage('aspera-connect-install-style');
     if (overrideStyle) {
       connectOptions.style = overrideStyle;
@@ -140,7 +131,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
 
       if (type.toLowerCase() === 'js') {
         fileref = document.createElement('script');
-        fileref.setAttribute('type','text/javascript');
+        fileref.setAttribute('type', 'text/javascript');
         fileref.setAttribute('src', file);
       } else if (type.toLowerCase() === 'css') {
         fileref = document.createElement('link');
@@ -257,10 +248,10 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
   const addStyleString = function (str: string) {
     const node = document.createElement('style');
     node.setAttribute('type', 'text/css');
-        // Fix for <= IE9
-        // @ts-ignore
+    // Fix for <= IE9
+    // @ts-ignore
     if (node.styleSheet) {
-            // @ts-ignore
+      // @ts-ignore
       node.styleSheet.cssText = str;
     } else {
       node.innerHTML = str;
@@ -297,48 +288,48 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     return;
   };
 
-    /**
-     * Queries the Connect SDK for the current system's information, returning the full spec of all the
-     * documentation and binaries available for it.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#installationJSON
-     * @param {Function} callbacks Function that will be called when the result is
-     *   retrieved.
-     *
-     *   Object returned to callback function:
-     *   ```
-     *   {
-     *     "title": "Aspera Connect for Windows",
-     *     "platform": {
-     *         "os": "win32"
-     *    },
-     *     "navigator": {
-     *         "platform": "Win32"
-     *     },
-     *     "version": "3.10.0.105660",
-     *     "id": "urn:uuid:589F9EE5-0489-4F73-9982-A612FAC70C4E",
-     *     "updated": "2012-10-30T10:16:00+07:00",
-     *     "links": [
-     *         {
-     *             "title": "Windows Installer",
-     *             "type": "application/octet-stream",
-     *             "href": "bin/AsperaConnect-ML-3.10.0.105660.msi",
-     *             "hreflang": "en",
-     *             "rel": "enclosure"
-     *         },
-     *         {
-     *             "title": "Aspera Connect Release Notes for Windows",
-     *             "type": "text/html",
-     *             "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.9.9/relnote/connect_relnotes.html",
-     *             "hreflang": "en",
-     *             "rel": "release-notes"
-     *         }
-     *       ]
-     *   }
-     *   ```
-     * @return {null}
-     */
+  /**
+   * Queries the Connect SDK for the current system's information, returning the full spec of all the
+   * documentation and binaries available for it.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#installationJSON
+   * @param {Function} callbacks Function that will be called when the result is
+   *   retrieved.
+   *
+   *   Object returned to callback function:
+   *   ```
+   *   {
+   *     "title": "Aspera Connect for Windows",
+   *     "platform": {
+   *         "os": "win32"
+   *    },
+   *     "navigator": {
+   *         "platform": "Win32"
+   *     },
+   *     "version": "3.10.0.105660",
+   *     "id": "urn:uuid:589F9EE5-0489-4F73-9982-A612FAC70C4E",
+   *     "updated": "2012-10-30T10:16:00+07:00",
+   *     "links": [
+   *         {
+   *             "title": "Windows Installer",
+   *             "type": "application/octet-stream",
+   *             "href": "bin/AsperaConnect-ML-3.10.0.105660.msi",
+   *             "hreflang": "en",
+   *             "rel": "enclosure"
+   *         },
+   *         {
+   *             "title": "Aspera Connect Release Notes for Windows",
+   *             "type": "text/html",
+   *             "href": "https://www.ibm.com/support/knowledgecenter/SSXMX3_3.9.9/relnote/connect_relnotes.html",
+   *             "hreflang": "en",
+   *             "rel": "release-notes"
+   *         }
+   *       ]
+   *   }
+   *   ```
+   * @return {null}
+   */
   this.installationJSON = function (callback: any) {
     if (typeof callback !== 'function') {
       return;
@@ -373,8 +364,8 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
           const currentPlatform = platformVersion(entry.platform.version);
           if (!Utils.isNullOrUndefinedOrEmpty(currentPlatform) && !Utils.isNullOrUndefinedOrEmpty(userOSVersion)) {
             if ((userOSVersion.highWord > currentPlatform.highWord) ||
-                  (userOSVersion.highWord >= currentPlatform.highWord &&
-                      userOSVersion.loWord >= currentPlatform.loWord)) {
+              (userOSVersion.highWord >= currentPlatform.highWord &&
+                userOSVersion.loWord >= currentPlatform.loWord)) {
               procesJSONentry(entry);
               return;
             }
@@ -398,21 +389,20 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     return;
   };
 
-    /**
-     * @ignore
-     *
-     * Determines if user has already installed the Connect extensions.
-     *
-     * *This method is asynchronous.*
-     *
-     * @function
-     * @name AW4.ConnectInstaller#isExtensionInstalled
-     * @param {Number} timeout Timeout (in milliseconds) to wait before the extension
-     *   is considered not to be installed.
-     * @param {Callbacks} callbacks `success` and `timedout` functions to receive
-     *   results.
-     * @return {null}
-     */
+  /**
+   * Determines if user has already installed the Connect extensions.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @ignore
+   * @name AW4.ConnectInstaller#isExtensionInstalled
+   * @param {Number} timeout Timeout (in milliseconds) to wait before the extension
+   *   is considered not to be installed.
+   * @param {Callbacks} callbacks `success` and `timedout` functions to receive
+   *   results.
+   * @return {null}
+   */
   this.isExtensionInstalled = function (timeout: number, callbacks?: types.DetectionCallbacks) {
     // Prereq: asperaweb-4 needs to be loaded first
     // @ts-ignore
@@ -446,21 +436,21 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     }
   };
 
-    /**
-     * Determine if current browser requires web store to install extensions.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#doesBrowserNeedExtensionStore
-     * @return {Boolean}
-     */
+  /**
+   * Determine if current browser requires web store to install extensions.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#doesBrowserNeedExtensionStore
+   * @return {Boolean}
+   */
   this.doesBrowserNeedExtensionStore = function () {
     if (Utils.BROWSER.CHROME === true ||
-            Utils.BROWSER.FIREFOX === true ||
-            Utils.BROWSER.EDGE_WITH_EXTENSION === true) {
+      Utils.BROWSER.FIREFOX === true ||
+      Utils.BROWSER.EDGE_WITH_EXTENSION === true) {
       return true;
     }
-        // IE = ActiveX
-        // Safari = bundled app extension
+    // IE = ActiveX
+    // Safari = bundled app extension
     return false;
   };
 
@@ -569,7 +559,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     let iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
 
     // To support old browser that don't have it
-    if (typeof(String.prototype.endsWith) === 'undefined') {
+    if (typeof (String.prototype.endsWith) === 'undefined') {
       String.prototype.endsWith = function (suffix) {
         return this.indexOf(suffix, this.length - suffix.length) !== -1;
       };
@@ -760,17 +750,17 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     }
   }, false);
 
-    /**
-     * Displays a banner at the top of the screen explaining to the user that Connect
-     * is trying to be launched.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#showLaunching
-     * @param {Number} [timeout=3500] Timeout to show the banner in milliseconds. If at any point
-     *   during this timeout {@link AW4.ConnectInstaller#connected} or {@link AW4.ConnectInstaller#dismiss}
-     *   are called, the banner will not appear.
-     * @return {null}
-     */
+  /**
+   * Displays a banner at the top of the screen explaining to the user that Connect
+   * is trying to be launched.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#showLaunching
+   * @param {Number} [timeout=3500] Timeout to show the banner in milliseconds. If at any point
+   *   during this timeout {@link AW4.ConnectInstaller#connected} or {@link AW4.ConnectInstaller#dismiss}
+   *   are called, the banner will not appear.
+   * @return {null}
+   */
   this.showLaunching = function (timeout = 3500) {
     if (showInstallTimerID !== 0) {
       clearTimeout(showInstallTimerID);
@@ -782,13 +772,13 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     showInstallTimerID = setTimeout(showLaunchingHelperFunction, timeout);
   };
 
-    /**
-     * Displays a banner at the top of the screen notifying the user to download Connect.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#showDownload
-     * @return {null}
-     */
+  /**
+   * Displays a banner at the top of the screen notifying the user to download Connect.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#showDownload
+   * @return {null}
+   */
   this.showDownload = function () {
     if (isSupportedBrowser) {
       show('download');
@@ -797,14 +787,14 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     }
   };
 
-    /**
-     * Displays a banner at the top of the screen explaining to the user what to do once
-     * Connect has been downloaded.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#showInstall
-     * @return {null}
-     */
+  /**
+   * Displays a banner at the top of the screen explaining to the user what to do once
+   * Connect has been downloaded.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#showInstall
+   * @return {null}
+   */
   this.showInstall = function () {
     if (isSupportedBrowser) {
       show('install');
@@ -814,14 +804,14 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     }
   };
 
-    /**
-     * Displays a banner at the top of the screen notifying the user to update Connect
-     * to the latest version.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#showUpdate
-     * @return {null}
-     */
+  /**
+   * Displays a banner at the top of the screen notifying the user to update Connect
+   * to the latest version.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#showUpdate
+   * @return {null}
+   */
   this.showUpdate = function () {
     if (isSupportedBrowser) {
       show('update');
@@ -830,24 +820,24 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     }
   };
 
-    /**
-     * Displays a banner with the option to retry launching Connect.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#showRetry
-     * @return {null}
-     */
+  /**
+   * Displays a banner with the option to retry launching Connect.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#showRetry
+   * @return {null}
+   */
   this.showRetry = function () {
     show('retry');
   };
 
-    /**
-     * Displays a page with instructions to install the browser extension.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#showExtensionInstall
-     * @return {null}
-     */
+  /**
+   * Displays a page with instructions to install the browser extension.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#showExtensionInstall
+   * @return {null}
+   */
   this.showExtensionInstall = function () {
     show('extension_install');
 
@@ -871,28 +861,28 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     show('previous');
   };
 
-    /**
-     * Displays a banner explaining that the browser is not supported by Connect.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#showUnsupportedBrowser
-     * @return {null}
-     */
+  /**
+   * Displays a banner explaining that the browser is not supported by Connect.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#showUnsupportedBrowser
+   * @return {null}
+   */
   this.showUnsupportedBrowser = function () {
     show('unsupported_browser');
   };
 
-    /**
-     * Displays a temporary message that Connect has been found, and after `timeout` dismisses the
-     * banner
-     *
-     * @function
-     * @name AW4.ConnectInstaller#connected
-     *
-     * @param {Number} [timeout=2000] Timeout (in milliseconds) until the banner
-     *   is dismissed..
-     * @return {null}
-     */
+  /**
+   * Displays a temporary message that Connect has been found, and after `timeout` dismisses the
+   * banner
+   *
+   * @function
+   * @name AW4.ConnectInstaller#connected
+   *
+   * @param {Number} [timeout=2000] Timeout (in milliseconds) until the banner
+   *   is dismissed..
+   * @return {null}
+   */
   this.connected = (timeout = 2000) => {
     clearTimeout(showInstallTimerID);
     const iframe = document.getElementById(connectOptions.iframeId);
@@ -905,13 +895,13 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     return;
   };
 
-    /**
-     * Dismisses the banner.
-     *
-     * @function
-     * @name AW4.ConnectInstaller#dismiss
-     * @return {null}
-     */
+  /**
+   * Dismisses the banner.
+   *
+   * @function
+   * @name AW4.ConnectInstaller#dismiss
+   * @return {null}
+   */
   this.dismiss = function () {
     if (showInstallTimerID !== 0) {
       clearTimeout(showInstallTimerID);
@@ -920,7 +910,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     setHideClass(true);
     return;
   };
-} as any as ConnectInstallerCtor;
+} as any as types.ConnectInstallerType;
 
 ConnectInstaller.EVENT = EVENT;
 ConnectInstaller.ACTIVITY_EVENT = ACTIVITY_EVENT;

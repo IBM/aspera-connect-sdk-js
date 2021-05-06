@@ -1,4 +1,4 @@
-import * as Logger from '../../../logger';
+import { Logger } from '../../../logger';
 import { atou, recordConnectDetected } from '../../../utils';
 import { STATUS } from '../../../constants';
 import BaseExtensionStrategy from './base-ext';

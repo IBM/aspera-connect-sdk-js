@@ -18,13 +18,13 @@ if (typeof localStorage !== 'undefined' && Object.prototype.hasOwnProperty.call(
   LogLevel = Number(localStorage.getItem(LS_LOG_KEY));
 }
 
-export function trace (...args: any[]): void {
+function trace (...args: any[]): void {
   if (LogLevel >= LEVEL.TRACE) {
     print('log', args);
   }
 }
 
-export function debug (...args: any[]): void {
+function debug (...args: any[]): void {
   if (LogLevel >= LEVEL.DEBUG) {
     print('log', args);
   }
@@ -36,7 +36,7 @@ export function debug (...args: any[]): void {
  * and if window.console is defined, then message will be sent to
  * console.log.
  */
-export function log (...args: any[]): void {
+function log (...args: any[]): void {
   print('log', args);
 }
 
@@ -46,7 +46,7 @@ export function log (...args: any[]): void {
  * and if window.console is defined, then message will be sent to
  * console.warn.
  */
-export function warn (...args: any[]): void {
+function warn (...args: any[]): void {
   print('warn', args);
 }
 
@@ -56,7 +56,7 @@ export function warn (...args: any[]): void {
  * and if window.console is defined, then message will be sent to
  * console.error.
  */
-export function error (...args: any[]): void {
+function error (...args: any[]): void {
   print('error', args);
 }
 
@@ -79,7 +79,9 @@ function print (level: 'error' | 'warn' | 'log', message: any[]) {
  * * `2` - TRACE
  * @return {null}
  */
-export function setLevel (level: number): void {
+function setLevel (level: number): void {
   LogLevel = level;
   localStorage[LS_LOG_KEY] = level;
 }
+
+export const Logger = { debug, error, log, setLevel, trace, warn };

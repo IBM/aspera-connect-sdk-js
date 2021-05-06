@@ -21,7 +21,7 @@
  *   ```
  */
 
-import * as Logger from './logger';
+import { Logger } from './logger';
 import BROWSER from './helpers/browser';
 import { LS_CONNECT_DETECTED, LS_CONTINUED_KEY } from './constants';
 import { ConnectGlobals } from './helpers/globals';
@@ -426,6 +426,8 @@ export function isMobile (): boolean {
   return (BROWSER.IOS || BROWSER.ANDROID);
 }
 
-export {
-  BROWSER
+export { BROWSER };
+
+export const Utils = {
+  atou, getFullURI, launchConnect, utoa, BROWSER
 };
