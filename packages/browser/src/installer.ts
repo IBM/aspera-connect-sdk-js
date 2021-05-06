@@ -481,7 +481,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     return '';
   };
 
-  /**
+  /*
    * AW4.ConnectInstaller#startExtensionInstall() -> null
    *
    * In supported browsers, starts the extension installation experience.

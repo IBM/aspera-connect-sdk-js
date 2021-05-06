@@ -5,7 +5,7 @@ import { ConnectGlobals } from '../helpers/globals';
 import Provider from './strategy/provider';
 import * as types from '../core/types';
 
-/**
+/*
  * Stategy pattern for selecting the correct request implementation during runtime
  * given the user's configuration options.
  *

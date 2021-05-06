@@ -58,7 +58,7 @@ const validateBody = (request: any, msg: string): void => {
   }
 };
 
-/**
+/*
  * Validate request body contains given keys
  */
 const validateKeys = (request: any, parameterName: string, keys: string[]): void => {

@@ -4,6 +4,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 const version = require('./package.json').version;
 
+const outputDir = 'dist';
+
 const hash = require('child_process')
   .execSync('git log --format=oneline --pretty=format:"%h" -1 .', { encoding: 'utf-8' })
   .trim();
@@ -23,10 +25,10 @@ const date = new Date().toISOString().replace('T', ' ').substr(0, 19);
 const year = new Date().getFullYear();
 const banner = `Connect SDK v${version}${suffix} (${hash})\n${date}\nCopyright IBM Corp. 2008, ${year}`;
 
-const emptyFileText = `/*DEPRECATED: This file should no longer be included and will be removed in a future release. Functionality has been bundled into asperaweb-4.js and asperaweb-4.min.js.*/`;
+const emptyFileText = `/*\nDEPRECATED: This file should no longer be included and will be removed in a future release. Functionality has been bundled into asperaweb-4.js and asperaweb-4.min.js.\n*/`;
 // For backwards-compatibility
 ['connectinstaller-4.js', 'connectinstaller-4.min.js'].forEach(filename => {
-  fs.outputFile(path.join(__dirname, 'build', filename), emptyFileText);
+  fs.outputFile(path.join(__dirname, outputDir, 'js', filename), emptyFileText);
 });
 
 const plugins = [
@@ -44,7 +46,7 @@ const bundleConfig = {
     extensions: ['.js', '.ts']
   },
   output: {
-    path: path.join(__dirname, 'build'),
+    path: path.join(__dirname, outputDir, 'js'),
   },
   module: {
     rules: [

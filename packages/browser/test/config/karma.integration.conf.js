@@ -17,7 +17,7 @@ module.exports = function(config) {
     files: [
       'test/integration/vendor/*.js',
       'test/integrationvendor/mocha.css',
-      'build/asperaweb-4.js',
+      'dist/js/asperaweb-4.js',
       'test/integration/shared/*.js',
       'test/integration/helper.js',
       'test/integration/connect.js',

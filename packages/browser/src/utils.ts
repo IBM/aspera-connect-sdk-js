@@ -31,9 +31,7 @@ ConnectGlobals.sessionId = generateUuid();
 ConnectGlobals.sessionKey = generateRandomStr(32);
 let nextObjId = 0;
 
-/**
- * Returns fasp initialize protocol
- */
+// Returns fasp initialize protocol
 export function getInitUrl (): string {
   return 'fasp://initialize';
 }
@@ -59,9 +57,7 @@ export function getXMLHttpRequest (): XMLHttpRequest {
   return new XMLHttpRequest();
 }
 
-/**
- * Returns standardized error object
- */
+// Returns standardized error object
 export function createError (errorCode: any, message: any): types.ConnectError {
   let internalMessage = '';
   if (errorCode === -1) {
@@ -71,9 +67,6 @@ export function createError (errorCode: any, message: any): types.ConnectError {
   return { error: { code: errorCode, internal_message: internalMessage, user_message: message } };
 }
 
-/**
- * - str
- */
 export function parseJson <T> (str: any): T | types.ConnectError {
   let obj;
   if (typeof str === 'string' && (str.length === 0 || str.replace(/\s/g, '') === '{}')) {
@@ -100,14 +93,13 @@ export function copyObject (obj: any): any {
 
   return localObj;
 }
-/**
- * Checks if variable is null or undefined or empty.
- */
+
+// Checks if variable is null or undefined or empty.
 export function isNullOrUndefinedOrEmpty (x: any): x is undefined | null | '' {
   return x === '' || x === null || typeof x === 'undefined';
 }
 
-/**
+/*
  * AW4.Utils.versionLessThan(version1, version2) -> bool
  *  - version1 (Number):  a version Integer
  *  - version2 (Number):  a version Integer
@@ -160,9 +152,7 @@ export function versionLessThan (a: string, b: string): boolean {
   return false;
 }
 
-/**
- * Checks if user has previously chosen to continue with current version.
- */
+// Checks if user has previously chosen to continue with current version.
 export function checkVersionException (): boolean {
   if (typeof(localStorage) === 'undefined') {
     return false;
@@ -185,9 +175,7 @@ export function addVersionException (): void {
   localStorage.setItem(LS_CONTINUED_KEY, String(Math.round(new Date().getTime() / 1000)));
 }
 
-/**
- * Helper function to generate deferred promise
- */
+// Helper function to generate deferred promise
 export function generatePromiseData<T> (): { promise: Promise<T>; resolver: any; rejecter: any } {
   let resolver;
   let rejecter;
@@ -317,20 +305,7 @@ export function getFullURI (relativeURL: string | undefined): string | void {
   return fullURL;
 }
 
-/**
- * Output base64 string from utf8 or unicode string
- *
- * @function
- * @static
- * @name utoa
- *
- * @param {String} inputString utf8 or unicode string input.
- * @return {String}
- *
- * @example
- * let inputString = 'foo'
- * AW4.Utils.atou(inputString) // returns "Zm9v"
- */
+// Output base64 string from utf8 or unicode string
 export function utoa (inputString: string): string {
   if (window.btoa) {
     return window.btoa(unescape(encodeURIComponent(inputString)));
@@ -339,20 +314,7 @@ export function utoa (inputString: string): string {
   }
 }
 
-/**
- * Output unicode string from base64 string
- *
- * @function
- * @static
- * @name atou
- *
- * @param {String} inputString base64 string input.
- * @return {String}
- *
- * @example
- * let inputString = 'Zm9v'
- * AW4.Utils.atou(inputString) // returns "foo"
- */
+// Output unicode string from base64 string
 export function atou (inputString: string): string {
   if (window.atob) {
     return decodeURIComponent(escape(window.atob(inputString)));
@@ -367,7 +329,7 @@ export function nextObjectId (): number {
   return nextObjId;
 }
 
-/** Returns true if status code is 2xx */
+// Returns true if status code is 2xx
 export function isSuccessCode (code: number): boolean {
   return code >= 200 && code < 300;
 }

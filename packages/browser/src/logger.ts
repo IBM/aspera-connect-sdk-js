@@ -1,9 +1,3 @@
-/**
- * @desc Contains logging wrapper functions for the developer.
- *
- * @module Logger
- */
-
 import { LS_LOG_KEY } from './constants';
 import { LogLevels } from './core/types';
 
@@ -30,7 +24,7 @@ function debug (...args: any[]): void {
   }
 }
 
-/**
+/*
  * AW4.Logger.log(message) -> No return value
  * -message (String): A check for if window.console is defined is performed,
  * and if window.console is defined, then message will be sent to
@@ -40,7 +34,7 @@ function log (...args: any[]): void {
   print('log', args);
 }
 
-/**
+/*
  * AW4.Logger.warn(message) -> No return value
  * -message (String): A check for if window.console is defined is performed,
  * and if window.console is defined, then message will be sent to
@@ -50,7 +44,7 @@ function warn (...args: any[]): void {
   print('warn', args);
 }
 
-/**
+/*
  * AW4.Logger.error(message) -> No return value
  * -message (String): A check for if window.console is defined is performed,
  * and if window.console is defined, then message will be sent to
@@ -66,18 +60,13 @@ function print (level: 'error' | 'warn' | 'log', message: any[]) {
   }
 }
 
-/**
+/*
  * Sets the logging level for the Connect SDK.
  *
- * @function
- * @static
- * @name setLevel
- * @param {Number} level=0
  * Levels:
  * * `0` - INFO
  * * `1` - DEBUG
  * * `2` - TRACE
- * @return {null}
  */
 function setLevel (level: number): void {
   LogLevel = level;

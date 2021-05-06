@@ -8,8 +8,7 @@ mkdir -p dist/v4
 cp -R ./resources/v2/* ./dist
 
 # Bundle built javascript and source maps
-cp ./packages/browser/build/*.js ./dist/v4
-cp ./packages/browser/build/*.map ./dist/v4
+cp ./packages/browser/dist/js/* ./dist/v4
 
 # Bundle Connect banner
 mkdir -p dist/v4/install/carbon-installer
@@ -26,4 +25,4 @@ cp ./resources/notices.txt ./dist/v4
 cp -R ./resources/plugin ./dist/v4/plugin
 
 # Bundle docs
-cp -R ./packages/browser/build/docs ./dist/v4/docs
+cp -R ./packages/browser/dist/docs ./dist/v4/docs

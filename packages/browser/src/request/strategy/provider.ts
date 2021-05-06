@@ -8,7 +8,7 @@ import { NativeHostStrategy, SafariAppStrategy } from './extension';
 import HttpStrategy from './http';
 import * as types from '../../core/types';
 
-/**
+/*
  * Responsible for selecting the appropriate request implementation to
  * use for handling API requests.
  */
