@@ -4,7 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 const version = require('./package.json').version;
 
-const commitHash = require('child_process')
+const hash = require('child_process')
   .execSync('git log --format=oneline --pretty=format:"%h" -1 .', { encoding: 'utf-8' })
   .trim();
 
@@ -18,26 +18,19 @@ const terserInstance = new TerserPlugin({
   sourceMap: true
 });
 
-let bannerText = `  Revision: ${version}-${branch !== 'main' ? (branch + '-') : ''}${commitHash}
-  Date: ${new Date().toISOString().replace('T', ' ').substr(0, 19)}
+const suffix = `-${branch !== 'main' ? branch : ''}`;
+const date = new Date().toISOString().replace('T', ' ').substr(0, 19);
+const year = new Date().getFullYear();
+const banner = `Connect SDK v${version}${suffix} (${hash})\n${date}\nCopyright IBM Corp. 2008, ${year}`;
 
-  http://www.asperasoft.com
-  Copyright IBM Corp. 2008, ${new Date().getFullYear()}`
-
-const emptyFileText = `/*
-${bannerText}
-
-  DEPRECATED: This file should no longer be included and will be removed in a future release. Functionality has been bundled into asperaweb-4.js and asperaweb-4.min.js.
-*/`;
+const emptyFileText = `/*DEPRECATED: This file should no longer be included and will be removed in a future release. Functionality has been bundled into asperaweb-4.js and asperaweb-4.min.js.*/`;
 // For backwards-compatibility
 ['connectinstaller-4.js', 'connectinstaller-4.min.js'].forEach(filename => {
   fs.outputFile(path.join(__dirname, 'build', filename), emptyFileText);
 });
 
 const plugins = [
-  new webpack.BannerPlugin({
-    banner: () => { return bannerText }
-  })
+  new webpack.BannerPlugin(banner)
 ];
 
 const bundleConfig = {
