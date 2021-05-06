@@ -26,12 +26,8 @@
   "author": "IBM",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/preset-env": "^7.4.3",
-    "@babel/preset-typescript": "^7.3.3",
     "@typescript-eslint/eslint-plugin": "^4.22.1",
     "@typescript-eslint/parser": "^4.22.1",
-    "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
     "core-js": "^3.0.1",
     "eslint": "^7.25.0",
