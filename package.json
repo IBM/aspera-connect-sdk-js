@@ -10,6 +10,7 @@
     "build:zip": "./scripts/zip-sdk.sh",
     "bump": "node ./scripts/bump-versions.js",
     "clean": "rimraf *.zip *ConnectSDK* dist packages/browser/dist",
+    "lint": "npm --prefix packages/browser run lint",
     "preinstall": "node ./scripts/preinstall.js",
     "release": "standard-version --no-verify --path packages/ --skip.bump=true",
     "test:browser": "npm --prefix packages/browser run test:integration:headless",
@@ -29,7 +30,8 @@
   "dependencies": {},
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "run-s lint"
     }
   }
 }
