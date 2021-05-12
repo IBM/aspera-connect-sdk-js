@@ -14,8 +14,10 @@ cp ./packages/browser/dist/js/* ./dist/v4
 mkdir -p dist/v4/install/carbon-installer
 cp -R ./packages/carbon-installer/build/* ./dist/v4/install/carbon-installer
 
-# Bundle legacy Connect banner
+# Bundle legacy Connect banner and javascript
 cp -R ./resources/auto-topbar ./dist/v4/install/auto-topbar
+echo "/* This file is deprecated and will be removed in a future release */" > ./dist/v4/connectinstaller-4.js
+cp ./dist/v4/connectinstaller-4.js ./dist/v4/connectinstaller-4.min.js
 
 # Bundle installers and build connect_references.json
 node ./scripts/bundle-installers.js ./dist/v4
