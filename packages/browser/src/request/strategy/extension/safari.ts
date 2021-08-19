@@ -130,14 +130,14 @@ class SafariAppStrategy extends BaseExtensionStrategy {
   };
 
   triggerExtensionCheck (): void {
-    const dummyIframe = document.createElement('IFRAME') as HTMLIFrameElement;
-    dummyIframe.src = 'fasp://initialize?checkextensions';
-    dummyIframe.style.visibility = 'hidden';
-    dummyIframe.style.position = 'absolute';
-    dummyIframe.style.width = '0px';
-    dummyIframe.style.height = '0px';
-    dummyIframe.style.border = '0px';
-    document.body.appendChild(dummyIframe);
+    const hiddenIframe = document.createElement('IFRAME') as HTMLIFrameElement;
+    hiddenIframe.src = 'fasp://initialize?checkextensions';
+    hiddenIframe.style.visibility = 'hidden';
+    hiddenIframe.style.position = 'absolute';
+    hiddenIframe.style.width = '0px';
+    hiddenIframe.style.height = '0px';
+    hiddenIframe.style.border = '0px';
+    document.body.appendChild(hiddenIframe);
   }
 
   stop = (): void => {

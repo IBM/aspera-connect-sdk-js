@@ -25,7 +25,7 @@
   <?js if (data.version) {?>
     <dt class="tag-version">Version:</dt>
     <dd class="tag-version">
-      <ul class="dummy">
+      <ul class="tmpl">
         <li>
           <?js= version ?>
         </li>
@@ -36,7 +36,7 @@
   <?js if (data.since) {?>
     <dt class="tag-since">Since:</dt>
     <dd class="tag-since">
-      <ul class="dummy">
+      <ul class="tmpl">
         <li>
           <?js= since ?>
         </li>
@@ -47,7 +47,7 @@
   <?js if (data.inherited && data.inherits && !data.overrides) { ?>
     <dt class="inherited-from">Inherited From:</dt>
     <dd class="inherited-from">
-      <ul class="dummy">
+      <ul class="tmpl">
         <li>
           <?js= this.linkto(data.inherits, this.htmlsafe(data.inherits)) ?>
         </li>
@@ -58,7 +58,7 @@
   <?js if (data.overrides) { ?>
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides">
-      <ul class="dummy">
+      <ul class="tmpl">
         <li>
           <?js= this.linkto(data.overrides, this.htmlsafe(data.overrides)) ?>
         </li>
@@ -109,13 +109,13 @@
     <?js
       if (data.deprecated === true) { ?>
         <dd class="yes-def tag-deprecated">
-          <ul class="dummy">
+          <ul class="tmpl">
             <li>Yes</li>
           </ul>
         </dd>
       <?js } else { ?>
         <dd>
-          <ul class="dummy">
+          <ul class="tmpl">
             <li>
               <?js= data.deprecated ?>
             </li>
@@ -141,7 +141,7 @@
   <?js if (data.copyright) {?>
     <dt class="tag-copyright">Copyright:</dt>
     <dd class="tag-copyright">
-      <ul class="dummy">
+      <ul class="tmpl">
         <li>
           <?js= copyright ?>
         </li>
@@ -152,7 +152,7 @@
   <?js if (data.license) {?>
     <dt class="tag-license">License:</dt>
     <dd class="tag-license">
-      <ul class="dummy">
+      <ul class="tmpl">
         <li>
           <?js= license ?>
         </li>
@@ -163,7 +163,7 @@
   <?js if (data.defaultvalue) {?>
     <dt class="tag-default">Default Value:</dt>
     <dd class="tag-default">
-      <ul class="dummy">
+      <ul class="tmpl">
         <li<?js= defaultObjectClass ?>>
           <?js= data.defaultvalue ?>
         </li>
@@ -174,7 +174,7 @@
   <?js if (data.meta && self.outputSourceFiles) {?>
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source">
-      <ul class="dummy">
+      <ul class="tmpl">
         <li>
           <?js= self.linkto(meta.shortpath) ?>, <?js= self.linkto(meta.shortpath, 'line ' + meta.lineno, null, 'line' + meta.lineno) ?>
         </li>

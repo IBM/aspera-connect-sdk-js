@@ -259,15 +259,15 @@ export function launchConnect (userCallback?: (t: boolean) => any): void {
   } else if (BROWSER.EDGE_LEGACY || BROWSER.EDGE_WITH_EXTENSION) {
     document.location.href = launchUri;
   } else if (BROWSER.FIREFOX_LEGACY || BROWSER.FIREFOX || BROWSER.SAFARI_NO_NPAPI) {
-    const dummyIframe = document.createElement('IFRAME') as HTMLIFrameElement;
-    dummyIframe.src = launchUri;
+    const hiddenIframe = document.createElement('IFRAME') as HTMLIFrameElement;
+    hiddenIframe.src = launchUri;
     // Don't show the iframe and don't allow it to take up space
-    dummyIframe.style.visibility = 'hidden';
-    dummyIframe.style.position = 'absolute';
-    dummyIframe.style.width = '0px';
-    dummyIframe.style.height = '0px';
-    dummyIframe.style.border = '0px';
-    document.body.appendChild(dummyIframe);
+    hiddenIframe.style.visibility = 'hidden';
+    hiddenIframe.style.position = 'absolute';
+    hiddenIframe.style.width = '0px';
+    hiddenIframe.style.height = '0px';
+    hiddenIframe.style.border = '0px';
+    document.body.appendChild(hiddenIframe);
   }
   // ELSE is handled by the NPAPI plugin
   return;
