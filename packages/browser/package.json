@@ -1,6 +1,6 @@
 {
   "name": "@ibm-aspera/connect-sdk-js",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "author": "IBM Aspera",
   "description": "Official IBM Aspera Connect SDK for Browsers",
   "private": true,
