@@ -1,5 +1,5 @@
 import BROWSER from '../../../helpers/browser';
-import { Logger }from '../../../logger';
+import { Logger } from '../../../logger';
 import * as Utils from '../../../utils';
 import {
   DEFAULT_PORT,
