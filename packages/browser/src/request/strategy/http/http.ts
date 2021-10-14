@@ -64,7 +64,7 @@ class HttpStrategy implements types.RequestStrategy {
    */
   check = async (): Promise<boolean> => {
     let success = false;
-    for (let port = DEFAULT_PORT; port < (DEFAULT_PORT + 1 + MAX_PORT_SEARCH); port++) {
+    for (let port = DEFAULT_PORT; port < (DEFAULT_PORT + MAX_PORT_SEARCH); port++) {
       const requestId = this.nextId;
       this.connectPort = port;
       const results = await this.ping(requestId);
