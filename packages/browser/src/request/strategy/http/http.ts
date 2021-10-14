@@ -63,19 +63,36 @@ class HttpStrategy implements types.RequestStrategy {
    * Iterates through ports and returns true if Connect responds
    */
   check = async (): Promise<boolean> => {
-    let success = false;
-    for (let port = DEFAULT_PORT; port < (DEFAULT_PORT + MAX_PORT_SEARCH); port++) {
-      const requestId = this.nextId;
-      this.connectPort = port;
-      const results = await this.ping(requestId);
+    const pingRequests = [];
+    // Map request id to port numbers
+    const portMap = new Map<number, number>();
 
-      if (results && Utils.isSuccessCode(results.status)) {
-        success = true;
-        break;
-      }
+    for (let port = DEFAULT_PORT; port < (DEFAULT_PORT + MAX_PORT_SEARCH); port++) {
+      const requestId = this.nextId++;
+      portMap.set(requestId, port);
+      this.connectPort = port;
+
+      pingRequests.push(this.ping(requestId));
     }
 
-    return success;
+    return Promise.all(pingRequests)
+      .then(pingResponses => {
+        for (let it = 0; it < pingResponses.length; it++) {
+          const { requestId, status } = pingResponses[it];
+
+          if (Utils.isSuccessCode(status)) {
+            // Retrieve port number via request id
+            const found = portMap.get(requestId);
+
+            if (found) {
+              this.connectPort = found;
+              return true;
+            }
+          }
+        }
+
+        return false;
+      });
   };
 
   detectConnect = async (firstRun: boolean): Promise<boolean> => {
