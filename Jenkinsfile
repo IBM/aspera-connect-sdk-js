@@ -14,6 +14,10 @@ pipeline {
         string(description: 'Specify connect-app branch',
             name: 'CONNECT_APP_BRANCH',
             defaultValue: env.BRANCH_NAME == 'main' ? 'main' : 'develop')
+        string(description: 'Specify Jenkins build number',
+            name: 'CONNECT_APP_BUILD_NUMBER',
+            defaultValue: '')
+        // TODO: Cleanup override variables
         string(description: 'Override installer directory (ex: /aspera/process/test/connect/3.10/archive)',
             name: 'OVERRIDE_INSTALLERS',
             defaultValue: '')
@@ -42,8 +46,17 @@ pipeline {
                         INSTALLER_DIR = 'imports'
                     }
                     steps {
-                        copyArtifacts filter: '*x86_64.dmg, *.exe, *.tar.gz', fingerprintArtifacts: true, flatten: true, projectName: "${APPS_PROJECT}", target: "${INSTALLER_DIR}"
-                        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*FIPS*.exe', fingerprintArtifacts: true, flatten: true, projectName: 'apps-connect-3.10-build-win-v140-32-fips', target: "${INSTALLER_DIR}"
+                        copyArtifacts filter: '*x86_64.dmg, *.exe, *.tar.gz',
+                                      fingerprintArtifacts: true,
+                                      flatten: true,
+                                      projectName: "${APPS_PROJECT}",
+                                      target: "${INSTALLER_DIR}",
+                                      selector: params.CONNECT_APP_BUILD_NUMBER == "" ? lastSuccessful() : specific("${params.CONNECT_APP_BUILD_NUMBER}")
+                        copyArtifacts filter: 'installer/BUILD/win-v100-32-release/IBMAsperaConnectSetup*FIPS*.exe',
+                                      fingerprintArtifacts: true,
+                                      flatten: true,
+                                      projectName: 'apps-connect-3.10-build-win-v140-32-fips',
+                                      target: "${INSTALLER_DIR}"
                     }
                 }
                 stage('Build') {
