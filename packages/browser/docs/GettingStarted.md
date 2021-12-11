@@ -11,6 +11,6 @@ This API reference provides entries for the SDK's JavaScript methods, type defin
 and utilities. Examples are included.
 
 For information about downloading the SDK, including installation, configuration,
-web server setup, and deployment, see the [SDK User's Guide](https://apie-next-ui-shell-dev.mybluemix.net/explorer/catalog/aspera/product/ibm-aspera/api/connect-sdk/doc/connect_sdk_guide).
+web server setup, and deployment, see the [SDK User's Guide](https://developer.ibm.com/apis/catalog/aspera--aspera-connect-sdk/Introduction/).
 
 You can access the Connect API reference here: {@link AW4.Connect}.
