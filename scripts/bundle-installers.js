@@ -154,9 +154,9 @@ function getDocumentation () {
 
   let versionArr = version.split('.');
   let short = `${versionArr[0]}.${versionArr[1]}`;
-  let long = versionArr.join('');
+  let rnVer = `${versionArr[0]}${versionArr[1]}`;
 
-  let releaseNotes = `${baseUrl}/${short}?topic=notes-release-aspera-connect-${long}`;
+  let releaseNotes = `${baseUrl}/${short}?topic=release-notes-aspera-connect-${rnVer}`;
 
   let htmlGuides = {};
   ['linux', 'macos', 'windows'].forEach((os) => {
