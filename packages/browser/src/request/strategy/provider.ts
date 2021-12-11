@@ -54,8 +54,10 @@ class Provider implements types.Provider {
               window.postMessage('show_extension_install', '*');
             }
           } else {
-            Logger.debug('Falling back to http strategy');
-            this.setHttpStrategy();
+            if (this.supportsHttp()) {
+              Logger.debug('Falling back to http strategy');
+              this.setHttpStrategy();
+            }
           }
         }
       }
@@ -80,11 +82,7 @@ class Provider implements types.Provider {
   };
 
   supportsHttp = (): boolean => {
-    if (Utils.getXMLHttpRequest() === null) {
-      return false;
-    }
-
-    return true;
+    return !BROWSER.SAFARI;
   };
 
   supportsNativeHost = (): boolean => {
