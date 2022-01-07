@@ -245,21 +245,6 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     }
   };
 
-  const addStyleString = function (str: string) {
-    const node = document.createElement('style');
-    node.setAttribute('type', 'text/css');
-    // Fix for <= IE9
-    // @ts-ignore
-    if (node.styleSheet) {
-      // @ts-ignore
-      node.styleSheet.cssText = str;
-    } else {
-      node.innerHTML = str;
-    }
-
-    document.body.appendChild(node);
-  };
-
   const supportsExtensions = function () {
     return (
       (Utils.BROWSER.CHROME || Utils.BROWSER.EDGE_WITH_EXTENSION || Utils.BROWSER.FIREFOX) ||
@@ -529,6 +514,47 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
     return false;
   };
 
+  // Apply the blue installer inline styles
+  const setBlueBannerStyle = function (iframe: HTMLIFrameElement) {
+    iframe.style.position = 'absolute';
+    iframe.style.width = '100%';
+    iframe.style.height = '80px';
+    iframe.style.margin = '0px';
+    iframe.style.padding = '0px';
+    iframe.style.border = 'none';
+    iframe.style.outline = 'none';
+    iframe.style.overflow = 'hidden';
+    iframe.style.top = '0px';
+    iframe.style.left = '0px';
+    iframe.style.zIndex = '999999999';
+  };
+
+  // Apply the carbon installer inline styles
+  const setCarbonBannerStyle = function (iframe: HTMLIFrameElement, small: boolean) {
+    iframe.style.position = 'fixed';
+    iframe.style.border = 'none';
+    iframe.style.outline = 'none';
+    iframe.style.overflow = 'hidden';
+    iframe.style.top = '0';
+    iframe.style.right = '0';
+    iframe.style.left = '0';
+    iframe.style.zIndex = '9999';
+    iframe.style.boxShadow = '0 12px 24px 0 rgba(0, 0, 0, 0.1)';
+
+    if (small) {
+      iframe.style.height = '80px';
+      iframe.style.width = '100%';
+      iframe.style.margin = '0 auto';
+      iframe.style.maxWidth = '600px';
+    } else {
+      iframe.style.height = '100%';
+      iframe.style.width = '100%';
+      iframe.style.margin = '0';
+      iframe.style.maxWidth = '100%';
+      iframe.style.backgroundColor = 'rgba(223, 227, 230, 0.75)';
+    }
+  };
+
   const setHideClass = function (hide: boolean) {
     const iframe = document.getElementById(connectOptions.iframeId);
     if (iframe) {
@@ -617,7 +643,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         notifyListeners(event.data);
         this.showLaunching();
       } else if (event.data === '100%') {
-        iframe.setAttribute('style', 'height:100%;width:100%;max-width: 100%;margin: 0 auto;background-color:rgba(223, 227, 230, 0.75);');
+        setCarbonBannerStyle(iframe, false);
       } else if (typeof event.data === 'string' && event.data.endsWith(EVENT.RESIZE)) {
         iframe.style.height = event.data;
         iframe.style.maxWidth = '600px';
@@ -692,12 +718,6 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         return;
       }
 
-      // Set iframe styling
-      if (connectOptions.style === 'carbon') {
-        addStyleString('.' + connectOptions.iframeId + '{width: 100%;max-width: 600px;height: 80px;margin: 0 auto;position: fixed;top: 0;right: 0;left: 0;z-index: 9999;box-shadow: 0 12px 24px 0 rgba(0, 0, 0, 0.1)}');
-      } else if (connectOptions.style === 'blue') {
-        addStyleString('.' + connectOptions.iframeId + '{position: absolute;width: 100%;height: 80px;margin: 0px;padding: 0px;border: none;outline: none;overflow: hidden;top: 0px;left: 0px;z-index: 999999999}');
-      }
       // Build and insert the iframe.
       iframe = document.createElement('iframe');
       iframe.id = connectOptions.iframeId;
@@ -705,8 +725,10 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       iframe.frameBorder = '0';
 
       if (connectOptions.style === 'carbon') {
+        setCarbonBannerStyle(iframe, true);
         iframe.src = connectOptions.sdkLocation + '/install/carbon-installer/index.html';
       } else if (connectOptions.style === 'blue') {
+        setBlueBannerStyle(iframe);
         iframe.src = connectOptions.sdkLocation + '/install/auto-topbar/index.html';
       }
 

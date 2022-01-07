@@ -89,3 +89,5 @@ var initialize = function() {
 var myInit = function () {
     setTimeout(initialize, 1000);
 }
+
+window.addEventListener('load', myInit);
