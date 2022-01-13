@@ -1,37 +1,69 @@
 {
+  "name": "@ibm-aspera/connect-sdk-js",
   "version": "4.1.2",
-  "description": "Top level project for the IBM Aspera Connect SDK",
+  "author": "IBM Aspera",
+  "description": "Official IBM Aspera Connect SDK for Javascript",
   "private": true,
+  "main": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
   "scripts": {
-    "build": "run-s build:browser build:carbon build:bundle",
-    "build:browser": "npm --prefix packages/browser run build",
-    "build:bundle": "./scripts/bundle-sdk.sh",
-    "build:carbon": "npm --prefix packages/carbon-installer run build",
-    "build:zip": "./scripts/zip-sdk.sh",
-    "bump": "node ./scripts/bump-versions.js",
-    "clean": "rimraf *.zip *ConnectSDK* dist packages/browser/dist",
-    "lint": "npm --prefix packages/browser run lint",
-    "preinstall": "node ./scripts/preinstall.js",
-    "release": "standard-version --no-verify --path packages/ --skip.bump=true",
-    "test:browser": "npm --prefix packages/browser run test:integration:headless",
-    "test:carbon": "npm --prefix packages/carbon-installer run test -- --watchAll false",
-    "test:lint": "npm --prefix packages/browser run lint"
+    "build": "node scripts/build.js",
+    "build:bundle": "webpack --mode production",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:ui": "npm --prefix ui run build",
+    "clean": "rm -rf ./dist ./ui/build",
+    "dev": "webpack --mode development --watch",
+    "docs": "jsdoc dist/esm --configure docs/jsdoc.config.js",
+    "lint": "eslint -c .eslintrc.js --ext .ts ./src",
+    "prepare": "npm --prefix ui install",
+    "release": "standard-version",
+    "test": "karma start test/config/karma.integration.conf.js",
+    "test:headless": "karma start test/config/karma.integration.conf.js --browsers ChromeCustom"
   },
+  "files": [
+    "dist/esm",
+    "dist/js",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:IBM/aspera-connect-sdk-js.git"
+  },
+  "license": "Apache-2.0",
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
-    "glob": "^7.1.6",
+    "@typescript-eslint/eslint-plugin": "^4.22.1",
+    "@typescript-eslint/parser": "^4.22.1",
+    "chai": "^4.2.0",
+    "eslint": "^7.25.0",
+    "eslint-plugin-jsdoc": "^33.1.0",
     "husky": "^2.3.0",
-    "npm-run-all": "^4.1.5",
-    "replace-in-file": "^4.2.0",
-    "rimraf": "^2.6.3",
-    "standard-version": "^9.1.0"
+    "jsdoc": "^3.6.3",
+    "karma": "^4.1.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.5",
+    "mocha": "^6.1.4",
+    "puppeteer": "^5.4.1",
+    "standard-version": "^9.1.0",
+    "terser-webpack-plugin": "^5.1.2",
+    "ts-loader": "^9.1.2",
+    "typescript": "^4.2.4",
+    "webpack": "^5.37.0",
+    "webpack-cli": "^4.7.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "es6-promise": "^4.2.8",
+    "tslib": "^2.2.0"
+  },
+  "jshintConfig": {
+    "esversion": 6
+  },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "run-s lint"
+      "pre-commit": "npm run lint"
     }
   }
 }
