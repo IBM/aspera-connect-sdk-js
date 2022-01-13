@@ -1,0 +1,17 @@
+.checkmark {
+  margin-left: 110px;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.visible {
+  composes: checkmark;
+  visibility: visible;
+}
+
+.hidden {
+  composes: checkmark;
+  visibility: hidden;
+}

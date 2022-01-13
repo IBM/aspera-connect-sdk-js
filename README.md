@@ -1,42 +1,87 @@
-## Top-level project for the IBM Aspera Connect SDK
+# Official Aspera Connect SDK for JavaScript
 
-## Description
-This project builds and bundles the [Connect SDK](https://api.ibm.com/explorer/catalog/aspera/product/ibm-aspera/api/connect-sdk/doc/connect_sdk_guide) which contains both the [Javascript SDK](packages/browser/README.md) and [Carbon Installer](packages/carbon-installer/README.md) components as well as various Connect [installers](https://www.ibm.com/aspera/connect/).
+Enables web applications to utilize Aspera file-transfer capabilities.
 
-## Prerequisites
-* NodeJS 12.x+
+Check the [IBM API Hub](https://developer.ibm.com/apis/catalog/aspera--aspera-connect-sdk/Introduction/) for documentation.
 
-## Getting Started
-Clone the repo:
-```shell
-git clone git@github.ibm.com:Aspera/connect-sdk.git
-
-```
-Install all dependencies:
-```shell
-cd connect-sdk
-npm install
-```
-
-## Build
-1. Copy all required Connect installers into a root directory named `imports`. Custom installer directories can be set via environment variables (in order of priority):
-      1. `SKIP_INSTALLERS=1` Skip bundling the installers
-      2. `OVERRIDE_LINUX_INSTALLERS=/tmp/linux` Custom directory for Linux installers
-      3. `OVERRIDE_MAC_INSTALLERS=/tmp/mac` Custom directory for macOS installers      
-      4. `OVERRIDE_WIN_INSTALLERS=/tmp/win` Custom directory for Windows installers
-      5. `OVERRIDE_INSTALLERS=/tmp/default` Custom directory for all installers
-2. `npm run build`
-
-## Release
-To bump the version, run:
+## Installation
+Install from npm:
 
 ```shell
-npm run bump -- --release-as <new_version>
+$ npm install --save @ibm-aspera/connect-sdk-js
 ```
 
-For automatic tagging and CHANGELOG generation, run:
+Install from source:
 
 ```shell
-npm run release -- --dry-run
+$ git clone https://github.com/IBM/aspera-connect-sdk-js.git
+$ cd aspera-connect-sdk-js
+$ npm install
 ```
-Remove `--dry-run` to actually make the changes.
+
+Load from the CDN:
+
+```html
+<script src="https://d3gcli72yxqn2z.cloudfront.net/@ibm-aspera/connect-sdk-js/latest/connect-sdk.js"></script>
+```
+
+It's highly recommended if you embed the Connect SDK via CDN that you use a specific version instead of using the latest. The latest Connect SDK is subject to change at any time with breaking changes, which could potentially affect your website.
+
+## Usage
+
+Launch and establish a connection to the Connect desktop application:
+```javascript
+import { Connect } from '@ibm-aspera/connect-sdk-js';
+
+const connectClient = new Connect();
+connectClient.initSession();
+```
+
+Start a download:
+```javascript
+try {
+  const transferSpec = {
+    authentication: 'token',
+    paths: [
+      {
+        source: 'my_awesome_movie.drp'
+      }
+    ],
+    remote_host: 'example.com',
+    remote_user: 'foo',
+    token: 'ATV7_HtfhDa-JwWfc6RkTwhkDUqjHeLQePiOHjIS254_LJ14_7VTA',
+    direction: 'receive'
+  };
+
+  const response = await connectClient.startTransferPromise(transferSpec);
+  console.log(`Transfer started: ${response}`);
+} catch(err) {
+  throw new Error(`Could not start transfer: ${err}`);
+}
+```
+
+Check out the provided [Samples](samples) for more code examples.
+
+## Migration from 3.x/4.x to 5.0.0
+
+Refer to [MIGRATION](MIGRATION.md) to see the required changes when updating your code to `v5.0.0`.
+
+## Development
+
+### Prerequisites
+* NodeJS 12+
+
+### Build
+
+```shell
+$ git clone https://github.com/IBM/aspera-connect-sdk-js.git
+$ cd aspera-connect-sdk-js
+$ npm install
+$ npm run build
+```
+
+## Troubleshooting
+
+In the browser, run `AW4.Logger.setLevel(2)` in the Developer Console to enable trace logging.
+
+For help regarding the Connect desktop application, please visit [IBM Support](https://ibm.com/support).

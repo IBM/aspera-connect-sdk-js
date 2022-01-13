@@ -1,19 +1,13 @@
-.DS_Store
-.idea/
-.vscode/
+# Dependencies
 node_modules/
-dist/
-esm/
-build/
-/docs/
-out/
-*ConnectSDK*
-*.zip
-results/
-.svn/
-coverage/
-test.html
 
-# symbolic links for quick testing
-connect
-connect_beta
+# Builds
+/dist
+build/
+
+# Installer directory
+/imports
+
+# Misc
+.DS_Store
+/.vscode
