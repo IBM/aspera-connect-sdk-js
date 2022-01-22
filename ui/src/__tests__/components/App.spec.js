@@ -1,6 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import Enzyme, { shallow, mount } from 'enzyme';
+import Enzyme, { shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import App from '../../components/App';
 import TwoStepBanner from '../../components/TwoStepBanner';
@@ -11,18 +10,6 @@ Enzyme.configure({ adapter: new Adapter() });
 it('renders correctly', () => {
   const wrapper = shallow(<App />);
   expect(wrapper.exists()).toBe(true);
-});
-
-it('handles messages', () => {
-  const spy = jest.spyOn(App.prototype, 'handleMessage');
-  const map = {};
-  window.addEventListener = jest.fn((event, cb) => {
-    map[event] = cb;
-  });
-  const wrapper = shallow(<App />);
-  map.message({data: 'download'});
-  expect(spy).toHaveBeenCalled();
-  spy.mockClear();
 });
 
 it('renders status banner', () => {
