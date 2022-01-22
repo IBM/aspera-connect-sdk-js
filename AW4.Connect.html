@@ -1,0 +1,6414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+      Connect - Documentation
+  </title>
+
+  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  
+
+  
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
+  <!-- end Mixpanel -->
+</head>
+
+<body>
+  <svg style="display: none;">
+    <defs>
+      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger" class="navicon-button x">
+    <div class="navicon"></div>
+  </label>
+
+  <label for="nav-trigger" class="overlay"></label>
+
+  <div class="top-nav-wrapper">
+    <ul>
+      <li >
+        <a href="index.html">
+          
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              <path d="M0 0h24v24H0z" fill="none"/>
+            </svg>
+          
+          
+        </a>
+      </li>
+
+      
+
+    </ul>
+  </div>
+
+  <nav>
+    <h3 class="reference-title">
+      IBM Aspera Connect SDK 4.1.2
+    </h3>
+
+    
+
+    <h3>Classes</h3><ul><li id="Connect-nav"><a href="AW4.Connect.html">Connect</a><ul class='methods'><li data-type="method" id="Connect-addEventListener-nav"><a href="AW4.Connect.html#addEventListener">addEventListener</a></li><li data-type="method" id="Connect-authenticate-nav"><a href="AW4.Connect.html#authenticate">authenticate</a></li><li data-type="method" id="Connect-getAllTransfers-nav"><a href="AW4.Connect.html#getAllTransfers">getAllTransfers</a></li><li data-type="method" id="Connect-getChecksum-nav"><a href="AW4.Connect.html#getChecksum">getChecksum</a></li><li data-type="method" id="Connect-getStatus-nav"><a href="AW4.Connect.html#getStatus">getStatus</a></li><li data-type="method" id="Connect-getTransfer-nav"><a href="AW4.Connect.html#getTransfer">getTransfer</a></li><li data-type="method" id="Connect-initSession-nav"><a href="AW4.Connect.html#initSession">initSession</a></li><li data-type="method" id="Connect-modifyTransfer-nav"><a href="AW4.Connect.html#modifyTransfer">modifyTransfer</a></li><li data-type="method" id="Connect-readAsArrayBuffer-nav"><a href="AW4.Connect.html#readAsArrayBuffer">readAsArrayBuffer</a></li><li data-type="method" id="Connect-readChunkAsArrayBuffer-nav"><a href="AW4.Connect.html#readChunkAsArrayBuffer">readChunkAsArrayBuffer</a></li><li data-type="method" id="Connect-removeEventListener-nav"><a href="AW4.Connect.html#removeEventListener">removeEventListener</a></li><li data-type="method" id="Connect-removeTransfer-nav"><a href="AW4.Connect.html#removeTransfer">removeTransfer</a></li><li data-type="method" id="Connect-resumeTransfer-nav"><a href="AW4.Connect.html#resumeTransfer">resumeTransfer</a></li><li data-type="method" id="Connect-setDragDropTargets-nav"><a href="AW4.Connect.html#setDragDropTargets">setDragDropTargets</a></li><li data-type="method" id="Connect-showAbout-nav"><a href="AW4.Connect.html#showAbout">showAbout</a></li><li data-type="method" id="Connect-showDirectory-nav"><a href="AW4.Connect.html#showDirectory">showDirectory</a></li><li data-type="method" id="Connect-showPreferences-nav"><a href="AW4.Connect.html#showPreferences">showPreferences</a></li><li data-type="method" id="Connect-showPreferencesPage-nav"><a href="AW4.Connect.html#showPreferencesPage">showPreferencesPage</a></li><li data-type="method" id="Connect-showSaveFileDialog-nav"><a href="AW4.Connect.html#showSaveFileDialog">showSaveFileDialog</a></li><li data-type="method" id="Connect-showSelectFileDialog-nav"><a href="AW4.Connect.html#showSelectFileDialog">showSelectFileDialog</a></li><li data-type="method" id="Connect-showSelectFileDialogPromise-nav"><a href="AW4.Connect.html#showSelectFileDialogPromise">showSelectFileDialogPromise</a></li><li data-type="method" id="Connect-showSelectFolderDialog-nav"><a href="AW4.Connect.html#showSelectFolderDialog">showSelectFolderDialog</a></li><li data-type="method" id="Connect-showSelectFolderDialogPromise-nav"><a href="AW4.Connect.html#showSelectFolderDialogPromise">showSelectFolderDialogPromise</a></li><li data-type="method" id="Connect-showTransferManager-nav"><a href="AW4.Connect.html#showTransferManager">showTransferManager</a></li><li data-type="method" id="Connect-showTransferMonitor-nav"><a href="AW4.Connect.html#showTransferMonitor">showTransferMonitor</a></li><li data-type="method" id="Connect-start-nav"><a href="AW4.Connect.html#start">start</a></li><li data-type="method" id="Connect-startTransfer-nav"><a href="AW4.Connect.html#startTransfer">startTransfer</a></li><li data-type="method" id="Connect-startTransferPromise-nav"><a href="AW4.Connect.html#startTransferPromise">startTransferPromise</a></li><li data-type="method" id="Connect-startTransfers-nav"><a href="AW4.Connect.html#startTransfers">startTransfers</a></li><li data-type="method" id="Connect-stop-nav"><a href="AW4.Connect.html#stop">stop</a></li><li data-type="method" id="Connect-stopTransfer-nav"><a href="AW4.Connect.html#stopTransfer">stopTransfer</a></li><li data-type="method" id="Connect-testSshPorts-nav"><a href="AW4.Connect.html#testSshPorts">testSshPorts</a></li><li data-type="method" id="Connect-version-nav"><a href="AW4.Connect.html#version">version</a></li></ul></li><li id="ConnectInstaller-nav"><a href="AW4.ConnectInstaller.html">ConnectInstaller</a><ul class='methods'><li data-type="method" id="ConnectInstaller-connected-nav"><a href="AW4.ConnectInstaller.html#connected">connected</a></li><li data-type="method" id="ConnectInstaller-dismiss-nav"><a href="AW4.ConnectInstaller.html#dismiss">dismiss</a></li><li data-type="method" id="ConnectInstaller-doesBrowserNeedExtensionStore-nav"><a href="AW4.ConnectInstaller.html#doesBrowserNeedExtensionStore">doesBrowserNeedExtensionStore</a></li><li data-type="method" id="ConnectInstaller-getExtensionStoreLink-nav"><a href="AW4.ConnectInstaller.html#getExtensionStoreLink">getExtensionStoreLink</a></li><li data-type="method" id="ConnectInstaller-installationJSON-nav"><a href="AW4.ConnectInstaller.html#installationJSON">installationJSON</a></li><li data-type="method" id="ConnectInstaller-showDownload-nav"><a href="AW4.ConnectInstaller.html#showDownload">showDownload</a></li><li data-type="method" id="ConnectInstaller-showExtensionInstall-nav"><a href="AW4.ConnectInstaller.html#showExtensionInstall">showExtensionInstall</a></li><li data-type="method" id="ConnectInstaller-showInstall-nav"><a href="AW4.ConnectInstaller.html#showInstall">showInstall</a></li><li data-type="method" id="ConnectInstaller-showLaunching-nav"><a href="AW4.ConnectInstaller.html#showLaunching">showLaunching</a></li><li data-type="method" id="ConnectInstaller-showPrevious-nav"><a href="AW4.ConnectInstaller.html#showPrevious">showPrevious</a></li><li data-type="method" id="ConnectInstaller-showRetry-nav"><a href="AW4.ConnectInstaller.html#showRetry">showRetry</a></li><li data-type="method" id="ConnectInstaller-showUnsupportedBrowser-nav"><a href="AW4.ConnectInstaller.html#showUnsupportedBrowser">showUnsupportedBrowser</a></li><li data-type="method" id="ConnectInstaller-showUpdate-nav"><a href="AW4.ConnectInstaller.html#showUpdate">showUpdate</a></li></ul></li></ul><h3>Modules</h3><ul><li id="Utils-nav"><a href="module-Utils.html">Utils</a><ul class='methods'><li data-type="method" id="Utils-getFullURI-nav"><a href="module-Utils.html#.getFullURI">getFullURI</a></li><li data-type="method" id="Utils-launchConnect-nav"><a href="module-Utils.html#.launchConnect">launchConnect</a></li></ul></li></ul><h3 id="global-nav"><a href="global.html">Global</a></h3>
+  </nav>
+
+  <div id="main">
+    
+      <h1 class="page-title">
+        Connect
+      </h1>
+    
+
+    
+
+<section>
+  <header>
+    
+      <h2>
+        
+          <span class="ancestors"><a href="AW4.html">AW4</a>.</span>
+        
+        Connect
+        
+      </h2>
+
+      
+        <div class="class-description">
+          <p>Contains all the Connect API methods</p>
+        </div>
+      
+    
+  </header>
+
+  <article>
+    <div class="container-overview">
+      
+        
+
+
+  
+    <h2>Constructor</h2>
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#Connect">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="Connect">
+      <span class="type-signature"></span>new Connect<span class="signature">(options)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Configuration parameters for Connect</p>
+          
+            <h6>Properties</h6>
+            
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+        <th>Default</th>
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>connectLaunchWaitTimeoutMs</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Number
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              5000
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>How long to wait in milliseconds
+for Connect to launch. If we reach this timeout without a successful request to Connect,
+Connect will go to FAILED status.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>id</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              "aspera-web"
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>The DOM 'id' of the plug-in object to be inserted.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>containerId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>The DOM 'id' of an existing element to insert the plug-in
+element into (replacing its contents). If not specified, the plug-in is appended to the document body.
+Note that the plug-in must not be hidden in order to be loaded.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>sdkLocation</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              "//d3gcli72yxqn2z.cloudfront.net/connect/v4"
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Specifies the custom
+SDK location to check for Connect installers. It has to be in the following format: '//domain/path/to/connect/sdk'.
+If you are hosting your own SDK, then you must provide the location to your copy
+of the SDK. This points to the /v4 folder of the provided SDK. The URL provided
+must be in the same level of security as the web page (HTTP/HTTPS), HTTPS preferred.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>pollingTime</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Number
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              2000
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>How often in milliseconds we want to get
+updates of transfer status.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>maxActivityOutstanding</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Number
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              2
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>The maximum number of oustanding transfer activity
+requests allowed before being skipped.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>extensionRequestTimeout</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Number
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              86400000
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>How long to wait in milliseconds for extension requests
+to return before failing. Only applies to file and folder dialog APIs.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>minVersion</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Minimum version of Connect required by the web
+application in order to work. Format: &quot;3.9.0&quot;.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>dragDropEnabled</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              false
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Enable drag and drop of files/folders
+into the browser.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>connectMethod</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      "http"
+    </span>
+
+    |
+
+    <span class="param-type">
+      "extension"
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>Specify the preferred method of
+Connect communication. Default is &quot;extension&quot; for <code>minVersion</code> &gt;= 3.9.0. Otherwise, default
+is &quot;http&quot;.</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="example-container">
+    <a class="link-icon" href="#Connect-examples">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h5 id="Connect-examples">Example</h5>
+    
+
+  <pre class="prettyprint"><code>let options = {
+  minVersion: "3.9.0",
+  dragDropEnabled: true
+}
+let asperaWeb = new AW4.Connect(options) // returns instance of AW4.Connect</code></pre>
+
+
+  </div>
+
+
+      
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+      <h3 class="subsection-title">Methods</h3>
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#addEventListener">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="addEventListener">
+      <span class="type-signature"></span>addEventListener<span class="signature">(type, listener)</span><span class="type-signature"> &rarr; {null|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Subscribe for Connect events. The first time the listener is
+called it will receive an event for each of the transfers already displayed
+in Connect, such that the listener will know the complete state of all transfers.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>type</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="global.html#EVENT">EVENT</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The type of event to receive events for.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>listener</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      function
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The function that will be called when the event occurs.
+Format:</p>
+<pre class="prettyprint source"><code>function(eventType, data) { ... }
+</code></pre>
+<p>&quot;transfer&quot; event types return data format: <a href="global.html#AllTransfersInfo">AllTransfersInfo</a></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <div class="example-container">
+    <a class="link-icon" href="#addEventListener-examples">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h5 id="addEventListener-examples">Example</h5>
+    
+
+  <pre class="prettyprint"><code>// create a transfer listener
+function transferListener(type, allTransfersInfo) {
+  if (type === AW4.Connect.EVENT.TRANSFER) {
+    console.log('Received transfer event!')
+    handleTransferEvent(allTransfersInfo) // do something with the transfers data
+  }
+}
+asperaWeb.addEventListener(AW4.Connect.EVENT.TRANSFER, transferListener)</code></pre>
+
+
+  </div>
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#authenticate">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="authenticate">
+      <span class="type-signature"></span>authenticate<span class="signature">(authSpec, callbacks)</span><span class="type-signature"> &rarr; {null|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Test authentication credentials against a transfer server.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>authSpec</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Authentication credentials.</p>
+<p>Options for <code>authSpec</code> (subset of <a href="global.html#TransferSpec">TransferSpec</a>):</p>
+<ul>
+<li><code>remote_host</code></li>
+<li><code>ssh_port</code></li>
+<li><code>remote_user</code></li>
+<li><code>remote_password</code></li>
+<li><code>token</code></li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive results.</p>
+<p>Object returned to success callback:
+<code>{}</code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getAllTransfers">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getAllTransfers">
+      <span class="type-signature"></span>getAllTransfers<span class="signature">(callbacks, iterationToken<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Get statistics for all transfers.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+        <th>Default</th>
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+          </td>
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+<code><a href="global.html#AllTransfersInfo">AllTransfersInfo</a></code></p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>iterationToken</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+          <td class="default">
+            
+              '0'
+            
+          </td>
+        
+
+        <td class="description last">
+          <p>If specified, return only transfers that have
+had activity since the last call.</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getChecksum">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getChecksum">
+      <span class="type-signature"></span>getChecksum<span class="signature">(options, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Calculates checksum of the given chunk size of the file.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Object with options needed for reading a chunk.</p>
+<p>Options:</p>
+<ul>
+<li><code>path</code> (String) - Absolute path to the file we want to read the chunk from.</li>
+<li><code>offset</code> (Number) - Offset (in bytes) that we want to start reading the file.</li>
+<li><code>chunkSize</code> (Number) - The size (in bytes) of the chunk we want.</li>
+<li><code>checksumMethod</code> (String) - The hash method we want to apply on chunk. Allowed checksum methods are &quot;md5&quot;, &quot;sha1&quot;, &quot;sha256&quot;, &quot;sha512&quot;.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:</p>
+<pre class="prettyprint source"><code>{
+  &quot;checksumMethod&quot; : &quot;md5&quot;
+  &quot;checksum&quot; : &quot;35cf801a...&quot;
+}
+</code></pre>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getStatus">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getStatus">
+      <span class="type-signature"></span>getStatus<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="global.html#STATUS">STATUS</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Get current status of Connect.</p>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getTransfer">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getTransfer">
+      <span class="type-signature"></span>getTransfer<span class="signature">(transferId, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Get statistics for a single transfer.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The ID (<code>uuid</code>) of the transfer to retrieve.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+See <code><a href="global.html#TransferInfo">TransferInfo</a></code></p>
+<pre class="prettyprint source"><code>{
+ &quot;transfer_info&quot;: TransferInfo
+}</code></pre>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#initSession">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="initSession">
+      <span class="type-signature"></span>initSession<span class="signature">(applicationId<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Call this method after creating the <a href="AW4.Connect.html">AW4.Connect</a> object. It is mandatory to call this
+function before making use of any other function of the API. If called more than
+once on the same instance, it will return an error.</p>
+<p>Return format:</p>
+<pre class="prettyprint source"><code>{
+ &quot;app_id&quot;: &quot;MjY2ZTM0YWItMGM2NC00ODdhLWJkNzQtNzU0YzVjN2FjYjJj&quot;
+}
+</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>applicationId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>An ID to represent this session. Transfers
+initiated during this session will be associated with the ID. To continue
+a previous session, use the same ID as before. Use a unique ID in order to
+keep transfer information private from other websites. IF not specified,
+an ID is automatically generated for you.</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#modifyTransfer">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="modifyTransfer">
+      <span class="type-signature"></span>modifyTransfer<span class="signature">(transferId, options, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Change the speed of a running transfer.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The ID of the transfer to modify</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>A subset of <a href="global.html#TransferSpec">TransferSpec</a></p>
+<p>Options:</p>
+<ul>
+<li><code>rate_policy</code></li>
+<li><code>target_rate_kbps</code></li>
+<li><code>min_rate_kbps</code></li>
+<li><code>target_rate_cap_kbps</code></li>
+<li><code>lock_rate_policy</code></li>
+<li><code>lock_target_rate</code></li>
+<li><code>lock_min_rate</code></li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive results.</p>
+<p>Object returned to success callback:
+<code><a href="global.html#TransferSpec">TransferSpec</a></code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#readAsArrayBuffer">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="readAsArrayBuffer">
+      <span class="type-signature"></span>readAsArrayBuffer<span class="signature">(options, callbacks)</span><span class="type-signature"> &rarr; {null|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Read file as 64-bit encoded data.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Object with options needed for reading the file.</p>
+<p>Options:</p>
+<ul>
+<li><code>path</code> (String) - Absolute path to the file we want to read.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:</p>
+<pre class="prettyprint source"><code>{
+  &quot;type&quot; : &quot;image/pjpeg&quot;,
+  &quot;data&quot; : &quot;/9j/4AAQSkZ...&quot;
+}
+</code></pre>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#readChunkAsArrayBuffer">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="readChunkAsArrayBuffer">
+      <span class="type-signature"></span>readChunkAsArrayBuffer<span class="signature">(options, callbacks)</span><span class="type-signature"> &rarr; {null|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Read 64-bit encoded chunk from file.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Object with options needed for reading a chunk.</p>
+<p>Options:</p>
+<ul>
+<li><code>path</code> (String) - Absolute path to the file we want to read the chunk from.</li>
+<li><code>offset</code> (Number) - Offset (in bytes) that we want to start reading the file.</li>
+<li><code>chunkSize</code> (Number) - The size (in bytes) of the chunk we want.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:</p>
+<pre class="prettyprint source"><code>{
+  &quot;type&quot; : &quot;image/pjpeg&quot;,
+  &quot;data&quot; : &quot;/9j/4AAQSkZ...&quot;
+}
+</code></pre>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#removeEventListener">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="removeEventListener">
+      <span class="type-signature"></span>removeEventListener<span class="signature">(type<span class="signature-attributes">opt</span>, listener<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Boolean}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Unsubscribe from Aspera Web events. If <code>type</code> is not specified,
+all versions of the <code>listener</code> with different types will be removed.
+If <code>listener</code> is not specified, all listeners for the <code>type</code> will be
+removed. If neither <code>type</code> nor <code>listener</code> are specified, all listeners
+will be removed.</p>
+<p>Return values:</p>
+<ul>
+<li><code>true</code> - If we could find a listener with the parameters provided.</li>
+<li><code>false</code> - If we could not find a listener for the parameters provided.</li>
+</ul>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>type</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="global.html#EVENT">EVENT</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>The type of event to stop receiving events for.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>listener</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      function
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>The function used to subscribe in <a href="AW4.Connect.html#addEventListener">AW4.Connect#addEventListener</a></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#removeTransfer">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="removeTransfer">
+      <span class="type-signature"></span>removeTransfer<span class="signature">(transferId, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Remove the transfer - terminating it if necessary - from Connect.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The ID(<code>uuid</code>) of the transfer to delete.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+<code><a href="global.html#TransferSpec">TransferSpec</a></code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#resumeTransfer">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="resumeTransfer">
+      <span class="type-signature"></span>resumeTransfer<span class="signature">(transferId, options, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Resume a transfer that was stopped.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The ID(<code>uuid</code>) of the transfer to resume</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>A subset of <a href="global.html#TransferSpec">TransferSpec</a></p>
+<p>Options:</p>
+<ul>
+<li><code>token</code></li>
+<li><code>cookie</code></li>
+<li><code>authentication</code></li>
+<li><code>remote_user</code></li>
+<li><code>remote_password</code></li>
+<li><code>content_protection_passphrase</code></li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive results.</p>
+<p>Object returned to success callback:
+<code><a href="global.html#TransferSpec">TransferSpec</a></code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#setDragDropTargets">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="setDragDropTargets">
+      <span class="type-signature"></span>setDragDropTargets<span class="signature">(cssSelector, options<span class="signature-attributes">opt</span>, listener)</span><span class="type-signature"> &rarr; {null|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Sets drag and drop options for the element given in the cssSelector. Please note that
+the <code>dragDropEnabled</code> option must have been set to <code>true</code> when creating the <a href="AW4.Connect.html">AW4.Connect</a>
+object.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>cssSelector</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>CSS selector for drop targets.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>Drag and drop options for these targets.</p>
+<p>Options:</p>
+<ul>
+<li><code>dragEnter</code> (Boolean) - <code>true</code> if drag enter event should trigger the listener. Default: <code>false</code>.</li>
+<li><code>dragOver</code> (Boolean) - <code>true</code> if drag over event should trigger the listener. Default: <code>false</code>.</li>
+<li><code>dragLeave</code> (Boolean) - <code>true</code> if drag leave event should trigger the listener. Default: <code>false</code>.</li>
+<li><code>drop</code> (Boolean) - <code>true</code> if drop event should trigger the listener. Default: <code>true</code>.</li>
+<li><code>allowPropagation</code> (Boolean) - <code>true</code> allow further propagation of events. Default: <code>false</code>.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>listener</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      function
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>Function to be called when each of the events occurs.</p>
+<p>Format:</p>
+<pre class="prettyprint source"><code>function(event, files) { ... }
+</code></pre>
+<ul>
+<li><code>event</code> (Object) - DOM Event object as implemented by the browser.</li>
+<li><code>files</code> (Object) - See <a href="global.html#dataTransfer">dataTransfer</a>. This is only valid on <code>drop</code> events.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showAbout">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showAbout">
+      <span class="type-signature"></span>showAbout<span class="signature">(callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays the IBM Aspera Connect &quot;About&quot; window.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+<code>{}</code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showDirectory">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showDirectory">
+      <span class="type-signature"></span>showDirectory<span class="signature">(transferId, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Open the destination directory of the transfer using the system file
+browser.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The ID(<code>uuid</code>) of the transfer to show files for.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+<code>{}</code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showPreferences">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showPreferences">
+      <span class="type-signature"></span>showPreferences<span class="signature">(callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays the IBM Aspera Connect &quot;Preferences&quot; window.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+<code>{}</code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showPreferencesPage">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showPreferencesPage">
+      <span class="type-signature"></span>showPreferencesPage<span class="signature">(options, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays the IBM Aspera Connect &quot;Preferences&quot; window opened to a specifiic page.</p>
+<p><em>This method is asynchronous</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      options
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Options used when opening preferences.</p>
+<p>Options:</p>
+<ul>
+<li><code>page</code> (String) - <code>general</code>, <code>transfers</code>, <code>network</code>, <code>bandwidth</code>, <code>security</code></li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive results.</p>
+<p>Object returned to success callback:
+<code>{}</code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showSaveFileDialog">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showSaveFileDialog">
+      <span class="type-signature"></span>showSaveFileDialog<span class="signature">(callbacks, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {null|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays a file chooser dialog for the user to pick a &quot;save-to&quot; path.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+See <code><a href="global.html#dataTransfer">dataTransfer</a></code>.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>File chooser options</p>
+<p>Options:</p>
+<ul>
+<li><code>allowedFileTypes</code> (<a href="global.html#FileFilters">FileFilters</a>) - Filter the files displayed by file extension.</li>
+<li><code>suggestedName</code> (String) - The file name to pre-fill the dialog with.</li>
+<li><code>title</code> (String) - The name of the dialog window.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showSelectFileDialog">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showSelectFileDialog">
+      <span class="type-signature"></span>showSelectFileDialog<span class="signature">(callbacks, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {null|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays a file browser dialog for the user to select files. The select file
+dialog call(s) may be separated in time from the later startTransfer(s) call,
+but they must occur in the same Connect session.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+See <code><a href="global.html#dataTransfer">dataTransfer</a></code>.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>File chooser options</p>
+<p>Options:</p>
+<ul>
+<li><code>allowedFileTypes</code> (<a href="global.html#FileFilters">FileFilters</a>) - Filter the files displayed by file extension.</li>
+<li><code>allowMultipleSelection</code> (Boolean) -  Allow the selection of multiple
+files. Default: <code>true</code>.</li>
+<li><code>title</code> (String) - The name of the dialog window.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showSelectFileDialogPromise">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showSelectFileDialogPromise">
+      <span class="type-signature"></span>showSelectFileDialogPromise<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#dataTransfer">dataTransfer</a>>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays a file browser dialog for the user to select files. The select file
+dialog call(s) may be separated in time from the later startTransfer(s) call,
+but they must occur in the same Connect session.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>File chooser options</p>
+<p>Options:</p>
+<ul>
+<li><code>allowedFileTypes</code> (<a href="global.html#FileFilters">FileFilters</a>) - Filter the files displayed by file extension.</li>
+<li><code>allowMultipleSelection</code> (Boolean) -  Allow the selection of multiple
+files. Default: <code>true</code>.</li>
+<li><code>title</code> (String) - The name of the dialog window.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showSelectFolderDialog">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showSelectFolderDialog">
+      <span class="type-signature"></span>showSelectFolderDialog<span class="signature">(callbacks, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {null|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays a file browser dialog for the user to select directories. The select
+folder dialog call(s) may be separated in time from the later startTransfer(s)
+call, but they must occur in the same Connect session.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+See <code><a href="global.html#dataTransfer">dataTransfer</a></code>.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>File chooser options</p>
+<p>Options:</p>
+<ul>
+<li><code>allowMultipleSelection</code> (Boolean) -  Allow the selection of multiple
+folders. Default: <code>true</code>.</li>
+<li><code>title</code> (String) - The name of the dialog window.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showSelectFolderDialogPromise">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showSelectFolderDialogPromise">
+      <span class="type-signature"></span>showSelectFolderDialogPromise<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#dataTransfer">dataTransfer</a>>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays a file browser dialog for the user to select directories. The select
+folder dialog call(s) may be separated in time from the later startTransfer(s)
+call, but they must occur in the same Connect session.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+        <th>Attributes</th>
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+          <td class="attributes">
+            
+              &lt;optional><br>
+            
+
+            
+
+            
+          </td>
+        
+
+        
+
+        <td class="description last">
+          <p>File chooser options</p>
+<p>Options:</p>
+<ul>
+<li><code>allowMultipleSelection</code> (Boolean) -  Allow the selection of multiple
+folders. Default: <code>true</code>.</li>
+<li><code>title</code> (String) - The name of the dialog window.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showTransferManager">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showTransferManager">
+      <span class="type-signature"></span>showTransferManager<span class="signature">(callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays the IBM Aspera Connect &quot;Activity&quot; window.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+<code>{}</code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#showTransferMonitor">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="showTransferMonitor">
+      <span class="type-signature"></span>showTransferMonitor<span class="signature">(transferId, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Displays the IBM Aspera Connect &quot;Transfer Monitor&quot; window for the transfer.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The ID(<code>uuid</code>) of the corresponding transfer.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+<code>{}</code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#start">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="start">
+      <span class="type-signature"></span>start<span class="signature">()</span><span class="type-signature"> &rarr; {null|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Start looking for Connect. Please note that this is called internally by <a href="AW4.Connect.html#initSession">AW4.Connect#initSession</a>
+and it should only be called directly after a call to <a href="AW4.Connect.html#stop">AW4.Connect#stop</a>.</p>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#startTransfer">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="startTransfer">
+      <span class="type-signature"></span>startTransfer<span class="signature">(transferSpec, connectSpec, callbacks)</span><span class="type-signature"> &rarr; {Object|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Initiates a single transfer. Call <a href="AW4.Connect.html#getAllTransfers">AW4.Connect#getAllTransfers</a> to get transfer
+statistics, or register an event listener through <a href="AW4.Connect.html#addEventListener">AW4.Connect#addEventListener</a>.</p>
+<p>Return format:</p>
+<pre class="prettyprint source"><code>{
+ &quot;request_id&quot;: &quot;bb1b2e2f-3002-4913-a7b3-f7aef4e79132&quot;
+}
+</code></pre>
+<p>The <code>request_id</code>, which is returned immediately, may be used for matching
+this transfer with its events.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferSpec</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="global.html#TransferSpec">TransferSpec</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Transfer parameters.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>connectSpec</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="global.html#ConnectSpec">ConnectSpec</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Connect options</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive results.
+This call is successful if Connect is able to start the
+transfer. Note that an error could still occur after the transfer starts,
+e.g. if authentication fails. Use <a href="AW4.Connect.html#addEventListener">AW4.Connect#addEventListener</a> to
+receive notifications about errors that occur during a transfer session.
+This call fails if validation fails or the user rejects the transfer.</p>
+<p>Object returned to success callback:
+<code><a href="global.html#TransferSpecs">TransferSpecs</a></code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#startTransferPromise">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="startTransferPromise">
+      <span class="type-signature"></span>startTransferPromise<span class="signature">(transferSpec, connectSpec)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TransferSpecs">TransferSpecs</a>>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Initiates a single transfer. Call <a href="AW4.Connect.html#getAllTransfers">AW4.Connect#getAllTransfers</a> to get transfer
+statistics, or register an event listener through <a href="AW4.Connect.html#addEventListener">AW4.Connect#addEventListener</a>.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferSpec</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="global.html#TransferSpec">TransferSpec</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Transfer parameters.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>connectSpec</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="global.html#ConnectSpec">ConnectSpec</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Connect options</p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#startTransfers">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="startTransfers">
+      <span class="type-signature"></span>startTransfers<span class="signature">(transferSpecs, callbacks)</span><span class="type-signature"> &rarr; {Object|<a href="global.html#Error">Error</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Initiates one or more transfers (<em>currently only the first <code>transfer_spec</code>
+is used</em>). It's recommended to instead use <a href="AW4.Connect.html#startTransfer">AW4.Connect#startTransfer</a>. Call <a href="AW4.Connect.html#getAllTransfers">AW4.Connect#getAllTransfers</a> to get transfer
+statistics, or register an event listener through <a href="AW4.Connect.html#addEventListener">AW4.Connect#addEventListener</a>.</p>
+<p><em>This method is asynchronous.</em></p>
+<p>Return format:</p>
+<pre class="prettyprint source"><code>{
+ &quot;request_id&quot;: &quot;bb1b2e2f-3002-4913-a7b3-f7aef4e79132&quot;
+}
+</code></pre>
+<p>The <code>request_id</code>, which is returned immediately, may be used for matching
+this transfer with its events.</p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferSpecs</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Transfer parameters.</p>
+<p>Format:
+See <a href="global.html#TransferSpecs">TransferSpecs</a></p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive results.
+This call is successful if Connect is able to start the
+transfer. Note that an error could still occur after the transfer starts,
+e.g. if authentication fails. Use <a href="AW4.Connect.html#addEventListener">AW4.Connect#addEventListener</a> to
+receive notifications about errors that occur during a transfer session.
+This call fails if validation fails or the user rejects the transfer.</p>
+<p>Object returned to success callback:
+<a href="global.html#TransferSpecs">TransferSpecs</a></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#stop">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="stop">
+      <span class="type-signature"></span>stop<span class="signature">()</span><span class="type-signature"> &rarr; {Boolean}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Stop all requests from Connect to restart activity, please
+create a new <a href="AW4.Connect.html">AW4.Connect</a> object or call <a href="AW4.Connect.html#start">AW4.Connect#start</a>.</p>
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#stopTransfer">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="stopTransfer">
+      <span class="type-signature"></span>stopTransfer<span class="signature">(transferId, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Terminate the transfer. Use <a href="AW4.Connect.html#resumeTransfer">AW4.Connect#resumeTransfer</a> to resume.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>transferId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      String
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The ID(<code>uuid</code>) of the transfer to stop.</p>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+<code>{}</code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#testSshPorts">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="testSshPorts">
+      <span class="type-signature"></span>testSshPorts<span class="signature">(options, callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Test that Connect can open a TCP connection to <code>remote_host</code> over the given <code>ssh_port</code>.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>options</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>Test options.
+Options:</p>
+<ul>
+<li><code>remote_host</code> (String) - Domain name of the transfer server.</li>
+<li><code>ssh_port</code> (Number) - SSH port. Default: <code>33001</code>.</li>
+<li><code>timeout_sec</code> (Number) - Timeout value in seconds. Default: <code>3</code>.</li>
+</ul>
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:
+<code>{}</code></p>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#version">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="version">
+      <span class="type-signature"></span>version<span class="signature">(callbacks)</span><span class="type-signature"> &rarr; {null}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>Get the IBM Aspera Connect version and installation context.</p>
+<p><em>This method is asynchronous.</em></p>
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>callbacks</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Callbacks
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p><code>success</code> and <code>error</code> functions to receive
+results.</p>
+<p>Object returned to success callback:</p>
+<pre class="prettyprint source"><code>{
+  &quot;system_wide&quot;: false,
+  &quot;version&quot;: &quot;3.9.1.171801&quot;
+}
+</code></pre>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+    
+
+    
+
+    
+  </article>
+</section>
+
+
+
+
+  </div>
+
+  <br class="clear">
+
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
+  </footer>
+
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  
+
+</body>
+</html>
