@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { dict } from '../language'
-import * as Utils from '../utils';
-import TwoStepBanner from './TwoStepBanner';
-import StatusBanner from './StatusBanner';
-import styles from '../styles/components/App.module.scss';
+import { dict } from '../../services/language'
+import * as Utils from '../../helpers/utils';
+import TwoStepBanner from '../TwoStepBanner';
+import StatusBanner from '../StatusBanner';
+import styles from '../../styles/components/App.module.scss';
 
 interface State {
   banner: string;
@@ -87,7 +87,6 @@ class App extends Component<{}, State> {
     }
 
     if (allowedBannerStates.indexOf(message) !== -1) {
-      console.log(`Received event, transitioning to state: ${message}`);
       this.setState((prevState) => {
         // Unsupported browser is a terminal state
         if (prevState.banner === 'unsupported_browser' && message !== 'running') {

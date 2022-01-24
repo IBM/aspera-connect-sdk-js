@@ -1,4 +1,4 @@
-import Dictionary from './constants';
+import Dictionary from '../constants';
 
 interface DictionaryKeys {
   launching        : string;
@@ -127,7 +127,6 @@ class LanguageService {
 
   getBrowserLanguage() {
     if (navigator && typeof navigator.language === 'string') {
-      console.log(`Detected browser language: ${navigator.language.toLowerCase()}`)
       return navigator.language.toLowerCase();
     } else {
       console.log('Could not detect browser language. Defaulting to English (US).');

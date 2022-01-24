@@ -1,7 +1,7 @@
 import React from 'react';
-import { dict } from '../../language';
+import { dict } from '../../services/language';
 import { Button } from '../Button';
-import * as Utils from '../../utils';
+import * as Utils from '../../helpers/utils';
 
 interface Props {
   href?: string;

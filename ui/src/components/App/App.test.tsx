@@ -2,10 +2,10 @@ import '@testing-library/jest-dom/extend-expect';
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import { Dictionary as dict } from '../../constants/en-us';
-import App from '../../components/App';
+import App from '.';
 
 // Simulate window.postMessage() from parent page
-const fireMessage = async (message) => {
+const fireMessage = async (message: {data: string}) => {
   fireEvent(window, new MessageEvent('message', message));
   await new Promise((resolve) => setTimeout(resolve, 100));
 };
@@ -14,7 +14,7 @@ const jestFn = jest.fn();
 window.parent.postMessage = async (message) => {
   jestFn(message);
   await new Promise((resolve) => setTimeout(resolve, 100));
-}
+};
 
 it('handles launching message properly', async () => {
   const app = render(<App />);
@@ -89,7 +89,7 @@ it('sends removeiframe message on close click', async () => {
 
 it('sends 100% and connect_bar_visible messages on download render', async () => {
   jestFn.mockClear();
-  const app = render(<App />);
+  render(<App />);
   fireMessage({ data: 'download' });
   expect(jestFn).toHaveBeenCalledWith('100%');
   expect(jestFn).toHaveBeenCalledWith('connect_bar_visible');

@@ -28,5 +28,7 @@ in a browser, you can use `window.postMessage(event, '*')` to trigger the variou
 For example:
 
 ```javascript
-window.postMessage('show_download', '*');
+window.postMessage('download', '*');
+window.postMessage('extension_install', '*');
+window.postMessage('running', '*');
 ```

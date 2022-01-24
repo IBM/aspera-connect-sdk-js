@@ -1,16 +1,16 @@
-import { dict } from '../../language';
+import { dict } from './language';
 
 describe('Language', () => {
   describe('get', () => {
     it('should return a string', () => {
       expect(dict.get('running')).toBe('IBM Aspera Connect is running!');
     });
-    
+
     it('should return an empty string if no key', () => {
       expect(dict.get('asdf')).toBe('');
     });
   });
-  
+
   describe('findClosestLanguage', () => {
     const testCodes = [
       {
@@ -94,14 +94,14 @@ describe('Language', () => {
         expected: 'en-us'
       }
     ];
-    
+
     testCodes.forEach(item => {
       it(`should return ${item.expected} for code ${item.given}`, () => {
         expect(dict.findClosestLanguage(item.given)).toBe(item.expected);
       });
     });
   });
-  
+
   describe('getCurrentLanguage', () => {
     it('should set language to english', () => {
       expect(dict.getCurrentLanguage().code).toBe('en');

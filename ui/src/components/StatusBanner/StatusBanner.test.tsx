@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { Dictionary as dict } from '../../constants/en-us';
-import StatusBanner from '../../components/StatusBanner';
+import StatusBanner from '.';
 
 test('should render the proper running banner', () => {
   const app = render(<StatusBanner currentState='running' />);
