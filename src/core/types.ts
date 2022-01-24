@@ -526,7 +526,7 @@ export interface ConnectInstallerClientType {
   connected: (timeout?: number) => void;
   dismiss: () => void;
   doesBrowserNeedExtensionStore: () => boolean;
-  getExtensionStoreLink: () => boolean;
+  getExtensionStoreLink: () => string;
   installationJSON: (callback: (data: unknown) => unknown) => void;
   isExtensionInstalled: (timeout: number, callback?: DetectionCallbacks) => void;
   showDownload: () => void;
