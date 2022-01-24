@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { dict } from '../language';
-import { Button } from './Button';
-import * as Utils from '../utils';
+import { dict } from '../../services/language';
+import { Button } from '../Button';
+import * as Utils from '../../helpers/utils';
 
 let buttonText = () => {
   let text = dict.get('installExtension');

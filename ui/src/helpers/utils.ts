@@ -173,7 +173,6 @@ export function sendInstallAppEvent () {
 };
 
 function sendParentMessage (message: string) {
-  console.log(`Sending message to parent window: ${message}`)
   window.parent.postMessage(message, '*');
 };
 

@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import { dict } from '../language';
-import {
-  Checkmark,
-  InstallButton,
-  Pictogram
-} from './TwoStep';
-import { Footer } from './Footer';
-import { ExtensionInstallButton } from './ExtensionInstallButton';
-import * as Utils from '../utils';
-import styles from '../styles/components/TwoStepBanner.module.scss';
+import { dict } from '../../services/language';
+import { Checkmark } from '../Checkmark';
+import { InstallButton } from '../InstallButton';
+import { Pictogram } from '../Pictogram';
+import { Footer } from '../Footer';
+import { ExtensionInstallButton } from '../ExtensionInstallButton';
+import * as Utils from '../../helpers/utils';
+import styles from '../../styles/components/TwoStepBanner.module.scss';
 
 interface Props {
   currentState: string;

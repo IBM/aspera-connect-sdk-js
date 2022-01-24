@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { dict } from '../language';
-import * as Utils from '../utils';
-import styles from '../styles/components/Footer.module.scss';
+import { dict } from '../../services/language';
+import * as Utils from '../../helpers/utils';
+import styles from '../../styles/components/Footer.module.scss';
 
 interface Props {
   isOutdated: boolean;
