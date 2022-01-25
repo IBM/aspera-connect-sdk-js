@@ -1,3 +1,4 @@
 # Overrides for detected languages on GHE
 /docs/** -linguist-detectable
 /test/pages/** -linguist-detectable
+/examples/** -linguist-detectable

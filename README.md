@@ -60,7 +60,7 @@ try {
 }
 ```
 
-Check out the provided [Samples](samples) for more code examples.
+Check out the provided [Examples](examples) for more code samples.
 
 ## Migration from 3.x/4.x to 5.0.0
 
