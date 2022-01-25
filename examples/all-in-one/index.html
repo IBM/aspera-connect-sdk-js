@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IBM Aspera Connect SDK</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://d3gcli72yxqn2z.cloudfront.net/connect/v4/asperaweb-4.min.js"></script>
+    <script src="index.js"></script>
+    <style>
+      #allTransfers {
+    	  width: 800px;
+        margin-top: 15px;
+      }
+
+      th {
+    	  font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+    	  color: #4f6b72;
+    	  border-right: 1px solid #C1DAD7;
+    	  border-bottom: 1px solid #C1DAD7;
+    	  border-top: 1px solid #C1DAD7;
+    	  letter-spacing: 2px;
+    	  text-transform: capitalize;
+    	  text-align: center;
+    	  padding: 6px 6px 6px 12px;
+    	  background: #CAE8EA url(images/bg_header.jpg) no-repeat;
+      }
+
+      th.nobg {
+    	  border-top: 0;
+    	  border-left: 0;
+    	  border-right: 1px solid #C1DAD7;
+    	  background: none;
+      }
+
+      .table_caption {
+        font:bold 20px/30px Georgia, serif;
+      }
+    </style>
+  </head>
+   <body onload="initAsperaConnect();">
+    <header>
+      <div class="content">
+        <nav>
+          <a href="/">
+            <h1>IBM Aspera Connect SDK Samples</h1>
+          </a>
+        </nav>
+      </div>
+    </header>
+    <section class="content">
+      <p>This example shows how to perform various actions such as stopping and resuming transfers.</p>
+      <div id="transferControls">
+        <div style="padding-bottom: 15px;">
+          <button onclick="download('aspera-test-dir-tiny/200KB.1')">Download File (200KB)</button>
+          <button onclick="download('aspera-test-dir-small/10MB.1')">Download File (10MB)</button>
+          <button onclick="download('aspera-test-dir-large/100MB')">Download File (100MB)</button>
+        </div>
+        <div>
+          <button onclick="selectFile()">Upload File</button>
+          <button onclick="selectFolder()">Upload Directory</button>
+        </div>
+      </div>
+      <table id="results" cellspacing="0" class="allTransfers">
+        <caption class="table_caption">TRANSFERS VIEW</caption>
+        <tr>
+          <th scope="col" class="nobg">Transfer Progress</th>
+          <th scope="col" class="nobg">File Name</th>
+          <th scope="col" class="nobg">Status</th>
+          <th scope="col" class="nobg">Control buttons</th>
+        </tr>
+      </table>
+    </section>
+  </body>
+</html>
