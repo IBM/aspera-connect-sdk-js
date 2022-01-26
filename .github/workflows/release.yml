@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release
+        required: true
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_VERSION: ${{ github.event.inputs.version }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_PAT }} # Needed to properly trigger workflow events
+
+      - name: Prepare
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Bump version
+        run: |
+          npm run release -- --release-as ${{ env.RELEASE_VERSION }} --no-verify --skip.changelog
+
+      - name: Push tag
+        run: |
+          git push --follow-tags origin main
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          generateReleaseNotes: true
+          tag: v${{ env.RELEASE_VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}

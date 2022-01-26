@@ -1,9 +1,8 @@
 {
   "name": "@ibm-aspera/connect-sdk-js",
-  "version": "5.0.0-beta.0",
+  "version": "5.0.0-beta.2",
   "author": "IBM Aspera",
   "description": "Official IBM Aspera Connect SDK for Javascript",
-  "private": true,
   "main": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
   "scripts": {
@@ -16,7 +15,7 @@
     "docs": "jsdoc dist/esm --configure docs/jsdoc.config.js",
     "lint": "eslint -c .eslintrc.js --ext .ts ./src",
     "prepare": "npm --prefix ui install",
-    "release": "standard-version",
+    "release": "npx standard-version@9.3.2",
     "test": "karma start test/config/karma.integration.conf.js",
     "test:headless": "karma start test/config/karma.integration.conf.js --browsers ChromeCustom"
   },
@@ -45,7 +44,6 @@
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
     "mocha": "^9.1.4",
-    "standard-version": "^9.3.2",
     "terser-webpack-plugin": "^5.1.2",
     "ts-loader": "^9.1.2",
     "typescript": "^4.2.4",
