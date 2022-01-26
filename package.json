@@ -1,6 +1,6 @@
 {
   "name": "@ibm-aspera/connect-sdk-js",
-  "version": "5.0.0-beta.2",
+  "version": "5.0.0-pre.0",
   "author": "IBM Aspera",
   "description": "Official IBM Aspera Connect SDK for Javascript",
   "main": "dist/esm/index.js",
