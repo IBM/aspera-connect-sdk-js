@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release
+        required: true
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_VERSION: ${{ github.event.inputs.version }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Bump version
+        run: |
+          npm run release -- --release-as ${{ env.RELEASE_VERSION }} --no-verify --skip.changelog
+
+      - name: Push tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email actions@github.com
+          git push --follow-tags origin main
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          generateReleaseNotes: true
+          tag: v${{ env.RELEASE_VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}
