@@ -407,7 +407,7 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
         if (callbacks.error) callbacks.error(err);
       });
     } else {
-      throw new Error('getAllTransfers: No method is available for getting all transfers');
+      Logger.warn('getAllTransfers: No method is available for getting all transfers');
     }
   }
   /**
