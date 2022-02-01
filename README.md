@@ -2,7 +2,7 @@
 
 Enables web applications to utilize Aspera file-transfer capabilities.
 
-Check the [IBM API Hub](https://developer.ibm.com/apis/catalog/aspera--aspera-connect-sdk/Introduction/) for documentation.
+Check out [GitHub Pages](https://ibm.github.io/aspera-connect-sdk-js/) for documentation.
 
 ## Installation
 Install from npm:
