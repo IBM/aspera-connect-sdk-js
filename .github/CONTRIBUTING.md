@@ -95,7 +95,7 @@ If you're contributing, test your changes by running our test commands:
 npm run test
 ```
 
-Also, always make sure to run our linter command:
+When adding or changing functionality, please include new tests for them as part of your contribution. Also, always make sure to run our linter command:
 
 ```sh
 npm run lint
