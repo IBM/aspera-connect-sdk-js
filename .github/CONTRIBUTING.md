@@ -8,6 +8,14 @@ The Aspera Connect SDK for JavaScript is an **open source** project at IBM. We p
 
 We value all of our community members, and thus want to foster a positive contributing environment. Please take a look at our [code of conduct](./CODE_OF_CONDUCT.md) before beginning any work.
 
+## Who can contribute?
+
+Anyone! The one and only requirement is you'll need a [public GitHub account](https://github.com/join), as all our assets live on GitHub.
+
+- **Bug Reports:** Found an issue? Feel free to [open a bug report](https://github.com/IBM/aspera-connect-sdk-js/issues) to notify us of a potential issue, but please include as much detailed information as possible, such as the version of the Aspera Connect SDK, configuration options, browser version, etc.
+- **Development:** If coding is your thing, you can help us by contributing bug fixes or new features.
+- **Documentation:** Our documentation is just as important as the code itself, and anyone is welcome contribute to our documentation to make sure it stays correct and up-to-date.
+
 ## Prerequisites
 
 Before contributing, check out the [README](../README.md#prerequisites) to make sure you have the necessary tools installed.
@@ -137,10 +145,3 @@ Stay up to date with the activity in your pull request. Maintainers from the Asp
 When you need to make a change, use the same method detailed above except you no longer need to run `git push -u origin { YOUR_BRANCH_NAME }` just `git push`.
 
 Once all revisions to your pull request are complete, one of the maintainers will squash and merge your commits for you.
-
-## Who can contribute?
-
-Anyone! The one and only requirement is you'll need a [public GitHub account](https://github.com/join), as all our assets live on GitHub.
-
-- **Development:** If coding is your thing, you can help us by contributing bug fixes or new features.
-- **Documentation:** Our documentation is just as important as the code itself, and anyone is welcome contribute to    our documentation to make sure it stays correct and up-to-date.
