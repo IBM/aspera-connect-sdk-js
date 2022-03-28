@@ -69,7 +69,9 @@ Refer to [MIGRATION](MIGRATION.md) to see the required changes when updating you
 ## Development
 
 ### Prerequisites
-* NodeJS 12+
+* [Node.js](https://nodejs.org/en/download/) v12+
+  - If you are on macOS, we recommend installing Node.js via a package manager such as [nvm](https://github.com/nvm-sh/nvm).
+* Git
 
 ### Build
 
@@ -79,6 +81,10 @@ $ cd aspera-connect-sdk-js
 $ npm install
 $ npm run build
 ```
+
+## Contributing
+
+We're always looking for contributors to help us fix bugs, build new features, or help us improve the project documentation. If you're interested, definitely check out our [Contributing Guide](/.github/CONTRIBUTING.md).
 
 ## Troubleshooting
 
