@@ -1,3 +1,6 @@
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5764/badge)](https://bestpractices.coreinfrastructure.org/projects/5764)
+[![npm](https://img.shields.io/npm/v/@ibm-aspera/connect-sdk-js)](https://www.npmjs.com/package/@ibm-aspera/connect-sdk-js)
+
 # Official Aspera Connect SDK for JavaScript
 
 Enables web applications to utilize Aspera file-transfer capabilities.
