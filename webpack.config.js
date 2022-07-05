@@ -3,14 +3,9 @@ const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const { version } = require('./package.json');
 
-const branch = require('child_process')
-  .execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' })
-  .trim();
-
-const suffix = branch === 'main' ? '' : `-${branch}`;
 const date = new Date().toISOString().replace('T', ' ').substr(0, 19);
 const year = new Date().getFullYear();
-const banner = `@banner\nConnect SDK v${version}${suffix}\n${date}\nCopyright IBM Corp. 2008, ${year}`;
+const banner = `@banner\nConnect SDK v${version}\n${date}\nCopyright IBM Corp. 2008, ${year}`;
 
 const bundleConfig = {
   entry: './src/index.ts',
