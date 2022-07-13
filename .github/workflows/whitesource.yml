@@ -17,5 +17,5 @@ jobs:
       with:
         wssURL: https://ibmets.whitesourcesoftware.com/agent
         apiKey: ${{ secrets.WSS_API_KEY }}
-        productName: 'IBM Aspera Connect SDK'
-        projectName: 'aspera-connect-sdk-js'
+        productName: IBM Aspera Connect SDK
+        projectName: aspera-connect-sdk-js
