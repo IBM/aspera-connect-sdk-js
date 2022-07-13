@@ -1,0 +1,21 @@
+name: Whitesource Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Run Whitesource Action
+      uses: TheAxZim/Whitesource-Scan-Action@v1.0.0
+      with:
+        wssURL: https://ibmets.whitesourcesoftware.com/agent
+        apiKey: ${{ secrets.WSS_API_KEY }}
+        productName: 'IBM Aspera Connect SDK'
+        projectName: 'aspera-connect-sdk-js'
