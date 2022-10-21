@@ -116,7 +116,7 @@ export function getLocalStorage (key: string) {
 }
 
 export function getTroubleshootUrl () {
-  let url = 'https://test-connect.asperasoft.com';
+  let url = 'https://test-connect.ibmaspera.com';
   let querystring = getQueryString();
   if (querystring) {
     url += querystring;
