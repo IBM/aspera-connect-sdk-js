@@ -568,7 +568,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       } else if (event.data === EVENT.TROUBLESHOOT) {
         notifyListeners(event.data);
         const refreshWindow = getRefreshWindow();
-        refreshWindow.location.href = 'https://test-connect.asperasoft.com';
+        refreshWindow.location.href = 'https://test-connect.ibmaspera.com';
       } else if (event.data === EVENT.CONTINUE) {
         Utils.addVersionException();
         notifyListeners(event.data);
