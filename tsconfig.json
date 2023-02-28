@@ -15,7 +15,7 @@
     "strict": true,
     "target": "es5",
     "types": [],
-    "strictBindCallApply": false
+    "strictBindCallApply": false,
   },
   "include": [
     "src"

@@ -19,7 +19,12 @@
     "esModuleInterop": true,
     "strict": true,
     "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
+    ],
   },
   "include": [
     "src"
