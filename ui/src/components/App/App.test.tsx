@@ -11,6 +11,7 @@ const fireMessage = async (message: {data: string}) => {
 };
 
 const jestFn = jest.fn();
+
 window.parent.postMessage = async (message) => {
   jestFn(message);
   await new Promise((resolve) => setTimeout(resolve, 100));
@@ -62,9 +63,13 @@ it('handles download message properly', async () => {
 });
 
 it('handles install message properly', async () => {
+  window.open = jestFn;
+
   const app = render(<App />);
   fireMessage({ data: 'install' });
   expect(app.getByText(dict.installConnect)).toBeTruthy();
+  
+  jestFn.mockClear();
 });
 
 it('handles extension_install message properly', async () => {
