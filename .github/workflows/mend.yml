@@ -1,8 +1,8 @@
-name: Whitesource Security Scan
+name: Mend Security Scan
 
 on:
   push:
-    branches: [ main ]
+    branches: [ mend ]
   pull_request:
     branches: [ main ]
 
@@ -12,10 +12,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Run Whitesource Action
+    - name: Run Mend Action
       uses: TheAxZim/Whitesource-Scan-Action@v1.0.0
       with:
         wssURL: https://ibmets.whitesourcesoftware.com/agent
         apiKey: ${{ secrets.WSS_API_KEY }}
-        productName: IBM Aspera Connect SDK
+        productName: PSIRT_PRD0010973
         projectName: aspera-connect-sdk-js
