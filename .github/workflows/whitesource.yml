@@ -2,7 +2,7 @@ name: Whitesource Security Scan
 
 on:
   push:
-    branches: [ main ]
+    branches: [ whitesource ]
   pull_request:
     branches: [ main ]
 
@@ -17,5 +17,5 @@ jobs:
       with:
         wssURL: https://ibmets.whitesourcesoftware.com/agent
         apiKey: ${{ secrets.WSS_API_KEY }}
-        productName: IBM Aspera Connect SDK
+        productName: ${{ secrets.WSS_PRODUCT_NAME }}
         projectName: aspera-connect-sdk-js
