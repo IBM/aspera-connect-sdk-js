@@ -1,11 +1,11 @@
 {
   "private": true,
   "dependencies": {
-    "@ibm/plex": "^2.0.0",
-    "@types/react": "^16.9.17",
-    "@types/react-dom": "^16.9.4",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "@ibm/plex": "^6.2.0",
+    "@types/react": "^18.0.37",
+    "@types/react-dom": "^18.0.11",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "scripts": {
     "build": "react-scripts build",
@@ -24,12 +24,12 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
     "gulp": "^4.0.2",
     "gulp-inline-source": "^4.0.0",
-    "gulp-replace": "^1.1.3",
-    "react-scripts": "^4.0.3",
-    "sass": "^1.49.0"
+    "gulp-replace": "^1.1.4",
+    "react-scripts": "^5.0.1",
+    "sass": "^1.62.0"
   }
 }
