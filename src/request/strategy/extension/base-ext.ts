@@ -16,7 +16,23 @@ abstract class BaseExtensionStrategy implements types.RequestStrategy {
   defaultDialogTimeout = 86400000;
   abstract name: string;
 
-  constructor (options: types.RequestStrategyOptions) {
+  constructor (
+    options: types.RequestStrategyOptions = {
+      requestStatusCallback: function (): void {
+        throw new Error('Function not implemented.');
+      },
+      objectId: 0,
+      statusListener: function (): void {
+        throw new Error('Function not implemented.');
+      },
+      id: '',
+      containerId: '',
+      connectLaunchWaitTimeoutMs: 0,
+      sdkLocation: '',
+      connectMethod: '',
+      minVersion: ''
+    }
+  ) {
     this.options = options;
   }
 
@@ -29,9 +45,15 @@ abstract class BaseExtensionStrategy implements types.RequestStrategy {
     this.options.requestStatusCallback(newConnectStatus);
   };
 
-  httpRequest = (endpoint: types.HttpEndpoint, requestId: number): Promise<types.ResolvedHttpResponse> => {
+  httpRequest = (
+    endpoint: types.HttpEndpoint,
+    requestId: number
+  ): Promise<types.ResolvedHttpResponse> => {
     const requestPromise = generatePromiseData<types.ResolvedHttpResponse>();
-    if (endpoint.path.indexOf('/v5/') > -1 || endpoint.path.indexOf('/v6/') > -1) {
+    if (
+      endpoint.path.indexOf('/v5/') > -1 ||
+      endpoint.path.indexOf('/v6/') > -1
+    ) {
       // TODO: Don't mutate original object
       endpoint.path = endpoint.path.replace('/v5', '').replace('/v6', '');
     }
@@ -42,11 +64,11 @@ abstract class BaseExtensionStrategy implements types.RequestStrategy {
     }
 
     const req: types.ExtensionRequest = {
-      'request_id': requestId,
-      'min_version': this.options.minVersion || '',
-      'method': endpoint.method,
-      'uri_reference': endpoint.path,
-      'body': endpoint.body
+      request_id: requestId,
+      min_version: this.options.minVersion || '',
+      method: endpoint.method,
+      uri_reference: endpoint.path,
+      body: endpoint.body
     };
 
     /**
@@ -64,17 +86,19 @@ abstract class BaseExtensionStrategy implements types.RequestStrategy {
     Logger.debug(req);
 
     this.outstandingRequests[requestId] = {
-      'req': req,
-      'response': '',
-      'resolve': requestPromise.resolver
+      req: req,
+      response: '',
+      resolve: requestPromise.resolver
     };
     // TODO: Validate the data length is not over 100MB
-    document.dispatchEvent(new CustomEvent('AsperaConnectRequest', { 'detail': req }));
+    document.dispatchEvent(
+      new CustomEvent('AsperaConnectRequest', { detail: req })
+    );
 
     return requestPromise.promise;
   };
 
-  abstract startup (): Promise<void>;
+  abstract startup(): Promise<void>;
 }
 
 export default BaseExtensionStrategy;
