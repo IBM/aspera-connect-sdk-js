@@ -1,14 +1,7 @@
 import * as Utils from './utils';
 import { Logger } from './logger';
-import {
-  NativeHostStrategy,
-  SafariAppStrategy
-} from './request/strategy/extension';
-import {
-  INSTALL_EVENT as EVENT,
-  ACTIVITY_EVENT,
-  EVENT_TYPE
-} from './constants';
+import { NativeHostStrategy, SafariAppStrategy } from './request/strategy/extension';
+import { INSTALL_EVENT as EVENT, ACTIVITY_EVENT, EVENT_TYPE } from './constants';
 import * as types from './core/types';
 import { connectInstallerBanner } from './constants/banner';
 
@@ -63,16 +56,12 @@ import { connectInstallerBanner } from './constants/banner';
  * }
  * let asperaInstaller = new AW4.ConnectInstaller(options)
  */
-const ConnectInstaller = function ConnectInstaller (
-  this: any,
-  options?: types.InstallerOptions
-): void {
+const ConnectInstaller = function ConnectInstaller (this: any, options?: types.InstallerOptions): void {
   if (!new.target) {
     throw new Error('ConnectInstaller() must be called with new');
   }
 
-  const DEFAULT_SDK_LOCATION =
-    '//d3gcli72yxqn2z.cloudfront.net/downloads/connect';
+  const DEFAULT_SDK_LOCATION = '//d3gcli72yxqn2z.cloudfront.net/downloads/connect';
   const CONNECT_VERSIONS_JS = '/versions.js';
 
   const connectOptions: any = {};
@@ -87,35 +76,21 @@ const ConnectInstaller = function ConnectInstaller (
     options = {};
   }
 
-  if (
-    Utils.isNullOrUndefinedOrEmpty(
-      Utils.getLocalStorage('aspera-install-attempted')
-    )
-  ) {
+  if (Utils.isNullOrUndefinedOrEmpty(Utils.getLocalStorage('aspera-install-attempted'))) {
     Utils.setLocalStorage('aspera-install-attempted', 'true');
   }
-  if (
-    Utils.isNullOrUndefinedOrEmpty(
-      Utils.getLocalStorage('aspera-last-detected')
-    )
-  ) {
+  if (Utils.isNullOrUndefinedOrEmpty(Utils.getLocalStorage('aspera-last-detected'))) {
     Utils.setLocalStorage('aspera-last-detected', '');
   }
 
   connectOptions.version = options.version || 'latest';
   connectOptions.iframeId = options.iframeId || 'aspera-iframe-container';
-  connectOptions.sdkLocation = Utils.isNullOrUndefinedOrEmpty(
-    options.sdkLocation
-  )
-    ? `${DEFAULT_SDK_LOCATION}/${connectOptions.version}`
-    : Utils.getFullURI(options.sdkLocation);
-  connectOptions.stylesheetLocation = Utils.getFullURI(
-    options.stylesheetLocation
-  );
+  connectOptions.sdkLocation = (Utils.isNullOrUndefinedOrEmpty(options.sdkLocation)) ? `${DEFAULT_SDK_LOCATION}/${connectOptions.version}` : Utils.getFullURI(options.sdkLocation);
+  connectOptions.stylesheetLocation = Utils.getFullURI(options.stylesheetLocation);
   connectOptions.correlationId = options.correlationId;
   connectOptions.style = options.style || 'carbon';
 
-  if (typeof Storage !== 'undefined') {
+  if (typeof (Storage) !== 'undefined') {
     const overrideStyle = Utils.getLocalStorage('aspera-connect-install-style');
     if (overrideStyle) {
       connectOptions.style = overrideStyle;
@@ -139,18 +114,13 @@ const ConnectInstaller = function ConnectInstaller (
    *
    */
   const loadFiles = function (files: string[], type: string, callback: any) {
-    if (
-      files === null ||
-      typeof files === 'undefined' ||
-      !(files instanceof Array)
-    ) {
+    if (files === null || typeof files === 'undefined' || !(files instanceof Array)) {
       return;
     } else if (type === null || typeof type !== 'string') {
       return;
     }
     let numberOfFiles = 0;
-    const head =
-      document.getElementsByTagName('head')[0] || document.documentElement;
+    const head = document.getElementsByTagName('head')[0] || document.documentElement;
 
     /* Loads the file given, and sets a callback, when the file is the last one and a callback is
      * provided, it will call it
@@ -177,12 +147,7 @@ const ConnectInstaller = function ConnectInstaller (
       if (typeof callback === 'function') {
         /** Attach handlers for all browsers */
         fileref.onload = (fileref as any).onreadystatechange = function () {
-          if (
-            !done &&
-            (!this.readyState ||
-              this.readyState === 'loaded' ||
-              this.readyState === 'complete')
-          ) {
+          if (!done && (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete')) {
             done = false;
             /** Handle memory leak in IE */
             // tslint:disable-next-line
@@ -240,9 +205,7 @@ const ConnectInstaller = function ConnectInstaller (
 
   const supportsExtensions = function () {
     return (
-      Utils.BROWSER.CHROME ||
-      Utils.BROWSER.EDGE_WITH_EXTENSION ||
-      Utils.BROWSER.FIREFOX ||
+      (Utils.BROWSER.CHROME || Utils.BROWSER.EDGE_WITH_EXTENSION || Utils.BROWSER.FIREFOX) ||
       Utils.BROWSER.SAFARI_NO_NPAPI
     );
   };
@@ -256,10 +219,7 @@ const ConnectInstaller = function ConnectInstaller (
     return;
   };
 
-  this.addActivityListener = function (
-    type: 'connect_bar_event',
-    listener: any
-  ) {
+  this.addActivityListener = function (type: 'connect_bar_event', listener: any) {
     if (typeof listener !== 'function') {
       return;
     }
@@ -321,15 +281,11 @@ const ConnectInstaller = function ConnectInstaller (
     }
 
     let updatesURL = connectOptions.sdkLocation;
-    const replaceJSONWithFullHref = function (
-      connectversionsSdkLocation: string,
-      entryJSON: any
-    ) {
+    const replaceJSONWithFullHref = function (connectversionsSdkLocation: string, entryJSON: any) {
       for (let i = 0; i < entryJSON.links.length; i++) {
         const hrefLink = entryJSON.links[i].href;
         if (!/^https?:\/\//i.test(hrefLink) && !/^\/\//.test(hrefLink)) {
-          entryJSON.links[i].hrefAbsolute =
-            connectversionsSdkLocation + '/' + hrefLink;
+          entryJSON.links[i].hrefAbsolute = connectversionsSdkLocation + '/' + hrefLink;
         }
       }
     };
@@ -356,9 +312,7 @@ const ConnectInstaller = function ConnectInstaller (
         }
       }
 
-      Logger.error(
-        `Unable to find installer info for current platform: ${userOS}`
-      );
+      Logger.error(`Unable to find installer info for current platform: ${userOS}`);
       this.showUnsupportedBrowser();
     };
 
@@ -389,24 +343,18 @@ const ConnectInstaller = function ConnectInstaller (
    *   results.
    * @return {null}
    */
-  this.isExtensionInstalled = function (
-    timeout: number,
-    callbacks?: types.DetectionCallbacks
-  ) {
+  this.isExtensionInstalled = function (timeout: number, callbacks?: types.DetectionCallbacks) {
     // Prereq: connect-sdk needs to be loaded first
     // @ts-ignore
-    const extReqImpl: types.RequestStrategy = Utils.BROWSER.SAFARI_NO_NPAPI
-      ? new SafariAppStrategy()
-      : new NativeHostStrategy();
+    const extReqImpl: types.RequestStrategy = Utils.BROWSER.SAFARI_NO_NPAPI ? new SafariAppStrategy() : new NativeHostStrategy();
     if (!supportsExtensions()) {
       Logger.debug('This browser does not use extensions.');
       return;
     }
 
     if (callbacks) {
-      extReqImpl
-        .detectExtension?.(timeout)
-        .then((success: boolean) => {
+      extReqImpl.detectExtension?.(timeout).then(
+        (success: boolean) => {
           if (success && typeof callbacks.success === 'function') {
             callbacks.success();
           }
@@ -414,13 +362,15 @@ const ConnectInstaller = function ConnectInstaller (
           if (!success && typeof callbacks.timedout === 'function') {
             callbacks.timedout();
           }
-        })
-        .catch((err: any) => {
+        }
+      ).catch(
+        (err: any) => {
           Logger.debug('Error trying to detect extension:', err);
           if (typeof callbacks.timedout === 'function') {
             callbacks.timedout();
           }
-        });
+        }
+      );
     } else {
       return extReqImpl.detectExtension?.(timeout);
     }
@@ -434,11 +384,9 @@ const ConnectInstaller = function ConnectInstaller (
    * @return {Boolean}
    */
   this.doesBrowserNeedExtensionStore = function () {
-    if (
-      Utils.BROWSER.CHROME === true ||
+    if (Utils.BROWSER.CHROME === true ||
       Utils.BROWSER.FIREFOX === true ||
-      Utils.BROWSER.EDGE_WITH_EXTENSION === true
-    ) {
+      Utils.BROWSER.EDGE_WITH_EXTENSION === true) {
       return true;
     }
     // IE = ActiveX
@@ -497,9 +445,7 @@ const ConnectInstaller = function ConnectInstaller (
     }
 
     if (inIframe) {
-      const iframe = document.getElementById(
-        connectOptions.iframeId
-      ) as HTMLIFrameElement;
+      const iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
       if (iframe.contentWindow) {
         return iframe.contentWindow;
       }
@@ -510,10 +456,8 @@ const ConnectInstaller = function ConnectInstaller (
 
   // Get top window href and open in new tab
   const openNewTab = function () {
-    if (window.top) {
-      const url = window.top.location.href;
-      window.open(url, '_blank');
-    }
+    const url = window.top.location.href;
+    window.open(url, '_blank');
   };
 
   const isActivityEvent = function (e: any) {
@@ -526,10 +470,7 @@ const ConnectInstaller = function ConnectInstaller (
   };
 
   // Apply the carbon installer inline styles
-  const setCarbonBannerStyle = function (
-    iframe: HTMLIFrameElement,
-    small: boolean
-  ) {
+  const setCarbonBannerStyle = function (iframe: HTMLIFrameElement, small: boolean) {
     iframe.style.position = 'fixed';
     iframe.style.border = 'none';
     iframe.style.outline = 'none';
@@ -581,12 +522,10 @@ const ConnectInstaller = function ConnectInstaller (
     if (showInstallTimerID !== 0) {
       clearTimeout(showInstallTimerID);
     }
-    let iframe = document.getElementById(
-      connectOptions.iframeId
-    ) as HTMLIFrameElement;
+    let iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
 
     // To support old browser that don't have it
-    if (typeof String.prototype.endsWith === 'undefined') {
+    if (typeof (String.prototype.endsWith) === 'undefined') {
       String.prototype.endsWith = function (suffix) {
         return this.indexOf(suffix, this.length - suffix.length) !== -1;
       };
@@ -600,10 +539,7 @@ const ConnectInstaller = function ConnectInstaller (
 
         if (event.data === ACTIVITY_EVENT.CLICKED_DOWNLOAD_APP) {
           // Track if the user downloaded the app
-          Utils.setLocalStorage(
-            'aspera-connect-app-download',
-            Date.now().toString()
-          );
+          Utils.setLocalStorage('aspera-connect-app-download', Date.now().toString());
         } else if (event.data === ACTIVITY_EVENT.CLICKED_INSTALL_APP) {
           if (Utils.BROWSER.SAFARI || Utils.BROWSER.IE) {
             // Transition to extension_installs state if user clicks install app
@@ -625,7 +561,7 @@ const ConnectInstaller = function ConnectInstaller (
         notifyListeners(event.data);
         const refreshWindow = getRefreshWindow();
         // tslint:disable-next-line
-        refreshWindow.location.reload();
+        refreshWindow.location.reload(true);
       } else if (event.data === EVENT.IFRAME_REMOVED) {
         notifyListeners(event.data);
         this.dismiss();
@@ -636,13 +572,10 @@ const ConnectInstaller = function ConnectInstaller (
       } else if (event.data === EVENT.CONTINUE) {
         Utils.addVersionException();
         notifyListeners(event.data);
-        if (
-          (Utils.BROWSER.SAFARI && !Utils.BROWSER.SAFARI_NO_NPAPI) ||
-          Utils.BROWSER.IE
-        ) {
+        if ((Utils.BROWSER.SAFARI && !Utils.BROWSER.SAFARI_NO_NPAPI) || Utils.BROWSER.IE) {
           const refreshWindow = getRefreshWindow();
           // tslint:disable-next-line
-          refreshWindow.location.reload();
+          refreshWindow.location.reload(true);
         } else {
           this.showLaunching();
         }
@@ -651,10 +584,7 @@ const ConnectInstaller = function ConnectInstaller (
         this.showLaunching();
       } else if (event.data === '100%') {
         setCarbonBannerStyle(iframe, false);
-      } else if (
-        typeof event.data === 'string' &&
-        event.data.endsWith(EVENT.RESIZE)
-      ) {
+      } else if (typeof event.data === 'string' && event.data.endsWith(EVENT.RESIZE)) {
         iframe.style.height = event.data;
         iframe.style.maxWidth = '600px';
       } else if (event.data === EVENT.EXTENSION_INSTALL) {
@@ -667,19 +597,12 @@ const ConnectInstaller = function ConnectInstaller (
       iframeLoadedFlag = true;
       notifyListeners(EVENT.IFRAME_LOADED);
 
-      const iframe = document.getElementById(
-        connectOptions.iframeId
-      ) as HTMLIFrameElement;
+      const iframe = document.getElementById(connectOptions.iframeId) as HTMLIFrameElement;
 
       if (Utils.BROWSER.SAFARI || Utils.BROWSER.IE) {
-        const downloadTimestamp = Utils.getLocalStorage(
-          'aspera-connect-app-download'
-        );
+        const downloadTimestamp = Utils.getLocalStorage('aspera-connect-app-download');
         if (!Utils.isNullOrUndefinedOrEmpty(downloadTimestamp)) {
-          iframe.contentWindow?.postMessage(
-            'downloadTimestamp=' + downloadTimestamp,
-            '*'
-          );
+          iframe.contentWindow?.postMessage('downloadTimestamp=' + downloadTimestamp, '*');
         }
       }
 
@@ -691,14 +614,8 @@ const ConnectInstaller = function ConnectInstaller (
 
             if (link.rel === 'enclosure-one-click') {
               if (typeof iframe !== 'undefined' && iframe !== null) {
-                iframe.contentWindow?.postMessage(
-                  'downloadlink=' + link.hrefAbsolute,
-                  '*'
-                );
-                iframe.contentWindow?.postMessage(
-                  'downloadVersion=' + referencesJSON.version,
-                  '*'
-                );
+                iframe.contentWindow?.postMessage('downloadlink=' + link.hrefAbsolute, '*');
+                iframe.contentWindow?.postMessage('downloadVersion=' + referencesJSON.version, '*');
               }
             }
           }
@@ -715,18 +632,12 @@ const ConnectInstaller = function ConnectInstaller (
       if (connectOptions.stylesheetLocation) {
         // Inserting a stylesheet into the DOM for more manageable styles.
         if (typeof iframe !== 'undefined' && iframe !== null) {
-          iframe.contentWindow?.postMessage(
-            'insertstylesheet=' + connectOptions.stylesheetLocation,
-            '*'
-          );
+          iframe.contentWindow?.postMessage('insertstylesheet=' + connectOptions.stylesheetLocation, '*');
         }
       }
 
       if (connectOptions.correlationId) {
-        iframe.contentWindow?.postMessage(
-          'correlationId=' + connectOptions.correlationId,
-          '*'
-        );
+        iframe.contentWindow?.postMessage('correlationId=' + connectOptions.correlationId, '*');
       }
     };
 
@@ -777,17 +688,13 @@ const ConnectInstaller = function ConnectInstaller (
   };
 
   // Direct communication from Connect
-  window.addEventListener(
-    'message',
-    (event) => {
-      if (event.data === 'show_extension_install') {
-        this.showExtensionInstall();
-      } else if (event.data === 'show_safari_mitigate') {
-        show('safari_mitigate');
-      }
-    },
-    false
-  );
+  window.addEventListener('message', (event) => {
+    if (event.data === 'show_extension_install') {
+      this.showExtensionInstall();
+    } else if (event.data === 'show_safari_mitigate') {
+      show('safari_mitigate');
+    }
+  }, false);
 
   /**
    * Displays a banner at the top of the screen explaining to the user that Connect
@@ -928,10 +835,7 @@ const ConnectInstaller = function ConnectInstaller (
     if (typeof iframe !== 'undefined' && iframe !== null) {
       show('running');
       setTimeout(this.dismiss, timeout);
-      Utils.setLocalStorage(
-        'aspera-last-detected',
-        String(Date.now().toString())
-      );
+      Utils.setLocalStorage('aspera-last-detected', String(Date.now().toString()));
     }
 
     return;
