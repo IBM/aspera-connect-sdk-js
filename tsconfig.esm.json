@@ -15,7 +15,7 @@
     "noUnusedParameters": true,
     "outDir": "dist/esm",
     "strict": true,
-    "target": "es5",
+    "target": "es6",
     "types": [],
     "strictBindCallApply": false
   },
