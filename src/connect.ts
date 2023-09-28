@@ -975,7 +975,10 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
         evt.stopPropagation();
       }
 
-      evt.preventDefault();
+      if (!options.disablePreventDefault) {
+        evt.preventDefault();
+      }
+
       // Prepare request and create a valid JSON object to be serialized
       const filesDropped = evt.dataTransfer.files;
       const data: any = {};
