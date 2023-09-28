@@ -633,7 +633,7 @@ li {
     tests.setDragDropTargets = function() {
         var options = formInputToObj(
             {},
-            ["dragEnter", "dragOver", "dragLeave", "drop", "allowPropagation"]);
+            ["dragEnter", "dragOver", "dragLeave", "drop", "allowPropagation", "disablePreventDefault"]);
         log("Invoking SetDragDropTargets.", options);
         log("showSaveFileDialog SetDragDropTargets.", plugin.setDragDropTargets(
             ".drop-target",
@@ -2458,6 +2458,19 @@ li {
                     </label>
                     <label>
                         <input name="input_allowPropagation"
+                            type="radio" value="false" />
+                        false
+                    </label>
+                </li>
+                <li>
+                    <label>disablePreventDefault</label>
+                    <label>
+                        <input name="input_disablePreventDefault"
+                            type="radio" value="true" />
+                        true
+                    </label>
+                    <label>
+                        <input name="input_disablePreventDefault"
                             type="radio" value="false" />
                         false
                     </label>

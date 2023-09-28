@@ -212,6 +212,11 @@ export interface DragDropOptions {
   dragLeave?: boolean;
   drop?: boolean;
   allowPropagation?: boolean;
+  /**
+   * If `true`, the Connect SDK will not prevent the default action on drag/drop events. Instead, the client
+   * will be responsible for preventing the default action. For most use cases, this option is not needed.
+   */
+  disablePreventDefault?: boolean;
 }
 
 interface DragDropEvent {
