@@ -1,5 +1,12 @@
 {
   "private": true,
+  "dependencies": {
+    "@ibm/plex": "^2.0.0",
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
   "scripts": {
     "build": "react-scripts build",
     "dev": "react-scripts start",
@@ -16,13 +23,6 @@
     "not ie < 11",
     "not op_mini all"
   ],
-  "dependencies": {
-    "@ibm/plex": "^2.0.0",
-    "@types/react": "^16.9.17",
-    "@types/react-dom": "^16.9.4",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
-  },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
