@@ -39,7 +39,7 @@
     "eslint-plugin-jsdoc": "^33.1.0",
     "husky": "^4.3.0",
     "jsdoc": "^3.6.9",
-    "karma": "^6.3.11",
+    "karma": "^6.3.20",
     "karma-chrome-launcher": "^3.1.0",
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "es6-promise": "^4.2.8",
-    "tslib": "^2.2.0"
+    "tslib": "^2.6.2"
   },
   "jshintConfig": {
     "esversion": 6

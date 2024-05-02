@@ -456,6 +456,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
 
   // Get top window href and open in new tab
   const openNewTab = function () {
+    // @ts-ignore
     const url = window.top.location.href;
     window.open(url, '_blank');
   };
@@ -560,7 +561,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
       } else if (event.data === EVENT.REFRESH_PAGE) {
         notifyListeners(event.data);
         const refreshWindow = getRefreshWindow();
-        // tslint:disable-next-line
+        // @ts-ignore
         refreshWindow.location.reload(true);
       } else if (event.data === EVENT.IFRAME_REMOVED) {
         notifyListeners(event.data);
@@ -574,7 +575,7 @@ const ConnectInstaller = function ConnectInstaller (this: any, options?: types.I
         notifyListeners(event.data);
         if ((Utils.BROWSER.SAFARI && !Utils.BROWSER.SAFARI_NO_NPAPI) || Utils.BROWSER.IE) {
           const refreshWindow = getRefreshWindow();
-          // tslint:disable-next-line
+          // @ts-ignore
           refreshWindow.location.reload(true);
         } else {
           this.showLaunching();
