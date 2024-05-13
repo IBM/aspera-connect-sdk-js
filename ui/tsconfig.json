@@ -5,28 +5,23 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "es6",
-      "dom",
-      "scripthost"
-    ],
-    "module": "esnext",
+    "lib": ["ES6", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
-    "target": "es5",
+    "jsx": "react-jsx",
+    "target": "ES5",
     "esModuleInterop": true,
     "strict": true,
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "exclude": [
     "node_modules",
     "build",
     "**/*.test.ts"
-  ]
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
