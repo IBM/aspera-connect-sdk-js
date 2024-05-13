@@ -2,8 +2,8 @@
 node_modules/
 
 # Builds
-/dist
-build/
+dist
+ui/dist
 
 # Installer directory
 /imports

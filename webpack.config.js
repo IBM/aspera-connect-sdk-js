@@ -11,7 +11,7 @@ const bundleConfig = {
   entry: './src/index.ts',
   resolve: {
     alias: {
-      '@ui': path.resolve(__dirname, 'ui/build/inline/')
+      '@ui': path.resolve(__dirname, 'ui/dist')
     },
     extensions: ['.js', '.ts']
   },

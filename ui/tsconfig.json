@@ -5,7 +5,11 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["ES6", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES6",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -17,11 +21,13 @@
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": [
+    "src",
+    "vite.config.ts"
+  ],
   "exclude": [
     "node_modules",
     "build",
     "**/*.test.ts"
-  ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  ]
 }
