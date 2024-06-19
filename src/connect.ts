@@ -494,7 +494,7 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
    *
    * @function
    * @name AW4.Connect#initSession
-   * @param  {String} [applicationId] An ID to represent this session. Transfers
+   * @param {String | Undefined} [applicationId] An ID to represent this session. Transfers
    *   initiated during this session will be associated with the ID. To continue
    *   a previous session, use the same ID as before. Use a unique ID in order to
    *   keep transfer information private from other websites. IF not specified,
@@ -502,13 +502,13 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
    *
    * @returns {Object}
    */
-  this.initSession = function (id = ''): types.ApplicationIdObject | types.ConnectError {
+  this.initSession = function (applicationId: string | undefined = ''): types.ApplicationIdObject | types.ConnectError {
     if (!Utils.isNullOrUndefinedOrEmpty(APPLICATION_ID)) {
       return Utils.createError(-1, 'Session was already initialized.');
     }
 
-    if (!Utils.isNullOrUndefinedOrEmpty(id)) {
-      APPLICATION_ID = id;
+    if (!Utils.isNullOrUndefinedOrEmpty(applicationId)) {
+      APPLICATION_ID = applicationId;
     } else {
       let appId = Utils.getLocalStorage(LS_CONNECT_APP_ID);
       /** Generate a new application id */
@@ -825,6 +825,7 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
       throw new Error('removeTransfer: No transfer method is available for removing a transfer');
     }
   }
+
   /**
    * Remove the transfer - terminating it if necessary - from Connect.
    *
@@ -929,7 +930,6 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
    *   * `files` (Object) - See {@link dataTransfer}. This is only valid on `drop` events.
    * @return {null|Error}
    */
-
   this.setDragDropTargets = function (
     cssSelector: string, options: types.DragDropOptions, listener: types.DragDropListener
   ): void | types.ConnectError {
@@ -981,9 +981,11 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
 
       // Prepare request and create a valid JSON object to be serialized
       const filesDropped = evt.dataTransfer.files;
-      const data: any = {};
-      data.dataTransfer = {};
-      data.dataTransfer.files = [];
+      const data: types.DragDropDataTransfer = {
+        dataTransfer: {
+          files: []
+        }
+      };
       for (let i = 0; i < filesDropped.length; i++) {
         const fileObject = {
           'lastModifiedDate': filesDropped[i].lastModifiedDate,
@@ -993,17 +995,13 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
         };
         data.dataTransfer.files.push(fileObject);
       }
+
       // Drop helper
       const dropHelper = function (response: any) {
         listener({ event: evt, files: response });
       };
-      const request =
-        new Request()
-          .setName('droppedFiles')
-          .setMethod(HTTP_METHOD.POST)
-          .setBody(data);
 
-      send<any>(request, {
+      getDroppedFiles(data, {
         success: dropHelper
       });
     };
@@ -1023,6 +1021,39 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
       }
     }
   };
+
+  function getDroppedFiles (
+    data: types.DragDropDataTransfer,
+    callbacks: types.Callbacks<any>
+  ): void | types.ConnectError {
+    if (!DRAGDROP_ENABLED) {
+      return Utils.createError(-1, 'Drop is not enabled in the initialization ' +
+        'options, please instantiate Connect again with the dragDropEnabled option set to true.');
+    }
+
+    const request =
+      new Request()
+        .setName('droppedFiles')
+        .setMethod(HTTP_METHOD.POST)
+        .setBody(data);
+
+    send<any>(request, callbacks);
+  }
+
+  /**
+   * Gets drag and drop files. Please note that the `dragDropEnabled` option must have been set to `true`
+   * when creating the {@link AW4.Connect} object.
+   *
+   * *This method is asynchronous.*
+   *
+   * @function
+   * @name AW4.Connect#getDroppedFiles
+   * @param {DragDropDataTransfer} data Data transfer object.
+   * @param {Callbacks} callbacks Error and Success callbacks.
+   *
+   * @return {null|Error}
+   */
+  this.getDroppedFiles = getDroppedFiles;
 
   function showAbout(callbacks: types.Callbacks<types.EmptyObject>): void;
   function showAbout(): Promise<types.EmptyObject>;
@@ -1533,14 +1564,14 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
    */
   function startTransfer (
     transferSpec: types.TransferSpec,
-    asperaConnectSettings: types.ConnectSpec,
+    connectSpec: types.ConnectSpec,
     callbacks: types.Callbacks<types.StartTransferOutput>
   ): { request_id: string } {
     if (Utils.isNullOrUndefinedOrEmpty(transferSpec)) {
       throw new Error('#startTransfer transferSpec is missing or invalid');
     }
 
-    const settings = asperaConnectSettings || {};
+    const settings = connectSpec || {};
     const localCallbacks = callbacks || {};
     const transferSpecs: types.TransferSpecs = {
       transfer_specs: [{
@@ -1549,7 +1580,7 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
       }]
     };
 
-    return this.startTransfers(transferSpecs, localCallbacks);
+    return startTransfers(transferSpecs, localCallbacks);
   }
   this.startTransfer = startTransfer;
 
@@ -1566,13 +1597,13 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
    */
   function startTransferPromise (
     transferSpec: types.TransferSpec,
-    asperaConnectSettings: types.ConnectSpec
+    connectSpec: types.ConnectSpec
   ): Promise<types.StartTransferOutput> {
     if (Utils.isNullOrUndefinedOrEmpty(transferSpec)) {
       throw new Error('#startTransfer transferSpec is missing or invalid');
     }
 
-    const settings = asperaConnectSettings || {};
+    const settings = connectSpec || {};
     const transferSpecs: types.TransferSpecs = {
       transfer_specs: [{
         transfer_spec: transferSpec,
@@ -1581,7 +1612,7 @@ const Connect = function Connect (this: types.ConnectClientType, options?: types
     };
 
     if (connectRunning) {
-      return this.startTransfers(transferSpecs);
+      return startTransfers(transferSpecs);
     } else if (mobileConnectRunning && window.AsperaMobile) {
       return window.AsperaMobile.startTransfer(transferSpec) as unknown as Promise<types.StartTransferOutput>;
     } else {

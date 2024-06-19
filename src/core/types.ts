@@ -219,6 +219,10 @@ export interface DragDropOptions {
   disablePreventDefault?: boolean;
 }
 
+export interface DragDropDataTransfer {
+  dataTransfer: { files: FileObject[] };
+}
+
 interface DragDropEvent {
   /** DOM Event object as implemented by the browser. */
   event: DragEvent;
@@ -462,6 +466,11 @@ export interface ConnectClientType {
     cssSelector: string,
     options: DragDropOptions,
     listener: DragDropListener
+  ): void | ConnectError;
+
+  getDroppedFiles (
+    data: DragDropDataTransfer,
+    callbacks: Callbacks<any>
   ): void | ConnectError;
 
   showAbout (callbacks: Callbacks<EmptyObject>): void;

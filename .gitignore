@@ -1,16 +1,16 @@
 # Dependencies
-node_modules/
+node_modules
 
 # Builds
-/dist
-build/
+dist
+build
 
 # Installer directory
-/imports
+imports
 
 # Misc
 .DS_Store
-/.vscode
+.vscode
 
 # JetBrans IDE
 .idea
