@@ -33,23 +33,7 @@ jobs:
           npm run build
 
       - name: Deploy ${{ steps.extract.outputs.current-version }}
-        uses: reggionick/s3-deploy@v3
-        with:
-          folder: dist/js
-          bucket: ${{ secrets.S3_BUCKET }}/${{ env.PACKAGE_NAME }}/${{ env.PACKAGE_VERSION }}
-          bucket-region: ${{ secrets.S3_BUCKET_REGION }}
-          dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-          invalidation: ${{ secrets.S3_BUCKET }}/${{ env.PACKAGE_NAME }}/${{ env.PACKAGE_VERSION }}/*
-          no-cache: true
-        env:
-          PACKAGE_VERSION: v${{ steps.extract.outputs.current-version }}
+        run: node scripts/script.js dist/js ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} ${{ secrets.S3_BUCKET }} ${{ env.PACKAGE_NAME }} ${{ env.PACKAGE_VERSION }}
 
       - name: Deploy Latest
-        uses: reggionick/s3-deploy@v3
-        with:
-          folder: dist/js
-          bucket: ${{ secrets.S3_BUCKET }}/${{ env.PACKAGE_NAME }}/latest
-          bucket-region: ${{ secrets.S3_BUCKET_REGION }}
-          dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-          invalidation: ${{ secrets.S3_BUCKET }}/${{ env.PACKAGE_NAME }}/latest/*
-          no-cache: true
+        run: node scripts/script.js dist/js ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} ${{ secrets.S3_BUCKET }} ${{ env.PACKAGE_NAME }} latest
