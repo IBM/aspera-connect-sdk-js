@@ -40,7 +40,7 @@ jobs:
           aws --version
 
       - name: Deploy ${{ steps.extract.outputs.current-version }}
-        run: node scripts/deploy.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName ${{ env.PACKAGE_VERSION }}
+        run: node scripts/deploy-cdn.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName ${{ env.PACKAGE_VERSION }}
 
       - name: Deploy Latest
-        run: node scripts/deploy.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName latest
+        run: node scripts/deploy-cdn.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName latest
