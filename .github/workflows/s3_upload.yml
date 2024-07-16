@@ -32,6 +32,13 @@ jobs:
         run: |
           npm run build
 
+      - name: Install AWS CLI
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+          aws --version
+
       - name: Deploy ${{ steps.extract.outputs.current-version }}
         run: node scripts/deploy.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName ${{ env.PACKAGE_VERSION }}
 
