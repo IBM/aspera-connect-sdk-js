@@ -33,7 +33,7 @@ jobs:
           npm run build
 
       - name: Deploy ${{ steps.extract.outputs.current-version }}
-        run: node scripts/script.js dist/js ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} ${{ secrets.S3_BUCKET }} ${{ env.PACKAGE_NAME }} ${{ env.PACKAGE_VERSION }}
+        run: node scripts/deploy.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName ${{ env.PACKAGE_VERSION }}
 
       - name: Deploy Latest
-        run: node scripts/script.js dist/js ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} ${{ secrets.S3_BUCKET }} ${{ env.PACKAGE_NAME }} latest
+        run: node scripts/deploy.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName latest
