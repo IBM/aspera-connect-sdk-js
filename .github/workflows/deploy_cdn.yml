@@ -20,27 +20,28 @@ jobs:
         with:
           node-version: 14
 
-      - name: Extract version
-        id: extract
-        uses: martinbeentjes/npm-get-version-action@master
-
       - name: Install dependencies
-        run: |
-          npm ci
+        run: npm ci
 
       - name: Build
-        run: |
-          npm run build
+        run: npm run build
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
 
       - name: Install AWS CLI
         run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
+          pip install awscli --upgrade --user
           aws --version
 
+      - name: Extract version from package.json
+        id: extract
+        run: echo ::set-output name=current-version::v$(jq -r '.version' package.json)
+
       - name: Deploy ${{ steps.extract.outputs.current-version }}
-        run: node scripts/deploy-cdn.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName ${{ env.PACKAGE_VERSION }}
+        run: node scripts/deploy-cdn.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName ${{ steps.extract.outputs.current-version }}
 
       - name: Deploy Latest
         run: node scripts/deploy-cdn.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName latest
