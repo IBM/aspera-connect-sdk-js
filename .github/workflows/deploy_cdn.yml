@@ -1,0 +1,47 @@
+name: Deploy to Cloudfront
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      PACKAGE_NAME: '@ibm-aspera/connect-sdk-js'
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Install AWS CLI
+        run: |
+          pip install awscli --upgrade --user
+          aws --version
+
+      - name: Extract version from package.json
+        id: extract
+        run: echo ::set-output name=current-version::v$(jq -r '.version' package.json)
+
+      - name: Deploy ${{ steps.extract.outputs.current-version }}
+        run: node scripts/deploy-cdn.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName ${{ steps.extract.outputs.current-version }}
+
+      - name: Deploy Latest
+        run: node scripts/deploy-cdn.js --folder dist/js --distId ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --bucketName ${{ secrets.S3_BUCKET }} --packageName ${{ env.PACKAGE_NAME }} --tagName latest
