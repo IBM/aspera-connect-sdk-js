@@ -6,27 +6,28 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "lib": [
-      "es6",
-      "dom",
-      "scripthost"
+      "ES6",
+      "DOM",
+      "DOM.Iterable"
     ],
-    "module": "esnext",
+    "module": "ESNext",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "target": "es5",
+    "target": "ES5",
     "esModuleInterop": true,
     "strict": true,
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src"
+    "src",
+    "vite.config.ts"
   ],
   "exclude": [
     "node_modules",
     "build",
-    "**/*.test.ts"
+    "**/*.test.tsx"
   ]
 }
