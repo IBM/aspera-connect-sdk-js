@@ -27,6 +27,13 @@ jobs:
         run: |
           npm run build
           npm run docs
+
+      - name: Upload artifact
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: dist/docs
   Deploy:
     needs: Documentation
 
@@ -44,5 +51,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          path: dist/docs
