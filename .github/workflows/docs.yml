@@ -2,8 +2,8 @@ name: Documentation
 
 on:
   push:
-    branches:
-      - '**'
+    tags:
+      - 'v*'
 
 jobs:
   Documentation:
@@ -42,11 +42,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout GitHub Pages branch
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
