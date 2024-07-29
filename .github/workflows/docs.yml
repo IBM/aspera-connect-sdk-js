@@ -12,7 +12,7 @@ jobs:
       matrix:
         node: [ 18 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js ${{ matrix.node }}
         uses: actions/setup-node@v2
@@ -28,25 +28,19 @@ jobs:
           npm run build
           npm run docs
 
-      - name: Upload artifact
-        id: upload-artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: github-pages
           path: dist/docs
   Deploy:
     needs: Documentation
-
+    runs-on: ubuntu-latest
     permissions:
       pages: write
       id-token: write
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
-    runs-on: ubuntu-latest
-
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
