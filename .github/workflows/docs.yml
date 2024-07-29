@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  Documentation:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,8 +27,8 @@ jobs:
         run: |
           npm run build
           npm run docs
-  deploy:
-    needs: build
+  Deploy:
+    needs: Documentation
 
     permissions:
       pages: write
