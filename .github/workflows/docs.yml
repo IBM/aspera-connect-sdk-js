@@ -8,8 +8,16 @@ on:
 jobs:
   Documentation:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ 18 ]
     steps:
       - uses: actions/checkout@v2
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
 
       - name: Install dependencies
         run: |
@@ -21,7 +29,7 @@ jobs:
           npm run docs
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.2.2
+        uses: github/pages-deploy-action@v2
         with:
           branch: gh-pages
           folder: dist/docs
