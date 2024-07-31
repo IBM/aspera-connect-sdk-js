@@ -8,13 +8,16 @@ on:
 jobs:
   Publish:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ 18 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: ${{ matrix.node }}
 
       - name: Install dependencies
         run: |
@@ -25,7 +28,7 @@ jobs:
           npm run build
 
       - name: Publish
-        uses: JS-DevTools/npm-publish@v1
+        uses: JS-DevTools/npm-publish@v3
         with:
           access: public
           token: ${{ secrets.NPM_TOKEN }}

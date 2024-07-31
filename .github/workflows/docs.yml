@@ -8,8 +8,16 @@ on:
 jobs:
   Documentation:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ 18 ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
 
       - name: Install dependencies
         run: |
@@ -20,8 +28,20 @@ jobs:
           npm run build
           npm run docs
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.2.2
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          branch: gh-pages
-          folder: dist/docs
+          path: dist/docs
+  Deploy:
+    needs: Documentation
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
