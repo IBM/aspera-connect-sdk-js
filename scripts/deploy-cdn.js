@@ -1,5 +1,5 @@
 const { execSync } = require('child_process');
-const args = require('minimist')(process.argv.slice(4));
+const args = require('minimist')(process.argv.slice(2));
 
 const { folder, distId, bucketName, packageName, tagName } = args;
 const bucketPath = `${bucketName}/${packageName}/${tagName}`;
