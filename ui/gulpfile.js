@@ -5,8 +5,7 @@ const replace = require("gulp-replace");
 gulp.task("default", () => {
   return gulp
     .src("./dist/*.html")
-    .pipe(replace('type="module" ', ''))
-    .pipe(replace('crossorigin ', ''))
+    .pipe(replace('type="module"', "type='module'"))
     .pipe(replace('.js"></script>', '.js" inline></script>'))
     .pipe(replace('.css">', '.css" inline>'))
     .pipe(
