@@ -1,0 +1,20 @@
+{
+  "settingsInheritedFrom": "whitesource-config/whitesource-config@master",
+  "minSeverityLevel": "NONE",
+  "remediateSettings": {
+    "enableRenovate": true,
+    "extends": ["config:base"],
+    "packageRules": [
+      {
+        "matchPackagePatterns": ["*"],
+        "groupName": "all-upgrades",
+        "separateMinorPatch": true,
+        "separateMultipleMajor": true
+      },
+      {
+        "matchPackageNames": ["gulp"],
+        "enabled": false
+      }
+    ]
+  }
+}
