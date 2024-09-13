@@ -375,7 +375,7 @@ class RequestHandler implements types.RequestHandler {
   /** Define timeout behavior */
   async handleTimeout (timeout: types.ConnectError): Promise<void> {
     /**
-     * Return error message from strategy. Otherwise do some debugging first.
+     * Return error message from strategy. Otherwise, do some debugging first.
      */
     if (timeout.error.user_message !== 'timeout') {
       throw new Error(timeout.error.user_message);

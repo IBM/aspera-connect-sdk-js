@@ -9,7 +9,7 @@ execSync('npm run build:esm', {stdio: 'inherit'});
 
 console.info('Building UI');
 execSync('npm run build:ui', {stdio: 'inherit'});
-const htmlText = fs.readFileSync('./ui/dist/index.html', {encoding: 'utf8'});
+const htmlText = fs.readFileSync('./ui/dist/inline/index.html', {encoding: 'utf8'});
 fs.writeFileSync('./dist/esm/constants/banner.js', `export const connectInstallerBanner = \'${htmlText.replace(/\\/g, '\\\\').replace(/\'/g, '\\\'').replace(/\r?\n|\r/g, '')}\';`);
 
 console.info('Building JS bundle');
