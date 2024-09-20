@@ -39,8 +39,8 @@ jobs:
           git push --follow-tags origin main
 
       - name: Create release
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v2
         with:
-          generateReleaseNotes: true
-          tag: v${{ env.RELEASE_VERSION }}
+          generate_release_notes: true
+          tag_name: v${{ env.RELEASE_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
