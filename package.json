@@ -54,6 +54,9 @@
     "es6-promise": "^4.2.8",
     "tslib": "^2.6.2"
   },
+  "overrides": {
+    "body-parser": "1.20.3"
+  },
   "jshintConfig": {
     "esversion": 6
   },
