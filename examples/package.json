@@ -4,7 +4,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.21.0"
+    "express": "^4.21.1"
   },
   "overrides": {
     "body-parser": "1.20.3"
