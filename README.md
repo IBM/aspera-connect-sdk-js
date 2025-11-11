@@ -1,6 +1,14 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5764/badge)](https://bestpractices.coreinfrastructure.org/projects/5764)
 [![npm](https://img.shields.io/npm/v/@ibm-aspera/connect-sdk-js)](https://www.npmjs.com/package/@ibm-aspera/connect-sdk-js)
 
+⚠️ Deprecation Notice ⚠️
+
+The **Connect SDK** is **deprecated** and will no longer receive updates or support.
+
+Please migrate to the [Aspera JS SDK](<https://github.com/IBM/aspera-sdk-js/>).
+
+Continuing to use the **Connect SDK** and **Aspera Connect** application may still work for some time, but is not guaranteed and may break in the future.
+
 # Official Aspera Connect SDK for JavaScript
 
 Enables web applications to utilize Aspera file-transfer capabilities.
