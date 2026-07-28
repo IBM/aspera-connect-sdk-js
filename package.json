@@ -55,7 +55,7 @@
     "tslib": "^2.6.2"
   },
   "overrides": {
-    "body-parser": "1.20.3",
+    "body-parser": "1.20.6",
     "cookie": "0.7.2"
   },
   "jshintConfig": {
