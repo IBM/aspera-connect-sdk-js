@@ -16,7 +16,7 @@ jobs:
     env:
       RELEASE_VERSION: ${{ github.event.inputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           token: ${{ secrets.GH_PAT }} # Needed to properly trigger workflow events
 

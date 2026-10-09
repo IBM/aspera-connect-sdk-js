@@ -12,7 +12,7 @@ jobs:
       matrix:
         node: [ 18 ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Node.js ${{ matrix.node }}
         uses: actions/setup-node@v4
